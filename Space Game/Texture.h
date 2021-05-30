@@ -19,5 +19,5 @@ public:
 
 	void Draw();
 	void Draw(int index, float x, float y, bool bRealCoordinates = false);
-	void DrawPanorama(int x);
+	void DrawPanorama(float x);
 };

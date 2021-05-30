@@ -29,7 +29,7 @@ void SpaceGame::Load()
 
 	tCharacterTexture = new Texture(L"player.png", 2624, 2098, 66, 58);
 	tOrbTexture = new Texture(L"orb.png", 2497, 2497, 32, 32);
-	tBackground = new Texture(L"background.png");
+	tBackground = new Texture(L"background.png", 38400, 5400, 5120, 720);
 	tLaserTexture = new Texture(L"Laser.png");
 	tLaserBeamTexture = new Texture(L"LaserBeam.png");
 	tEnemyTexture = new Texture(L"enemy.png", 1856, 2646, 38, 55);

@@ -174,7 +174,4 @@
       <Filter>Source Files\Space\Entities</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram.cd" />
-  </ItemGroup>
 </Project>

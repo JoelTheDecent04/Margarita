@@ -17,7 +17,7 @@ void DeathScreen::Render()
 {
 	if (!bRenderedFirstFrame)
 	{
-		Graphics::FillRectangle(0.0f, 0.0f, 1280.0f, 720.0f, clrBlack, 0.7f);
+		Graphics::FillRectangle(0.0f, 0.0f,nScreenWidth, nScreenHeight, clrBlack, 0.7f);
 		bRenderedFirstFrame = true;
 	}
 

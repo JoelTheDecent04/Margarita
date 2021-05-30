@@ -5,7 +5,7 @@
 
 Texture::Texture(const wchar_t* filename)
 {
-	
+	int n = Graphics::iRenderTarget->GetMaximumBitmapSize();
 
 	iBitmap = nullptr;
 
@@ -101,12 +101,13 @@ void Texture::Draw(int index, float x, float y, bool bRealCoordinates)
 
 	Graphics::iRenderTarget->DrawBitmap(iBitmap, rDest, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, rSrc); //Display bitmap
 }
-void Texture::DrawPanorama(int x)
+void Texture::DrawPanorama(float x)
 {
 	RECT rClientRect;
 	GetClientRect(Graphics::hWindow, &rClientRect); //Get screen area
 
-	D2D_RECT_F rSrc = D2D1::RectF(x, 0.0f, x + 1280, iBitmap->GetSize().height); //Get source coordinates
+	float fBitmapScale = iBitmap->GetSize().height / 720;
+	D2D_RECT_F rSrc = D2D1::RectF(fBitmapScale * x, 0.0f, fBitmapScale * (x + 1280), iBitmap->GetSize().height); //Get source coordinates
 	D2D_RECT_F rDest = D2D1::RectF(rClientRect.left, rClientRect.top, rClientRect.right, rClientRect.bottom); //Get destination coordinates
 
 	Graphics::iRenderTarget->DrawBitmap(iBitmap, rDest, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, rSrc);//Display bitmap

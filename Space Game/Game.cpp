@@ -30,8 +30,8 @@ namespace Game {
 		if (lCurrentLevel && bUnloadPrevious)
 		{
 			Level* lLastLevel = lCurrentLevel;
-			lCurrentLevel = nullptr;
 			Sleep(50); //Give threads enough time to finish using level
+			lCurrentLevel = nullptr;
 			lLastLevel->Unload();
 		}
 		
