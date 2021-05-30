@@ -18,6 +18,6 @@ public:
 	~Texture();
 
 	void Draw();
-	void Draw(int index, float x, float y, bool bRealCoordinates = false);
+	void Draw(int index, float x, float y, bool bRealCoordinates = false, float fAngle = 0.0f);
 	void DrawPanorama(float x);
 };

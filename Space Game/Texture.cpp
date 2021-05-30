@@ -76,7 +76,7 @@ void Texture::Draw()
 		D2D1::RectF(0.0f, 0.0f, iBitmap->GetSize().width, iBitmap->GetSize().height)
 	);
 }
-void Texture::Draw(int index, float x, float y, bool bRealCoordinates)
+void Texture::Draw(int index, float x, float y, bool bRealCoordinates, float fAngle)
 {
 	D2D_RECT_F rSrc;
 	if (nTexturesAcross != 0) //We are using multiple textures in one file
@@ -99,7 +99,14 @@ void Texture::Draw(int index, float x, float y, bool bRealCoordinates)
 		rDest.right *= fScaleH;
 	}
 
-	Graphics::iRenderTarget->DrawBitmap(iBitmap, rDest, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, rSrc); //Display bitmap
+	if (fAngle != 0.0f)
+	{
+		Graphics::iRenderTarget->SetTransform(D2D1::Matrix3x2F::Rotation(fAngle, D2D1::Point2F(fScaleH * (x + fTextureDrawnWidth / 2), fScaleV * (y + fTextureDrawnHeight / 2))));
+		Graphics::iRenderTarget->DrawBitmap(iBitmap, rDest, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, rSrc); //Display bitmap
+		Graphics::iRenderTarget->SetTransform(D2D1::Matrix3x2F::Identity());
+	}
+	else
+		Graphics::iRenderTarget->DrawBitmap(iBitmap, rDest, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, rSrc); //Display bitmap
 }
 void Texture::DrawPanorama(float x)
 {

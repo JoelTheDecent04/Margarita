@@ -33,7 +33,7 @@ void SpaceGame::Load()
 	tOrbTexture = new Texture(L"orb.png", 2497, 2497, 32, 32);
 	tBackground = new Texture(L"background.png", 15360, 2160, 5120, 720);
 	tLaserTexture = new Texture(L"Laser.png");
-	tLaserBeamTexture = new Texture(L"LaserBeam.png");
+	tLaserBeamTexture = new Texture(L"LaserBeam.png", 2569, 765, 32, 10);
 	tEnemyTexture = new Texture(L"enemy.png", 1856, 2646, 38, 55);
 	tCrabTexture = new Texture(L"crab.png", 700, 350, 96, 48);
 	tBombTexture = new Texture(L"bomb.png", 2218, 2223, 32.0f, 32.0f);

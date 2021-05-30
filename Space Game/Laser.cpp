@@ -10,12 +10,23 @@ LaserBeam::LaserBeam(SpaceGame* game, float fX, float fY, float fSpeedX, float f
 	this->fSpeedX = fSpeedX;
 	this->fSpeedY = fSpeedY;
 	bCanCollideWithPlayer = false;
+
+	
 }
 
 void LaserBeam::Collide(Entity* entity)
 {
 	entity->ChangeHealth(-50.0f);
 	Destroy();
+}
+
+void LaserBeam::Draw()
+{
+	float fGradient = fSpeedY / fSpeedX;
+	float fAngle = atan(fGradient) * 180 / 3.1415926f;
+	if (fSpeedX < 0.0f)
+		fAngle += 180.0f;
+	tTexture->Draw(nFrame, (fX - fBackgroundPosition - (tTexture->fTextureDrawnWidth / 2)), fY - tTexture->fTextureDrawnHeight / 2, false, fAngle);
 }
 
 LaserWeapon::LaserWeapon()

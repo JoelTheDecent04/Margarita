@@ -22,7 +22,7 @@ public:
 	virtual void Update(double deltatime);
 	virtual void ChangeHealth(float fChange);
 	virtual void Collide(Entity* entity) {};
-	void Draw();
+	virtual void Draw();
 	bool Overlapping(Entity* e);
 	bool WillOverlap(Entity* e, float fNewX, float fNewY);
 	float Distance(Entity* entity);
