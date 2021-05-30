@@ -56,5 +56,6 @@ void Enemy::Update(double deltatime)
 void Enemy::Destroy()
 {
 	sgGame->plPlayer->fMoney += 10.0f;
+	sgGame->nEnemies--;
 	Entity::Destroy();
 }

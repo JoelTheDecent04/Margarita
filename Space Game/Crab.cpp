@@ -51,5 +51,6 @@ void Crab::Update(double deltatime)
 void Crab::Destroy()
 {
 	sgGame->plPlayer->fMoney += 15.0f;
+	sgGame->nEnemies--;
 	Entity::Destroy();
 }

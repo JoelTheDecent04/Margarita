@@ -10,12 +10,14 @@
 #include "PauseScreen.h"
 #include "Shop.h"
 #include "Crab.h"
+#include "Comet.h"
 #include <math.h>
 #include <random>
 #include <time.h>
 
 float fBackgroundPosition = 0.0f;
 Texture* tCharacterTexture, * tOrbTexture, * tBackground, * tLaserTexture, * tLaserBeamTexture, * tEnemyTexture, * tBombTexture, * tCrabTexture;
+Texture* tForegroundTexture, * tCometTexture;
 
 D2D1::ColorF clrBlack		= D2D1::ColorF(0.0f, 0.0f, 0.0f);
 D2D1::ColorF clrRed			= D2D1::ColorF(1.0f, 0.0f, 0.0f);
@@ -29,12 +31,14 @@ void SpaceGame::Load()
 
 	tCharacterTexture = new Texture(L"player.png", 2624, 2098, 66, 58);
 	tOrbTexture = new Texture(L"orb.png", 2497, 2497, 32, 32);
-	tBackground = new Texture(L"background.png", 38400, 5400, 5120, 720);
+	tBackground = new Texture(L"background.png", 15360, 2160, 5120, 720);
 	tLaserTexture = new Texture(L"Laser.png");
 	tLaserBeamTexture = new Texture(L"LaserBeam.png");
 	tEnemyTexture = new Texture(L"enemy.png", 1856, 2646, 38, 55);
 	tCrabTexture = new Texture(L"crab.png", 700, 350, 96, 48);
-	tBombTexture = new Texture(L"bomb.png");
+	tBombTexture = new Texture(L"bomb.png", 2218, 2223, 32.0f, 32.0f);
+	tForegroundTexture = new Texture(L"foreground.png", 15360, 382, 5120, 127.33f);
+	tCometTexture = new Texture(L"comet.png", 640, 360, 100, 50);
 
 	plPlayer = new Player(this, 384.0f, 384.0f, tCharacterTexture, L"Player");
 	vEntities.push_back(plPlayer);
@@ -48,6 +52,8 @@ void SpaceGame::Load()
 	fDifficulty = 80.0f;
 	nWave = 0;
 	fSecondsUntilNextWave = 0.0f;
+	nEnemies = 0;
+	fSecondsUntilNextComet = 40 + random() * 40;
 }
 void SpaceGame::Unload()
 {
@@ -58,6 +64,9 @@ void SpaceGame::Unload()
 	delete tLaserBeamTexture;
 	delete tEnemyTexture;
 	delete tBombTexture;
+	delete tCrabTexture;
+	delete tForegroundTexture;
+	delete tCometTexture;
 	for (Entity* entity : vEntities)
 		if (entity) delete entity;
 	for (Item* item : vItems)
@@ -77,6 +86,8 @@ void SpaceGame::Render()
 
 	for (Entity* entity : vEntities)
 		if (entity) entity->Draw();
+
+	tForegroundTexture->Draw(0, -fBackgroundPosition - 65.0f, 475.0f);
 
 	for (BackgroundObject* backgroundobject : vBackgroundObjects)
 		backgroundobject->Draw();
@@ -119,7 +130,7 @@ void SpaceGame::Render()
 }
 void SpaceGame::Update(double deltatime)
 {
-	if (GetForegroundWindow() == Graphics::hWindow)
+	if (GetForegroundWindow() == Graphics::hWindow) //Controls
 	{
 		if (GetAsyncKeyState('D'))
 		{
@@ -142,7 +153,7 @@ void SpaceGame::Update(double deltatime)
 		}
 	}
 
-	for (Entity* entity : vEntities)
+	for (Entity* entity : vEntities) //Entity updates
 	{
 		if (entity) entity->Update(deltatime);
 		if (!bGameRunning) //Game could end after any entity update
@@ -152,17 +163,17 @@ void SpaceGame::Update(double deltatime)
 		}
 	}
 
-	for (BackgroundObject* backgroundobjects : vBackgroundObjects)
+	for (BackgroundObject* backgroundobjects : vBackgroundObjects) //Object updates
 	{
 		if (backgroundobjects)
 			backgroundobjects->Update(deltatime);
 		//TODO delete when opacity is 0
 	}
 
-	fNextEnemySpawn -= deltatime;
+	fNextEnemySpawn -= deltatime; //Enemy spawning
 	if (fNextEnemySpawn <= 0)
 	{
-		if (fSecondsUntilNextWave > 20.0f) //Don't spawn near end of wave
+		if (fSecondsUntilNextWave > 0.0f) //Don't spawn near end of wave
 		{
 			if (random() >= 0.15f)
 			{
@@ -170,7 +181,10 @@ void SpaceGame::Update(double deltatime)
 				if (!enemy->bLegalPosition)
 					delete enemy;
 				else
+				{
 					vEntities.push_back(enemy);
+					nEnemies++;
+				}
 			}
 			else
 			{
@@ -178,20 +192,30 @@ void SpaceGame::Update(double deltatime)
 				if (!crab->bLegalPosition)
 					delete crab;
 				else
+				{
 					vEntities.push_back(crab);
+					nEnemies++;
+				}
 			}
-
 		}
-		
+
 		fNextEnemySpawn = (random() * 10.0f) / (fDifficulty / 60.0f);
 	}
 
-	fSecondsUntilNextWave -= deltatime;
-	if (fSecondsUntilNextWave < 0.0f)
+	fSecondsUntilNextWave -= deltatime; //Waves
+	if (fSecondsUntilNextWave < 0.0f) fSecondsUntilNextWave = 0.0f;
+	if (fSecondsUntilNextWave <= 0.0f && nEnemies == 0)
 	{
 		nWave++;
 		fSecondsUntilNextWave = 60.0f;
 		fDifficulty *= 1.5f;
+	}
+
+	fSecondsUntilNextComet -= deltatime; //Comet
+	if (fSecondsUntilNextComet < 0.0f)
+	{
+		vBackgroundObjects.push_back(new Comet());
+		fSecondsUntilNextComet = 40 + random() * 40;
 	}
 }
 void SpaceGame::LeftClick()
@@ -230,7 +254,6 @@ void SpaceGame::KeyDown(int key)
 		if (vItems.size() >= n + 1)
 			nCurrentItem = n;
 	}
-
 
 	if (key == VK_OEM_6) //[
 	{
