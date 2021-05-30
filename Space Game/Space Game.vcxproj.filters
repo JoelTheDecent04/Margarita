@@ -1,0 +1,180 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\Space">
+      <UniqueIdentifier>{106d0e01-c771-4230-898e-3f355fe16554}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Space\Entities">
+      <UniqueIdentifier>{c77ec3f3-62f4-4a7f-9528-5e05a91eec32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\TitleScreen">
+      <UniqueIdentifier>{87fa288c-f1f2-4eaa-85da-945c13d7d879}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Space\DeathScreen">
+      <UniqueIdentifier>{06e94079-94a4-4771-a96b-da7dd1ca19b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\PauseScreen">
+      <UniqueIdentifier>{3b09c084-2346-4dcf-8f13-927d9fcca40e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Space\Shop">
+      <UniqueIdentifier>{bfe3611f-6d69-48af-be1a-30f59e3d7077}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Space\BackgroundObjects">
+      <UniqueIdentifier>{f55b8802-2679-43ac-9fef-8c7a0b855021}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Space\BackgroundObjects\TextObjects">
+      <UniqueIdentifier>{eab595ca-ad32-41be-bb3b-9e8f6c954520}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Space.cpp">
+      <Filter>Source Files\Space</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity.cpp">
+      <Filter>Source Files\Space</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Source Files\Space\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Orb.cpp">
+      <Filter>Source Files\Space\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Utilities.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Laser.cpp">
+      <Filter>Source Files\Space\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>Source Files\Space\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityHealthChangeText.cpp">
+      <Filter>Source Files\Space\BackgroundObjects\TextObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="TitleScreen.cpp">
+      <Filter>Source Files\TitleScreen</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathScreen.cpp">
+      <Filter>Source Files\Space\DeathScreen</Filter>
+    </ClCompile>
+    <ClCompile Include="Bomb.cpp">
+      <Filter>Source Files\Space\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="PauseScreen.cpp">
+      <Filter>Source Files\PauseScreen</Filter>
+    </ClCompile>
+    <ClCompile Include="Shop.cpp">
+      <Filter>Source Files\Space\Shop</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TextObject.cpp">
+      <Filter>Source Files\Space\BackgroundObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>Source Files\Space</Filter>
+    </ClCompile>
+    <ClCompile Include="Crab.cpp">
+      <Filter>Source Files\Space\Entities</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Game.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Space.h">
+      <Filter>Source Files\Space</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>Source Files\Space</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Source Files\Space\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Orb.h">
+      <Filter>Source Files\Space\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Weapon.h">
+      <Filter>Source Files\Space</Filter>
+    </ClInclude>
+    <ClInclude Include="Laser.h">
+      <Filter>Source Files\Space\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>Source Files\Space\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityHealthChangeText.h">
+      <Filter>Source Files\Space\BackgroundObjects\TextObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="TitleScreen.h">
+      <Filter>Source Files\TitleScreen</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathScreen.h">
+      <Filter>Source Files\Space\DeathScreen</Filter>
+    </ClInclude>
+    <ClInclude Include="Bomb.h">
+      <Filter>Source Files\Space\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="PauseScreen.h">
+      <Filter>Source Files\PauseScreen</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>Source Files\Space</Filter>
+    </ClInclude>
+    <ClInclude Include="Shop.h">
+      <Filter>Source Files\Space\Shop</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BackgroundObject.h">
+      <Filter>Source Files\Space</Filter>
+    </ClInclude>
+    <ClInclude Include="TextObject.h">
+      <Filter>Source Files\Space\BackgroundObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>Source Files\Space</Filter>
+    </ClInclude>
+    <ClInclude Include="Crab.h">
+      <Filter>Source Files\Space\Entities</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
+</Project>

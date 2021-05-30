@@ -1,0 +1,19 @@
+#pragma once
+#include "Game.h"
+#include "GUI.h"
+#include <Windows.h>
+#include <vector>
+
+class DeathScreen : public Level
+{
+	std::vector<Button> vButtons;
+	int nButtonHover;
+	bool bRenderedFirstFrame;
+public:
+	DeathScreen();
+	void Load() override {};
+	void Unload() override {};
+	void Render() override;
+	void Update(double deltatime) override;
+	void LeftClick() override;
+};
