@@ -24,12 +24,12 @@ Player::Player(SpaceGame* game, float fX, float fY, Texture* tTexture, std::wstr
 	nMaxEnergy = 100;
 	fMoney = 0.0f;
 	fEnergyRechargeSpeed = 3.0f;
-	fMaxEnergyRechargeSpeed = 10.0f;
-	fMaxHealthUpgrade = 500.0f;
+	fMaxEnergyRechargeSpeed = 9.0f;
+	fMaxHealthUpgrade = 450.0f;
 	fWidth = 72.0f;
 	fHeight = 58.0f;
 	fMovementSpeed = 150.0f;
-	fMaxMovementSpeed = 200.0f;
+	fMaxMovementSpeed = 190.0f;
 }
 
 void Player::Update(double deltatime)
@@ -97,6 +97,9 @@ void Player::Update(double deltatime)
 	if (fHealth > fMaxHealth) fHealth = fMaxHealth;
 
 	if (fMoney >= 150.0f && sgGame->vItems.size() <= 2) sgGame->vItems.push_back(new BombWeapon()); //TODO improve
+
+	for (Powerup* powerup : vPowerups)
+		if (powerup) powerup->Update(deltatime);
 }
 
 void Player::Destroy()

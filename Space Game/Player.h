@@ -1,12 +1,17 @@
 #pragma once
 #include "Entity.h"
 #include "Space.h"
+#include "Powerup.h"
 #include <string>
+#include <concurrent_vector.h>
 
 class Player : public Entity
 {
 public:
 	std::wstring sName;
+
+	concurrency::concurrent_vector<Powerup*> vPowerups;
+
 	float fMoney;
 	float nEnergy;
 	float nMaxEnergy;

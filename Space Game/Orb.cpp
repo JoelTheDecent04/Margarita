@@ -27,6 +27,7 @@ void Orb::Collide(Entity* entity)
 
 OrbWeapon::OrbWeapon()
 {
+	nCount = -1;
 	tTexture = tOrbTexture;
 }
 

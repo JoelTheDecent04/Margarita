@@ -70,7 +70,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	case WM_MOUSEWHEEL:
 		static int nDeltaMouseWheel = 0;
-		nDeltaMouseWheel += HIWORD(wParam);
+		nDeltaMouseWheel += GET_WHEEL_DELTA_WPARAM(wParam);
 		while (nDeltaMouseWheel >= 120)
 		{
 			Game::KeyDown(VK_OEM_4);

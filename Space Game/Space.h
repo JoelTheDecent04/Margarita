@@ -3,6 +3,7 @@
 #include "Texture.h"
 #include "BackgroundObject.h"
 #include <concurrent_vector.h>
+#include <vector>
 
 class Item;
 class Entity;
@@ -14,7 +15,7 @@ public:
 	concurrency::concurrent_vector<Entity*> vEntities;
 
 	int nCurrentItem;
-	concurrency::concurrent_vector<Item*> vItems;
+	std::vector<Item*> vItems;
 
 	Player* plPlayer;
 
@@ -43,7 +44,7 @@ public:
 
 extern float fBackgroundPosition;
 extern Texture* tCharacterTexture, * tOrbTexture, * tBackground, * tLaserTexture, * tLaserBeamTexture, * tEnemyTexture, * tBombTexture, * tCrabTexture;
-extern Texture* tCometTexture;
+extern Texture* tCometTexture, * tNoTexture;
 
 static const float fPlayerAcceleration = 3000.0f;
 static const float fPlayerDecceleration = 1500.0f;
@@ -53,3 +54,6 @@ static const float fPlayerMoveDownSpeed = 500.0f;
 static const float fFriction = 100.0f;
 
 extern int keyOpenShop1, keyOpenShop2;
+
+extern int keyChangeWeapon1[9];
+extern int keyChangeWeapon2[9];

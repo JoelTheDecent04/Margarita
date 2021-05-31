@@ -150,6 +150,7 @@
     <ClCompile Include="Crab.cpp" />
     <ClCompile Include="DeathScreen.cpp" />
     <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="EnergyPowerup.cpp" />
     <ClCompile Include="EntityHealthChangeText.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Graphics.cpp" />
@@ -160,6 +161,7 @@
     <ClCompile Include="Orb.cpp" />
     <ClCompile Include="PauseScreen.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Powerup.cpp" />
     <ClCompile Include="Shop.cpp" />
     <ClCompile Include="Space.cpp" />
     <ClCompile Include="TextObject.cpp" />
@@ -176,6 +178,7 @@
     <ClInclude Include="Crab.h" />
     <ClInclude Include="DeathScreen.h" />
     <ClInclude Include="Enemy.h" />
+    <ClInclude Include="EnergyPowerup.h" />
     <ClInclude Include="EntityHealthChangeText.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Graphics.h" />
@@ -186,6 +189,7 @@
     <ClInclude Include="Orb.h" />
     <ClInclude Include="PauseScreen.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Powerup.h" />
     <ClInclude Include="Shop.h" />
     <ClInclude Include="Space.h" />
     <ClInclude Include="TextObject.h" />

@@ -40,6 +40,12 @@
     <Filter Include="Source Files\PauseScreen\ControlsScreen">
       <UniqueIdentifier>{45b45f1a-386f-4b14-9052-95f03d1c8b00}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Space\Entities\Player">
+      <UniqueIdentifier>{5e39512c-3426-4fa3-a5cf-e2cf3ca4e023}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Space\Entities\Player\Powerups">
+      <UniqueIdentifier>{92362d99-2852-42d6-9b0f-84904d0aee3e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -110,6 +116,12 @@
     </ClCompile>
     <ClCompile Include="ControlsScreen.cpp">
       <Filter>Source Files\PauseScreen\ControlsScreen</Filter>
+    </ClCompile>
+    <ClCompile Include="EnergyPowerup.cpp">
+      <Filter>Source Files\Space\Entities\Player\Powerups</Filter>
+    </ClCompile>
+    <ClCompile Include="Powerup.cpp">
+      <Filter>Source Files\Space\Entities\Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -187,6 +199,12 @@
     </ClInclude>
     <ClInclude Include="ControlsScreen.h">
       <Filter>Source Files\PauseScreen\ControlsScreen</Filter>
+    </ClInclude>
+    <ClInclude Include="Powerup.h">
+      <Filter>Source Files\Space\Entities\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="EnergyPowerup.h">
+      <Filter>Source Files\Space\Entities\Player\Powerups</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

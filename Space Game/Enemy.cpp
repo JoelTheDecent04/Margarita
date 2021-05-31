@@ -9,8 +9,8 @@ Enemy::Enemy(SpaceGame* game, float fX, float fY)
 	fHealth = 100.0f;
 	fMaxHealth = 100.0f;
 	bAffectedByGravity = false;
-	fWidth = 41.0f;
-	fHeight = 52.0f;
+	fWidth = 32.0f;
+	fHeight = 49.0f;
 	fSecondsUntilNextAttack = 0.0f;
 	bLegalPosition = true;
 

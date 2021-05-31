@@ -20,8 +20,10 @@ public:
 	void Render() override;
 	void Update(double deltatime) override;
 	void LeftClick() override;
+	void KeyDown(int key) override;
 	void Resume();
 	void UpgradeHealth();
 	void UpgradeEnergyRecharge();
 	void UpgradeMovementSpeed();
+	void BuyEnergyPowerup();
 };

@@ -11,16 +11,20 @@
 #include "Shop.h"
 #include "Crab.h"
 #include "Comet.h"
+#include "EnergyPowerup.h"
 #include <math.h>
 #include <random>
 #include <time.h>
 
 float fBackgroundPosition = 0.0f;
 Texture* tCharacterTexture, * tOrbTexture, * tBackground, * tLaserTexture, * tLaserBeamTexture, * tEnemyTexture, * tBombTexture, * tCrabTexture;
-Texture* tForegroundTexture, * tCometTexture;
+Texture* tForegroundTexture, * tCometTexture, * tNoTexture;
 
 int keyOpenShop1 = 'E';
 int keyOpenShop2 = 0;
+int keyChangeWeapon1[9] = { '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+int keyChangeWeapon2[9];
+
 
 D2D1::ColorF clrBlack		= D2D1::ColorF(0.0f, 0.0f, 0.0f);
 D2D1::ColorF clrRed			= D2D1::ColorF(1.0f, 0.0f, 0.0f);
@@ -42,6 +46,7 @@ void SpaceGame::Load()
 	tBombTexture = new Texture(L"bomb.png", 2218, 2223, 32.0f, 32.0f);
 	tForegroundTexture = new Texture(L"foreground.png", 15360, 382, 5120, 127.33f);
 	tCometTexture = new Texture(L"comet.png", 640, 360, 100, 50);
+	tNoTexture = new Texture(L"notexture.png");
 
 	plPlayer = new Player(this, 384.0f, 384.0f, tCharacterTexture, L"Player");
 	vEntities.push_back(plPlayer);
@@ -108,15 +113,18 @@ void SpaceGame::Render()
 	Graphics::DrawRectangle(5, 2 + 14 + 2 + 20 + 2 + 14 + 2, 100, 20, clrDarkGrey);
 
 	DWRITE_TEXT_METRICS tmTextMetrics;
-	Graphics::TextMetrics(L"Weapons", 14.0f, tmTextMetrics);
+	Graphics::TextMetrics(L"Items", 14.0f, tmTextMetrics);
 	Graphics::FillRectangle(0, nScreenHeight - 4 - 32 - 4 - 14, max(32 * vItems.size(), tmTextMetrics.width) + 10, 14 + 4 + 32 + 4, clrBlack);
-	Graphics::WriteText(L"Weapons", 5, nScreenHeight - 4 - 32 - 4 - 14, 14);
-	int nWeapon = 0;
+	Graphics::WriteText(L"Items", 5, nScreenHeight - 4 - 32 - 4 - 14, 14);
+
+	int nItem = 0;
 	for (Item* item : vItems)
 	{
-		item->tTexture->Draw(0, 4 + nWeapon * 32, nScreenHeight - 4 - 32, true);
-		Graphics::DrawRectangle(4 + nWeapon * 32, nScreenHeight - 4 - 32, 32, 32, nWeapon == nCurrentItem ? clrWhite : clrDarkGrey);
-		nWeapon++;
+
+		item->tTexture->Draw(0, 4 + nItem * 32, nScreenHeight - 4 - 32, true);
+		Graphics::DrawRectangle(4 + nItem * 32, nScreenHeight - 4 - 32, 32, 32, nItem == nCurrentItem ? clrWhite : clrDarkGrey);
+		nItem++;
+
 	}
 
 	wchar_t txtMoney[64];
@@ -191,6 +199,10 @@ void SpaceGame::Update(double deltatime)
 		nWave++;
 		fSecondsUntilNextWave = 60.0f;
 		fDifficulty *= 1.5f;
+
+		plPlayer->fMaxHealthUpgrade += 50.0f;
+		plPlayer->fMaxEnergyRechargeSpeed += 1.0f;
+		plPlayer->fMaxMovementSpeed += 10.0f;
 	}
 
 	fSecondsUntilNextComet -= deltatime; //Comet
@@ -211,11 +223,20 @@ void SpaceGame::LeftClick()
 
 	pntCursorPosition.x += fBackgroundPosition;
 
+	
+
 	float fGradient = (pntCursorPosition.y - plPlayer->fY) / (pntCursorPosition.x - plPlayer->fX);
 	float fAngle = atan(fGradient);
 	if (pntCursorPosition.x < plPlayer->fX) fAngle += 3.1415926f;
 	
 	vItems[nCurrentItem]->Use(this, plPlayer->fX, plPlayer->fY, fAngle);
+	if (vItems[nCurrentItem]->nCount == 0)
+	{
+		vItems.erase(vItems.begin() + nCurrentItem);
+		if (nCurrentItem >= vItems.size())
+			nCurrentItem = vItems.size() - 1;
+	}
+
 }
 
 void SpaceGame::KeyDown(int key)
@@ -230,11 +251,13 @@ void SpaceGame::KeyDown(int key)
 		plPlayer->ChangeHealth(20.0f);
 	if (key == 'M')
 		plPlayer->fMoney += 200.0f;
-	if (key >= '1' && key <= '9')
+	if (key == 'P')
+		plPlayer->vPowerups.push_back(new EnergyPowerup(this));
+	for (int i = 0; i < 9; i++)
 	{
-		int n = key - '1';
-		if (vItems.size() >= n + 1)
-			nCurrentItem = n;
+		if (key == keyChangeWeapon1[i] || key == keyChangeWeapon2[i])
+			if (vItems.size() >= i + 1)
+				nCurrentItem = i;
 	}
 
 	if (key == VK_OEM_6) //[

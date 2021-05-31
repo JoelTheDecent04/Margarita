@@ -59,6 +59,11 @@ void Entity::Update(double deltatime)
 			fSpeedY = 0.0f;
 		}
 	}
+	else
+	{
+		fX = fNewX;
+		fY = fNewY;
+	}
 
 	if (fY >= 594.0f - fHeight / 2 && bAffectedByGravity) //If below ground
 	{

@@ -2,6 +2,8 @@
 #include "Space.h"
 #include "Player.h"
 #include <math.h>
+#include <Windows.h>
+#define PI 3.1415926f
 
 LaserBeam::LaserBeam(SpaceGame* game, float fX, float fY, float fSpeedX, float fSpeedY)
 	: Entity(game, tLaserBeamTexture, fX, fY)
@@ -10,8 +12,15 @@ LaserBeam::LaserBeam(SpaceGame* game, float fX, float fY, float fSpeedX, float f
 	this->fSpeedX = fSpeedX;
 	this->fSpeedY = fSpeedY;
 	bCanCollideWithPlayer = false;
+	bCanCollide = false;
 
-	
+	fWidth = 0.0f;
+	fHeight = 0.0f;
+
+	float fGradient = fSpeedY / fSpeedX;
+	fAngle = atan(fGradient) * 180 / 3.1415926f;
+	if (fSpeedX < 0.0f)
+		fAngle += 180.0f;
 }
 
 void LaserBeam::Collide(Entity* entity)
@@ -22,16 +31,61 @@ void LaserBeam::Collide(Entity* entity)
 
 void LaserBeam::Draw()
 {
-	float fGradient = fSpeedY / fSpeedX;
-	float fAngle = atan(fGradient) * 180 / 3.1415926f;
-	if (fSpeedX < 0.0f)
-		fAngle += 180.0f;
 	tTexture->Draw(nFrame, (fX - fBackgroundPosition - (tTexture->fTextureDrawnWidth / 2)), fY - tTexture->fTextureDrawnHeight / 2, false, fAngle);
+}
+
+void LaserBeam::Update(double deltatime)
+{
+	float fBulletX = fX + cos(PI * fAngle / 180.0f) * 16.0f; //Get new position
+	float fBulletY = fY + sin(PI * fAngle / 180.0f) * 16.0f;
+
+	float fNewX = fX + fSpeedX * deltatime;
+	float fNewY = fY + fSpeedY * deltatime;
+
+	bool bCollided = false;
+	for (Entity* entity : sgGame->vEntities) //Check for collisions
+	{
+		if (!entity) continue;
+		if (entity == this || !entity->bCanCollide) continue;
+		if (entity == (Entity*)sgGame->plPlayer && !bCanCollideWithPlayer) continue;
+		if (entity->WillOverlap(this, fBulletX, fBulletY))
+		{
+			bCollided = true;
+			Collide(entity);
+			break;
+		}
+	}
+	if (!bCollided)
+	{
+		fX = fNewX;
+		fY = fNewY;
+	}
+
+	bool bSpeedChanged = false;
+
+	if (fBulletY >= 594.0f) //If below ground
+	{
+		fY = 594.0f - sin(PI * fAngle / 180.0f) * 16.0f;
+		fX += 2.0f * cos(PI * fAngle / 180.0f) * 16.0f;
+		fSpeedY = -(fSpeedY) * 0.6f; //bounce
+		bSpeedChanged = true;
+	}
+
+	if (fX < 0.0f || fX > 5120.0f) { /*Delete entity */ }
+
+	if (bSpeedChanged)
+	{
+		float fGradient = fSpeedY / fSpeedX;
+		fAngle = atan(fGradient) * 180 / 3.1415926f;
+		if (fSpeedX < 0.0f)
+			fAngle += 180.0f;
+	}
 }
 
 LaserWeapon::LaserWeapon()
 {
 	tTexture = tLaserTexture;
+	nCount = -1;
 }
 
 void LaserWeapon::Use(SpaceGame* game, float fX, float fY, float fAngle)

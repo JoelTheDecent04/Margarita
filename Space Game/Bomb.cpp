@@ -42,6 +42,7 @@ void Bomb::Update(double deltatime)
 
 BombWeapon::BombWeapon()
 {
+	nCount = -1;
 	tTexture = tBombTexture;
 }
 
