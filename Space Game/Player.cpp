@@ -30,6 +30,7 @@ Player::Player(SpaceGame* game, float fX, float fY, Texture* tTexture, std::wstr
 	fHeight = 58.0f;
 	fMovementSpeed = 150.0f;
 	fMaxMovementSpeed = 190.0f;
+	puCurrentPowerup = nullptr;
 }
 
 void Player::Update(double deltatime)
@@ -98,8 +99,8 @@ void Player::Update(double deltatime)
 
 	if (fMoney >= 150.0f && sgGame->vItems.size() <= 2) sgGame->vItems.push_back(new BombWeapon()); //TODO improve
 
-	for (Powerup* powerup : vPowerups)
-		if (powerup) powerup->Update(deltatime);
+	if (puCurrentPowerup)
+		puCurrentPowerup->Update(deltatime);
 }
 
 void Player::Destroy()

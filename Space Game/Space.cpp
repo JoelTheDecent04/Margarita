@@ -51,7 +51,7 @@ void SpaceGame::Load()
 	plPlayer = new Player(this, 384.0f, 384.0f, tCharacterTexture, L"Player");
 	vEntities.push_back(plPlayer);
 
-	vItems.push_back(new LaserWeapon());
+	vItems.push_back(new LaserWeapon(LaserWeapon::Normal));
 	vItems.push_back(new OrbWeapon());
 	nCurrentItem = 0;
 
@@ -252,7 +252,8 @@ void SpaceGame::KeyDown(int key)
 	if (key == 'M')
 		plPlayer->fMoney += 200.0f;
 	if (key == 'P')
-		plPlayer->vPowerups.push_back(new EnergyPowerup(this));
+		if (plPlayer->puCurrentPowerup == nullptr)
+			plPlayer->puCurrentPowerup = new EnergyPowerup(this);
 	for (int i = 0; i < 9; i++)
 	{
 		if (key == keyChangeWeapon1[i] || key == keyChangeWeapon2[i])

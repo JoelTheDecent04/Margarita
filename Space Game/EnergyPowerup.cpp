@@ -29,6 +29,9 @@ EnergyPowerupItem::EnergyPowerupItem()
 
 void EnergyPowerupItem::Use(SpaceGame* game, float fX, float fY, float fAngle)
 {
-	nCount--;
-	game->plPlayer->vPowerups.push_back(new EnergyPowerup(game));
+	if (game->plPlayer->puCurrentPowerup == nullptr)
+	{
+		nCount--;
+		game->plPlayer->puCurrentPowerup = new EnergyPowerup(game);
+	}
 }

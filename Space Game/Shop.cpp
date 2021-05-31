@@ -3,6 +3,7 @@
 #include "Space.h"
 #include "Player.h"
 #include "EnergyPowerup.h"
+#include "Laser.h"
 
 static D2D1::ColorF clrDarkGrey = D2D1::ColorF::DarkGray;
 static D2D1::ColorF clrWhite = D2D1::ColorF::White;
@@ -15,7 +16,7 @@ ShopScreen::ShopScreen(SpaceGame* lGameLevel)
 {
 	this->lGameLevel = lGameLevel;
 	nButtonHover = -1;
-	vButtons.push_back(Button(500, 500, 780, 600, [](void* s) { ((ShopScreen*)s)->Resume(); }, L"Back", 24.0f));
+	vButtons.push_back(Button(520, 600, 760, 680, [](void* s) { ((ShopScreen*)s)->Resume(); }, L"Back", 24.0f));
 
 	vButtons.push_back(Button(130, 200, 310, 240, [](void* s) { ((ShopScreen*)s)->UpgradeHealth(); }, L"Max Health ($150)", 16.0f));
 	vBars.push_back(Bar(330, 200, 530, 240, clrRed, &lGameLevel->plPlayer->fMaxHealth, &lGameLevel->plPlayer->fMaxHealthUpgrade));
@@ -24,7 +25,9 @@ ShopScreen::ShopScreen(SpaceGame* lGameLevel)
 	vButtons.push_back(Button(130, 300, 310, 340, [](void* s) { ((ShopScreen*)s)->UpgradeMovementSpeed(); }, L"Movement Speed ($50)", 16.0f));
 	vBars.push_back(Bar(330, 300, 530, 340, clrYellow, &lGameLevel->plPlayer->fMovementSpeed, &lGameLevel->plPlayer->fMaxMovementSpeed));
 
-	vButtons.push_back(Button(700, 200, 880, 240, [](void* s) { ((ShopScreen*)s)->BuyEnergyPowerup(); }, L"Energy Powerup ($200)", 16.0f));
+	vButtons.push_back(Button(700, 190, 880, 230, [](void* s) { ((ShopScreen*)s)->BuyEnergyPowerup(); }, L"Energy Powerup ($200)", 16.0f));
+
+	vButtons.push_back(Button(700, 340, 880, 380, [](void* s) { ((ShopScreen*)s)->BuyLaserUpgrade(); }, L"Laser ($200)", 16.0f));
 
 	nUpgrades = 0;
 }
@@ -62,6 +65,8 @@ void ShopScreen::Render()
 	Graphics::WriteText(txtBuf, fScaleH * (1280 - 5) - tmTextMetrics.width, 5, fScaleV * 16.0f);
 
 	Graphics::WriteText(L"Powerups:", fScaleH * 700, fScaleV * 150, fScaleV * 20.0f);
+
+	Graphics::WriteText(L"Upgrade Weapons:", fScaleH * 700, fScaleV * 300, fScaleV * 20.0f);
 }
 
 void ShopScreen::Update(double deltatime)
@@ -89,7 +94,7 @@ void ShopScreen::Update(double deltatime)
 	vButtons[2].bClickable = (lGameLevel->plPlayer->fMoney >= 150.0f);
 	vButtons[3].bClickable = (lGameLevel->plPlayer->fMoney >= 50.0f);
 	vButtons[4].bClickable = (lGameLevel->plPlayer->fMoney >= 200.0f);
-
+	vButtons[5].bClickable = (lGameLevel->plPlayer->fMoney >= 200.0f && ((LaserWeapon*)lGameLevel->vItems[0])->nLaserLevel != LaserWeapon::DoubleShot);
 }
 
 void ShopScreen::LeftClick()
@@ -146,6 +151,18 @@ void ShopScreen::BuyEnergyPowerup()
 		}
 		
 		lGameLevel->vItems.push_back(new EnergyPowerupItem());
+	}
+}
+
+void ShopScreen::BuyLaserUpgrade()
+{
+	if (lGameLevel->plPlayer->fMoney >= 200.0f && ((LaserWeapon*)lGameLevel->vItems[0])->nLaserLevel != LaserWeapon::DoubleShot)
+	{
+		lGameLevel->plPlayer->fMoney -= 200.0f;
+		LaserWeapon* new_weapon = new LaserWeapon(LaserWeapon::DoubleShot);
+		Item* old_weapon = lGameLevel->vItems[0];
+		lGameLevel->vItems[0] = new_weapon;
+		delete old_weapon;
 	}
 }
 

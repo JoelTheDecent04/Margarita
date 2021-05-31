@@ -25,7 +25,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR lpCmdLine, int nCmdSh
 	RECT rect = { 0, 0, nScreenWidth, nScreenHeight };
 	AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false);
 
-	HWND hwnd = CreateWindow(ClassName, L"Margarita 0.0.8", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
+	HWND hwnd = CreateWindow(ClassName, L"Margarita 0.0.9", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
 		rect.right - rect.left, rect.bottom - rect.top, NULL, NULL, hInstance, NULL);
 
 	ShowWindow(hwnd, nCmdShow);

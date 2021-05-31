@@ -5,7 +5,7 @@
 #include <Windows.h>
 #define PI 3.1415926f
 
-LaserBeam::LaserBeam(SpaceGame* game, float fX, float fY, float fSpeedX, float fSpeedY)
+LaserBeam::LaserBeam(SpaceGame* game, LaserWeapon* weapon, float fX, float fY, float fSpeedX, float fSpeedY)
 	: Entity(game, tLaserBeamTexture, fX, fY)
 {
 	bAffectedByGravity = false;
@@ -16,6 +16,15 @@ LaserBeam::LaserBeam(SpaceGame* game, float fX, float fY, float fSpeedX, float f
 
 	fWidth = 0.0f;
 	fHeight = 0.0f;
+
+	if (weapon && weapon->nLaserLevel == LaserWeapon::DoubleShot)
+	{
+		bFireSecond = true;
+		fSecondsUntilSecondFire = 0.1f;
+		lbNextShot = new LaserBeam(game, nullptr, 0.0f, 0.0f, fSpeedX, fSpeedY);
+	}
+	else
+		bFireSecond = false;
 
 	float fGradient = fSpeedY / fSpeedX;
 	fAngle = atan(fGradient) * 180 / 3.1415926f;
@@ -52,7 +61,7 @@ void LaserBeam::Update(double deltatime)
 		{
 			bCollided = true;
 			Collide(entity);
-			break;
+			return;
 		}
 	}
 	if (!bCollided)
@@ -80,19 +89,45 @@ void LaserBeam::Update(double deltatime)
 		if (fSpeedX < 0.0f)
 			fAngle += 180.0f;
 	}
+
+	if (bFireSecond)
+	{
+		fSecondsUntilSecondFire -= deltatime;
+		if (fSecondsUntilSecondFire <= 0.0f)
+		{
+			lbNextShot->fX = sgGame->plPlayer->fX;
+			lbNextShot->fY = sgGame->plPlayer->fY;
+			sgGame->vEntities.push_back(lbNextShot);
+			bFireSecond = false;
+		}
+	}
+	
 }
 
-LaserWeapon::LaserWeapon()
+LaserWeapon::LaserWeapon(LaserLevel nLaserLevel)
 {
 	tTexture = tLaserTexture;
+	this->nLaserLevel = nLaserLevel;
 	nCount = -1;
 }
 
 void LaserWeapon::Use(SpaceGame* game, float fX, float fY, float fAngle)
 {
-	if (game->plPlayer->nEnergy >= 4)
+	switch (nLaserLevel)
 	{
-		game->vEntities.push_back(new LaserBeam(game, fX, fY, 1000.0f * cos(fAngle), 1000.0f * sin(fAngle)));
-		game->plPlayer->nEnergy -= 4;
+	case Normal:
+		if (game->plPlayer->nEnergy >= 4)
+		{
+			game->vEntities.push_back(new LaserBeam(game, this, fX, fY, 1000.0f * cos(fAngle), 1000.0f * sin(fAngle)));
+			game->plPlayer->nEnergy -= 4;
+		}
+		break;
+	case DoubleShot:
+		if (game->plPlayer->nEnergy >= 6)
+		{
+			game->vEntities.push_back(new LaserBeam(game, this, fX, fY, 1000.0f * cos(fAngle), 1000.0f * sin(fAngle)));
+			game->plPlayer->nEnergy -= 6;
+		}
+		break;
 	}
 }

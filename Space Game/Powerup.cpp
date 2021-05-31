@@ -3,12 +3,5 @@
 
 void Powerup::Remove()
 {
-	for (Powerup*& p : sgGame->plPlayer->vPowerups)
-	{
-		if (p == this)
-		{
-			p = nullptr;
-			delete this;
-		}
-	}
+	sgGame->plPlayer->puCurrentPowerup = nullptr;
 }

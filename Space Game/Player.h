@@ -10,7 +10,7 @@ class Player : public Entity
 public:
 	std::wstring sName;
 
-	concurrency::concurrent_vector<Powerup*> vPowerups;
+	Powerup* puCurrentPowerup;
 
 	float fMoney;
 	float nEnergy;
