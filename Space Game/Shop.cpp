@@ -8,16 +8,20 @@ static D2D1::ColorF clrWhite = D2D1::ColorF::White;
 static D2D1::ColorF clrBlack = D2D1::ColorF(0.0f, 0.0f, 0.0f);
 static D2D1::ColorF clrRed = D2D1::ColorF::Red;
 static D2D1::ColorF clrGreen = D2D1::ColorF::Green;
+static D2D1::ColorF clrYellow = D2D1::ColorF::Yellow;
 
 ShopScreen::ShopScreen(SpaceGame* lGameLevel)
 {
 	this->lGameLevel = lGameLevel;
 	nButtonHover = -1;
 	vButtons.push_back(Button(500, 500, 780, 600, [](void* s) { ((ShopScreen*)s)->Resume(); }, L"Back", 24.0f));
-	vButtons.push_back(Button(200, 200, 350, 240, [](void* s) { ((ShopScreen*)s)->UpgradeHealth(); }, L"Max Health", 16.0f));
+
+	vButtons.push_back(Button(170, 200, 350, 240, [](void* s) { ((ShopScreen*)s)->UpgradeHealth(); }, L"Max Health ($150)", 16.0f));
 	vBars.push_back(Bar(370, 200, 570, 240, clrRed, &lGameLevel->plPlayer->fMaxHealth, &lGameLevel->plPlayer->fMaxHealthUpgrade));
-	vButtons.push_back(Button(200, 250, 350, 290, [](void* s) { ((ShopScreen*)s)->UpgradeEnergyRecharge(); }, L"Recharge Speed", 16.0f));
+	vButtons.push_back(Button(170, 250, 350, 290, [](void* s) { ((ShopScreen*)s)->UpgradeEnergyRecharge(); }, L"Recharge Speed ($150)", 16.0f));
 	vBars.push_back(Bar(370, 250, 570, 290, clrGreen, &lGameLevel->plPlayer->fEnergyRechargeSpeed, &lGameLevel->plPlayer->fMaxEnergyRechargeSpeed));
+	vButtons.push_back(Button(170, 300, 350, 340, [](void* s) { ((ShopScreen*)s)->UpgradeMovementSpeed(); }, L"Movement Speed ($50)", 16.0f));
+	vBars.push_back(Bar(370, 300, 570, 340, clrYellow, &lGameLevel->plPlayer->fMovementSpeed, &lGameLevel->plPlayer->fMaxMovementSpeed));
 
 	nUpgrades = 0;
 }
@@ -29,7 +33,7 @@ void ShopScreen::Render()
 	Graphics::TextMetrics(L"Shop", fScaleV * 36.0f, tmTextMetrics);
 	Graphics::WriteText(L"Shop", fScaleH * 640 - tmTextMetrics.width / 2, fScaleV * 100, fScaleV * 36.0f);
 
-	Graphics::WriteText(L"Upgrades:", fScaleH * 200, fScaleV * 150, fScaleV * 20.0f);
+	Graphics::WriteText(L"Upgrades:", fScaleH * 170, fScaleV * 150, fScaleV * 20.0f);
 
 	for (int i = 0; i < vButtons.size(); i++)
 		vButtons[i].Draw(i == nButtonHover);
@@ -45,6 +49,10 @@ void ShopScreen::Render()
 	swprintf_s(txtBuf, 64, L"%d / %d", (int)lGameLevel->plPlayer->fEnergyRechargeSpeed, (int)lGameLevel->plPlayer->fMaxEnergyRechargeSpeed); //Energy recharge
 	Graphics::TextMetrics(txtBuf, fScaleV * 16.0f, tmTextMetrics);
 	Graphics::WriteText(txtBuf, fScaleH * 590, fScaleV * (270 - 8), fScaleV * 16.0f);
+
+	swprintf_s(txtBuf, 64, L"%d / %d", (int)lGameLevel->plPlayer->fMovementSpeed, (int)lGameLevel->plPlayer->fMaxMovementSpeed); //Energy recharge
+	Graphics::TextMetrics(txtBuf, fScaleV * 16.0f, tmTextMetrics);
+	Graphics::WriteText(txtBuf, fScaleH * 590, fScaleV * (320 - 8), fScaleV * 16.0f);
 
 	swprintf_s(txtBuf, 64, L"$%d", (int)lGameLevel->plPlayer->fMoney); //Money (corner)
 	Graphics::TextMetrics(txtBuf, fScaleV * 16.0f, tmTextMetrics);
@@ -74,6 +82,7 @@ void ShopScreen::Update(double deltatime)
 	if (!bMouseOverButton) nButtonHover = -1;
 	vButtons[1].bClickable = (lGameLevel->plPlayer->fMoney >= 150.0f);
 	vButtons[2].bClickable = (lGameLevel->plPlayer->fMoney >= 150.0f);
+	vButtons[3].bClickable = (lGameLevel->plPlayer->fMoney >= 50.0f);
 
 }
 
@@ -103,5 +112,14 @@ void ShopScreen::UpgradeEnergyRecharge()
 	{
 		lGameLevel->plPlayer->fMoney -= 150.0f;
 		lGameLevel->plPlayer->fEnergyRechargeSpeed += 1.0f;
+	}
+}
+
+void ShopScreen::UpgradeMovementSpeed()
+{
+	if (lGameLevel->plPlayer->fMoney >= 50.0f && lGameLevel->plPlayer->fMovementSpeed < lGameLevel->plPlayer->fMaxMovementSpeed)
+	{
+		lGameLevel->plPlayer->fMoney -= 50.0f;
+		lGameLevel->plPlayer->fMovementSpeed += 10.0f;
 	}
 }

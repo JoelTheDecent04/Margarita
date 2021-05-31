@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "Graphics.h"
 #include <stdint.h>
+#include <string.h>
 
 int32_t nScreenWidth = 1600;
 int32_t nScreenHeight = 900;
@@ -27,6 +28,14 @@ namespace Game {
 			lCurrentLevel->Render();
 
 		loading = true;
+		wchar_t txtWindowTitle[100];
+		wchar_t txtNewWindowTitle[128];
+		
+		GetWindowText(Graphics::hWindow, txtWindowTitle, 100);
+		wcscpy_s(txtNewWindowTitle, 128, txtWindowTitle);
+		wcscat_s(txtNewWindowTitle, 128, L" - Loading");
+		SetWindowText(Graphics::hWindow, txtNewWindowTitle);
+
 		if (lCurrentLevel && bUnloadPrevious)
 		{
 			Level* lLastLevel = lCurrentLevel;
@@ -51,6 +60,7 @@ namespace Game {
 		}
 
 		loading = false;
+		SetWindowText(Graphics::hWindow, txtWindowTitle);
 	}
 
 	void Render()

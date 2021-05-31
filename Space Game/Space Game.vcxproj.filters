@@ -37,6 +37,9 @@
     <Filter Include="Source Files\Space\BackgroundObjects\TextObjects">
       <UniqueIdentifier>{eab595ca-ad32-41be-bb3b-9e8f6c954520}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\PauseScreen\ControlsScreen">
+      <UniqueIdentifier>{45b45f1a-386f-4b14-9052-95f03d1c8b00}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -104,6 +107,9 @@
     </ClCompile>
     <ClCompile Include="Comet.cpp">
       <Filter>Source Files\Space\BackgroundObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="ControlsScreen.cpp">
+      <Filter>Source Files\PauseScreen\ControlsScreen</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -178,6 +184,9 @@
     </ClInclude>
     <ClInclude Include="Comet.h">
       <Filter>Source Files\Space\BackgroundObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="ControlsScreen.h">
+      <Filter>Source Files\PauseScreen\ControlsScreen</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

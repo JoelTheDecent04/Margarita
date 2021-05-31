@@ -51,3 +51,5 @@ static const float fPlayerMaxSpeed = 150.0f;
 static const float fGravity = 250.0f;
 static const float fPlayerMoveDownSpeed = 500.0f;
 static const float fFriction = 100.0f;
+
+extern int keyOpenShop1, keyOpenShop2;

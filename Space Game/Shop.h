@@ -23,4 +23,5 @@ public:
 	void Resume();
 	void UpgradeHealth();
 	void UpgradeEnergyRecharge();
+	void UpgradeMovementSpeed();
 };

@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "Space.h"
 #include "TitleScreen.h"
+#include "ControlsScreen.h"
 
 static D2D1::ColorF clrDarkGrey = D2D1::ColorF::DarkGray;
 static D2D1::ColorF clrWhite = D2D1::ColorF::White;
@@ -11,10 +12,10 @@ PauseScreen::PauseScreen(Level* lPrevLevel)
 {
 	this->lPrevLevel = lPrevLevel;
 	nButtonHover = -1;
-	vButtons.push_back(Button(500, 200, 780, 300, [](PauseScreen* p) { p->Resume(); }, L"Resume"));
-	vButtons.push_back(Button(500, 325, 780, 425, [](PauseScreen* p) { p->ReturnToTitleScreen(); }, L"Title Screen"));
-	vButtons.push_back(Button(500, 450, 780, 550, [](PauseScreen* p) { p->Quit(); }, L"Quit"));
-	bRenderedFirstFrame = false;
+	vButtons.push_back(Button(500, 150, 780, 250, [](PauseScreen* p) { p->Resume(); }, L"Resume"));
+	vButtons.push_back(Button(500, 275, 780, 375, [](PauseScreen* p) { p->GoToControlsScreen(); }, L"Controls"));
+	vButtons.push_back(Button(500, 400, 780, 500, [](PauseScreen* p) { p->ReturnToTitleScreen(); }, L"Title Screen"));
+	vButtons.push_back(Button(500, 525, 780, 625, [](PauseScreen* p) { p->Quit(); }, L"Quit"));
 }
 
 void PauseScreen::Resume()
@@ -24,8 +25,15 @@ void PauseScreen::Resume()
 
 void PauseScreen::ReturnToTitleScreen()
 {
-	lPrevLevel->Unload();
+	Level* prev = lPrevLevel;
+	lPrevLevel = nullptr;
+	prev->Unload();
 	Game::LoadLevel(new TitleScreen());
+}
+
+void PauseScreen::GoToControlsScreen()
+{
+	Game::LoadLevel(new ControlsScreen(this));
 }
 
 void PauseScreen::Quit()
@@ -43,15 +51,13 @@ void PauseScreen::Unload()
 
 void PauseScreen::Render()
 {
-	if (!bRenderedFirstFrame)
-	{
-		Graphics::FillRectangle(0.0f, 0.0f, fScaleH * 1280.0f, fScaleV * 720.0f, clrBlack, 0.7f);
-		bRenderedFirstFrame = true;
-	}
+	if (lPrevLevel)
+		lPrevLevel->Render();
+	Graphics::FillRectangle(0.0f, 0.0f, fScaleH * 1280.0f, fScaleV * 720.0f, clrBlack, 0.7f);
 
 	DWRITE_TEXT_METRICS tmTextMetrics;
-	Graphics::TextMetrics(L"Game Paused", fScaleV * 36.0f, tmTextMetrics);
-	Graphics::WriteText(L"Game Paused", fScaleH * 640 - tmTextMetrics.width / 2, fScaleV * 100, fScaleV * 36.0f);
+	Graphics::TextMetrics(L"Game Paused", fScaleV * 44.0f, tmTextMetrics);
+	Graphics::WriteText(L"Game Paused", fScaleH * 640 - tmTextMetrics.width / 2, fScaleV * 70, fScaleV * 44.0f);
 
 	for (int i = 0; i < vButtons.size(); i++)
 	{
@@ -94,4 +100,10 @@ void PauseScreen::LeftClick()
 {
 	if (nButtonHover != -1)
 		vButtons[nButtonHover].function(this);
+}
+
+void PauseScreen::KeyDown(int key)
+{
+	if (key == VK_ESCAPE)
+		Resume();
 }

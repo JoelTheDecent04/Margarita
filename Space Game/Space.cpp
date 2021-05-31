@@ -19,6 +19,9 @@ float fBackgroundPosition = 0.0f;
 Texture* tCharacterTexture, * tOrbTexture, * tBackground, * tLaserTexture, * tLaserBeamTexture, * tEnemyTexture, * tBombTexture, * tCrabTexture;
 Texture* tForegroundTexture, * tCometTexture;
 
+int keyOpenShop1 = 'E';
+int keyOpenShop2 = 0;
+
 D2D1::ColorF clrBlack		= D2D1::ColorF(0.0f, 0.0f, 0.0f);
 D2D1::ColorF clrRed			= D2D1::ColorF(1.0f, 0.0f, 0.0f);
 D2D1::ColorF clrDarkGrey	= D2D1::ColorF(0.3f, 0.3f, 0.3f);
@@ -130,28 +133,7 @@ void SpaceGame::Render()
 }
 void SpaceGame::Update(double deltatime)
 {
-	if (GetForegroundWindow() == Graphics::hWindow) //Controls
-	{
-		if (GetAsyncKeyState('D'))
-		{
-			plPlayer->fSpeedX += fPlayerAcceleration * deltatime;
-			if (plPlayer->fSpeedX > fPlayerMaxSpeed)
-				plPlayer->fSpeedX = fPlayerMaxSpeed;
-		}
-		if (GetAsyncKeyState('A'))
-		{
-			plPlayer->fSpeedX -= fPlayerAcceleration * deltatime;
-			if (plPlayer->fSpeedX < -fPlayerMaxSpeed)
-				plPlayer->fSpeedX = -fPlayerMaxSpeed;
-		}
-		if (GetAsyncKeyState('S'))
-			plPlayer->fSpeedY += fPlayerMoveDownSpeed * deltatime;
-		if (GetAsyncKeyState('W') || GetAsyncKeyState(VK_SPACE))
-		{
-			plPlayer->fSpeedY = -180.0f;
-			plPlayer->bOnGround = false;
-		}
-	}
+	
 
 	for (Entity* entity : vEntities) //Entity updates
 	{
@@ -240,7 +222,7 @@ void SpaceGame::KeyDown(int key)
 {
 	if (key == VK_ESCAPE)
 		Game::LoadLevel(new PauseScreen(this), false, true);
-	if (key == 'E')
+	if (key == keyOpenShop1 || key == keyOpenShop2)
 		Game::LoadLevel(new ShopScreen(this), false, true);
 	if (key == 'K')
 		plPlayer->ChangeHealth(-20.0f);

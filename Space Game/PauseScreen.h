@@ -20,15 +20,16 @@ public:
 	};
 	std::vector<Button> vButtons;
 	int nButtonHover;
-	bool bRenderedFirstFrame;
 
 	PauseScreen(Level* lPrevLevel);
 	void Resume();
 	void ReturnToTitleScreen();
+	void GoToControlsScreen();
 	void Quit();
 	void Load() override;
 	void Unload() override;
 	void Render() override;
 	void Update(double deltatime) override;
 	void LeftClick() override;
+	void KeyDown(int key) override;
 };

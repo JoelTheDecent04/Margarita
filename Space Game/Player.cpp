@@ -5,6 +5,15 @@
 
 static uint32_t nLastCharacterId = 0;
 
+int keyJump1 = 'W';
+int keyJump2 = VK_SPACE;
+int keyMoveLeft1 = 'A';
+int keyMoveLeft2 = 0;
+int keyMoveRight1 = 'D';
+int keyMoveRight2 = 0;
+int keyMoveDown1 = 'S';
+int keyMoveDown2 = 0;
+
 Player::Player(SpaceGame* game, float fX, float fY, Texture* tTexture, std::wstring sName)
 	: Entity(game, tTexture, fX, fY)
 {
@@ -19,10 +28,35 @@ Player::Player(SpaceGame* game, float fX, float fY, Texture* tTexture, std::wstr
 	fMaxHealthUpgrade = 500.0f;
 	fWidth = 72.0f;
 	fHeight = 58.0f;
+	fMovementSpeed = 150.0f;
+	fMaxMovementSpeed = 200.0f;
 }
 
 void Player::Update(double deltatime)
 {
+	if (GetForegroundWindow() == Graphics::hWindow) //Controls
+	{
+		if (GetAsyncKeyState(keyMoveRight1) || GetAsyncKeyState(keyMoveRight2))
+		{
+			fSpeedX += fPlayerAcceleration * deltatime;
+			if (fSpeedX > fMovementSpeed)
+				fSpeedX = fMovementSpeed;
+		}
+		if (GetAsyncKeyState(keyMoveLeft1) || GetAsyncKeyState(keyMoveLeft2))
+		{
+			fSpeedX -= fPlayerAcceleration * deltatime;
+			if (fSpeedX < -fMovementSpeed)
+				fSpeedX = -fMovementSpeed;
+		}
+		if (GetAsyncKeyState(keyMoveDown1) || GetAsyncKeyState(keyMoveDown2))
+			fSpeedY += fPlayerMoveDownSpeed * deltatime;
+		if (GetAsyncKeyState(keyJump1) || GetAsyncKeyState(keyJump2))
+		{
+			fSpeedY = -180.0f;
+			bOnGround = false;
+		}
+	}
+
 	if (fSpeedX > 0)
 	{
 		fSpeedX -= fPlayerDecceleration * deltatime;

@@ -146,6 +146,7 @@
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Bomb.cpp" />
     <ClCompile Include="Comet.cpp" />
+    <ClCompile Include="ControlsScreen.cpp" />
     <ClCompile Include="Crab.cpp" />
     <ClCompile Include="DeathScreen.cpp" />
     <ClCompile Include="Enemy.cpp" />
@@ -171,6 +172,7 @@
     <ClInclude Include="BackgroundObject.h" />
     <ClInclude Include="Bomb.h" />
     <ClInclude Include="Comet.h" />
+    <ClInclude Include="ControlsScreen.h" />
     <ClInclude Include="Crab.h" />
     <ClInclude Include="DeathScreen.h" />
     <ClInclude Include="Enemy.h" />

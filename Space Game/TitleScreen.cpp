@@ -10,7 +10,7 @@ TitleScreen::TitleScreen()
 {
 	nButtonHover = -1;
 	vButtons.push_back(Button(500, 200, 780, 300, [] { Game::LoadLevel(new SpaceGame()); }, L"Play"));
-	vButtons.push_back(Button(500, 325, 780, 425, [] { MessageBox(Graphics::hWindow, L"Space Game\nVersion Alpha 0.0.7\nBy Joel Kruger\n(and Isaac Dyt)", L"Info", MB_OK); }, L"Info"));
+	vButtons.push_back(Button(500, 325, 780, 425, [] { MessageBox(Graphics::hWindow, L"Space Game\nVersion Alpha 0.0.8\nBy Joel Kruger\nand Isaac Dyt", L"Info", MB_OK); }, L"Info"));
 	vButtons.push_back(Button(500, 450, 780, 550, [] { PostQuitMessage(0); }, L"Quit"));
 }
 
