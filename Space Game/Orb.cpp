@@ -10,19 +10,23 @@ Orb::Orb(SpaceGame* game, float fX, float fY, float fSpeedX, float fSpeedY)
 	bCanCollideWithPlayer = false;
 }
 
-void Orb::Update(double deltatime)
+bool Orb::Update(double deltatime)
 {
-	Entity::Update(deltatime);
 	fAge += deltatime;
 	if (fAge >= 5.0f)
+	{
 		Destroy();
-	
+		return false;
+	}
+
+	return Entity::Update(deltatime);
 }
 
-void Orb::Collide(Entity* entity)
+bool Orb::Collide(Entity* entity)
 {
 	entity->ChangeHealth(-100.0f);
 	Destroy();
+	return false;
 }
 
 OrbWeapon::OrbWeapon()

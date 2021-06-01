@@ -33,8 +33,14 @@ Player::Player(SpaceGame* game, float fX, float fY, Texture* tTexture, std::wstr
 	puCurrentPowerup = nullptr;
 }
 
-void Player::Update(double deltatime)
+bool Player::Update(double deltatime)
 {
+	if (fHealth == 0.0f)
+	{
+		sgGame->bGameRunning = false;
+		return true; //So the player object is not deleted immediately
+	}
+
 	if (GetForegroundWindow() == Graphics::hWindow) //Controls
 	{
 		if (GetAsyncKeyState(keyMoveRight1) || GetAsyncKeyState(keyMoveRight2))
@@ -106,9 +112,6 @@ void Player::Update(double deltatime)
 	}
 	else
 		nFrame = 0;
-}
 
-void Player::Destroy()
-{
-	sgGame->bGameRunning = false;
+	return true;
 }

@@ -25,10 +25,8 @@ Enemy::Enemy(SpaceGame* game, float fX, float fY)
 	}
 }
 
-void Enemy::Update(double deltatime)
+bool Enemy::Update(double deltatime)
 {
-	Entity::Update(deltatime);
-
 	if (Distance(sgGame->plPlayer) > 80.0f)
 	{
 		float fGradient = (sgGame->plPlayer->fY - fY) / (sgGame->plPlayer->fX - fX);
@@ -51,6 +49,8 @@ void Enemy::Update(double deltatime)
 			fSecondsUntilNextAttack = 1.0f;
 		}
 	}
+
+	return Entity::Update(deltatime);
 }
 
 void Enemy::Destroy()

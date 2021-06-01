@@ -7,8 +7,8 @@ class Orb : public Entity
 	float fAge;
 public:
 	Orb(SpaceGame* game, float fX, float fY, float fSpeedX, float fSpeedY);
-	void Update(double deltatime) override;
-	void Collide(Entity* entity) override;
+	bool Update(double deltatime) override;
+	bool Collide(Entity* entity) override;
 };
 
 class OrbWeapon : public Weapon

@@ -19,12 +19,12 @@ public:
 	float fHeight, fWidth;
 
 	Entity(SpaceGame* sgGame, Texture* tTexture, float fX, float fY);
-	virtual void Update(double deltatime);
+	virtual bool Update(double deltatime);
 	virtual void ChangeHealth(float fChange);
-	virtual void Collide(Entity* entity) {};
+	virtual bool Collide(Entity* entity) { return true; };
 	virtual void Draw();
 	bool Overlapping(Entity* e);
 	bool WillOverlap(Entity* e, float fNewX, float fNewY);
 	float Distance(Entity* entity);
-	virtual void Destroy();
+	virtual void Destroy() {};
 };

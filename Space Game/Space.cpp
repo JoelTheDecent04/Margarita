@@ -153,11 +153,17 @@ void SpaceGame::Render()
 }
 void SpaceGame::Update(double deltatime)
 {
-	
-
-	for (Entity* entity : vEntities) //Entity updates
+	for (Entity*& entity : vEntities) //Entity updates
 	{
-		if (entity) entity->Update(deltatime);
+		if (entity)
+		{
+			bool bEntityExists = entity->Update(deltatime);
+			if (!bEntityExists)
+			{
+				delete entity;
+				entity = nullptr;
+			}
+		}
 		if (!bGameRunning) //Game could end after any entity update
 		{
 			Game::LoadLevel(new DeathScreen());

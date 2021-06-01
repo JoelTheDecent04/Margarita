@@ -23,7 +23,7 @@ class LaserBeam : public Entity
 	float fAngle;
 public:
 	LaserBeam(SpaceGame* game, LaserWeapon* weapon, float fX, float fY, float fSpeedX, float fSpeedY);
-	void Collide(Entity* entity) override;
-	void Update(double deltatime) override;
+	bool Collide(Entity* entity) override;
+	bool Update(double deltatime) override;
 	void Draw() override;
 };

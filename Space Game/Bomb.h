@@ -8,9 +8,9 @@ class Bomb : public Entity
 	int nLevel;
 public:
 	Bomb(SpaceGame* game, float fX, float fY, float fSpeedX, float fSpeedY, int nLevel);
-	void Collide(Entity* entity) override;
+	bool Collide(Entity* entity) override;
 	void Explode();
-	void Update(double deltatime) override;
+	bool Update(double deltatime) override;
 };
 
 class BombWeapon : public Weapon

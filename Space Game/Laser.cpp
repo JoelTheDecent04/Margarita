@@ -32,10 +32,11 @@ LaserBeam::LaserBeam(SpaceGame* game, LaserWeapon* weapon, float fX, float fY, f
 		fAngle += 180.0f;
 }
 
-void LaserBeam::Collide(Entity* entity)
+bool LaserBeam::Collide(Entity* entity)
 {
 	entity->ChangeHealth(-50.0f);
 	Destroy();
+	return false;
 }
 
 void LaserBeam::Draw()
@@ -43,7 +44,7 @@ void LaserBeam::Draw()
 	tTexture->Draw(nFrame, (fX - fBackgroundPosition - (tTexture->fTextureDrawnWidth / 2)), fY - tTexture->fTextureDrawnHeight / 2, false, fAngle);
 }
 
-void LaserBeam::Update(double deltatime)
+bool LaserBeam::Update(double deltatime)
 {
 	float fBulletX = fX + cos(PI * fAngle / 180.0f) * 16.0f; //Get new position
 	float fBulletY = fY + sin(PI * fAngle / 180.0f) * 16.0f;
@@ -60,8 +61,7 @@ void LaserBeam::Update(double deltatime)
 		if (entity->WillOverlap(this, fBulletX, fBulletY))
 		{
 			bCollided = true;
-			Collide(entity);
-			return;
+			return Collide(entity);
 		}
 	}
 	if (!bCollided)
@@ -80,7 +80,7 @@ void LaserBeam::Update(double deltatime)
 		bSpeedChanged = true;
 	}
 
-	if (fX < 0.0f || fX > 5120.0f) { Destroy(); return; }
+	if (fX < 0.0f || fX > 5120.0f) { Destroy(); return false; }
 
 	if (bSpeedChanged)
 	{
@@ -102,6 +102,7 @@ void LaserBeam::Update(double deltatime)
 		}
 	}
 	
+	return true;
 }
 
 LaserWeapon::LaserWeapon(LaserLevel nLaserLevel)

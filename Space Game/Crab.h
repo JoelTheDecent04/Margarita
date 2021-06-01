@@ -10,6 +10,6 @@ class Crab : public Entity
 public:
 	bool bLegalPosition;
 	Crab(SpaceGame* game, float fX);
-	void Update(double deltatime) override;
+	bool Update(double deltatime) override;
 	void Destroy() override;
 };

@@ -14,7 +14,7 @@ Entity::Entity(SpaceGame* sgGame, Texture* tTexture, float fX, float fY)
 	fSpeedY = 0.0f;
 	bOnGround = false;
 	bAffectedByGravity = true;
-	fHealth = 0.0f;
+	fHealth = -1.0f;
 	fMaxHealth = 100.0f;
 	fHeight = tTexture->fTextureDrawnHeight;
 	fWidth = tTexture->fTextureDrawnWidth;
@@ -26,8 +26,10 @@ void Entity::Draw()
 	tTexture->Draw(nFrame, (fX - fBackgroundPosition - (tTexture->fTextureDrawnWidth / 2)), fY - tTexture->fTextureDrawnHeight / 2);
 }
 
-void Entity::Update(double deltatime)
+bool Entity::Update(double deltatime)
 {
+	if (fHealth == 0.0f) return false;
+
 	if (bAffectedByGravity) fSpeedY += fGravity * deltatime; //Gravity force
 
 	float fNewX = fX + fSpeedX * deltatime; //Get new position
@@ -44,9 +46,10 @@ void Entity::Update(double deltatime)
 			if (entity->WillOverlap(this, fNewX, fNewY))
 			{
 				bCollided = true;
-				Collide(entity);
+				if (Collide(entity) == false) return false;
 				break;
 			}
+
 		}
 		if (!bCollided)
 		{
@@ -90,11 +93,14 @@ void Entity::Update(double deltatime)
 		fSpeedY = -fSpeedY;
 	}
 
-	if (fX < 0.0f || fX > 5120.0f) { /*Delete entity */ }
+	if (fX < 0.0f || fX > 5120.0f)
+	{ 
+		return false; 
+	}
 
 	if (fSpeedX < 5.0f && fSpeedX > -5.0f) fSpeedX = 0.0f; //If speed is low set to 0
 
-	
+	return true;
 }
 
 void Entity::ChangeHealth(float fChange)
@@ -104,7 +110,6 @@ void Entity::ChangeHealth(float fChange)
 	if (fHealth <= 0.0f)
 	{
 		fHealth = 0.0f; //When Destroy() is called on the player, it won't get deleted straight away
-		Destroy();
 	}
 }
 
@@ -122,21 +127,6 @@ bool Entity::WillOverlap(Entity* e, float fNewX, float fNewY)
 		fX + fWidth / 2 > fNewX - e->fWidth / 2 &&
 		fY - fHeight / 2 < fNewY + e->fHeight / 2 &&
 		fY + fHeight / 2 > fNewY - e->fHeight / 2);
-}
-
-void Entity::Destroy()
-{
-	int i = 0;
-	for (Entity*& entity : sgGame->vEntities)
-	{
-		if (entity == this)
-		{
-			entity = nullptr;
-			delete this;
-		}
-
-		i++;
-	}
 }
 
 float Entity::Distance(Entity* entity)

@@ -21,8 +21,7 @@ public:
 	float fMovementSpeed;
 	float fMaxMovementSpeed;
 	Player(SpaceGame* game, float fX, float fY, Texture* tTexture, std::wstring sName);
-	void Update(double deltatime) override;
-	void Destroy() override;
+	bool Update(double deltatime) override;
 };
 
 extern int keyJump1, keyJump2, keyMoveLeft1, keyMoveLeft2, keyMoveRight1, keyMoveRight2, keyMoveDown1, keyMoveDown2;

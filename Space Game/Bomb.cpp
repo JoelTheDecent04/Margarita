@@ -12,9 +12,10 @@ Bomb::Bomb(SpaceGame* game, float fX, float fY, float fSpeedX, float fSpeedY, in
 	this->nLevel = nLevel;
 }
 
-void Bomb::Collide(Entity* entity)
+bool Bomb::Collide(Entity* entity)
 {
 	Explode();
+	return false;
 }
 
 void Bomb::Explode()
@@ -28,18 +29,19 @@ void Bomb::Explode()
 			entity->ChangeHealth((-250.0f - 20.0f * nLevel) * ((fDamageDistance - fDistance) / fDamageDistance));
 	}
 
-	Destroy();
+	fHealth = 0.0f;
 }
 
-void Bomb::Update(double deltatime)
+bool Bomb::Update(double deltatime)
 {
-	Entity::Update(deltatime);
+	if (Entity::Update(deltatime) == false) return false;
 	fAge += deltatime;
 	if (fAge >= 0.75f + 0.25f * nLevel)
 	{
 		Explode();
-		return;
+		return false;
 	}
+	return true;
 }
 
 BombWeapon::BombWeapon(int nLevel)

@@ -24,7 +24,7 @@ Crab::Crab(SpaceGame* game, float fX)
 			}
 	}
 }
-void Crab::Update(double deltatime)
+bool Crab::Update(double deltatime)
 {
 	if (abs(sgGame->plPlayer->fX - fX) > 80.0f)
 		fSpeedX = sgGame->plPlayer->fX > fX ? 100.0f + sgGame->fDifficulty / 60.0f : -100.0f - sgGame->fDifficulty / 60.0f;
@@ -40,9 +40,10 @@ void Crab::Update(double deltatime)
 		}
 	}
 
-	Entity::Update(deltatime);
 	animation.Update(deltatime);
 	
+	if (Entity::Update(deltatime) == false) return false;
+
 	if (abs(fSpeedX) > 0.0f)
 		animation.Start();
 	else
