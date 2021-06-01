@@ -22,9 +22,11 @@ public:
 	void LeftClick() override;
 	void KeyDown(int key) override;
 	void Resume();
+
 	void UpgradeHealth();
 	void UpgradeEnergyRecharge();
 	void UpgradeMovementSpeed();
 	void BuyLaserUpgrade();
 	void BuyEnergyPowerup();
+	void BuyBombUpgrade();
 };

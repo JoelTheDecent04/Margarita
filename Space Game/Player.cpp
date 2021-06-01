@@ -97,10 +97,15 @@ void Player::Update(double deltatime)
 	fHealth += 3.0f * deltatime;
 	if (fHealth > fMaxHealth) fHealth = fMaxHealth;
 
-	if (fMoney >= 150.0f && sgGame->vItems.size() <= 2) sgGame->vItems.push_back(new BombWeapon()); //TODO improve
+	if (fMoney >= 150.0f && sgGame->vItems.size() <= 2) sgGame->vItems.push_back(new BombWeapon(1)); //TODO improve
 
 	if (puCurrentPowerup)
+	{
 		puCurrentPowerup->Update(deltatime);
+		nFrame = 1;
+	}
+	else
+		nFrame = 0;
 }
 
 void Player::Destroy()

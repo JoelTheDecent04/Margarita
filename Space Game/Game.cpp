@@ -108,7 +108,6 @@ namespace Game {
 			uint64_t nCurrentTime;
 			QueryPerformanceCounter((LARGE_INTEGER*)&nCurrentTime);
 			double dDeltaTime = (nCurrentTime - nStartTime) * dSecondsPerCount;
-
 			nStartTime = nCurrentTime;
 
 			lCurrentLevel->Update(dDeltaTime);

@@ -16,7 +16,7 @@ void EnergyPowerup::Update(double deltatime)
 		Remove();
 		return;
 	}
-	sgGame->plPlayer->nEnergy += 25 * deltatime;
+	sgGame->plPlayer->nEnergy += 15 * deltatime;
 	if (sgGame->plPlayer->nEnergy > sgGame->plPlayer->nMaxEnergy)
 		sgGame->plPlayer->nEnergy = sgGame->plPlayer->nMaxEnergy;
 }

@@ -36,7 +36,7 @@ void SpaceGame::Load()
 {
 	bGameRunning = true;
 
-	tCharacterTexture = new Texture(L"player.png", 2624, 2098, 66, 58);
+	tCharacterTexture = new Texture(L"player.png", 3375, 2098, 83, 58);
 	tOrbTexture = new Texture(L"orb.png", 2497, 2497, 32, 32);
 	tBackground = new Texture(L"background.png", 15360, 2160, 5120, 720);
 	tLaserTexture = new Texture(L"Laser.png");
@@ -51,14 +51,17 @@ void SpaceGame::Load()
 	plPlayer = new Player(this, 384.0f, 384.0f, tCharacterTexture, L"Player");
 	vEntities.push_back(plPlayer);
 
+	m_vItems.lock();
 	vItems.push_back(new LaserWeapon(LaserWeapon::Normal));
 	vItems.push_back(new OrbWeapon());
+	m_vItems.unlock();
+
 	nCurrentItem = 0;
 
 	fNextEnemySpawn = 0.0;
 
-	fDifficulty = 80.0f;
-	nWave = 0;
+	fDifficulty = 1000.0f;//80.0f;
+	nWave = 8;
 	fSecondsUntilNextWave = 0.0f;
 	nEnemies = 0;
 	fSecondsUntilNextComet = 40 + random() * 40;
@@ -77,8 +80,10 @@ void SpaceGame::Unload()
 	delete tCometTexture;
 	for (Entity* entity : vEntities)
 		if (entity) delete entity;
+	m_vItems.lock();
 	for (Item* item : vItems)
 		if (item) delete item;
+	m_vItems.unlock();
 	for (BackgroundObject* BackgroundObject : vBackgroundObjects)
 		if (BackgroundObject) delete BackgroundObject;
 }
@@ -118,14 +123,21 @@ void SpaceGame::Render()
 	Graphics::WriteText(L"Items", 5, nScreenHeight - 4 - 32 - 4 - 14, 14);
 
 	int nItem = 0;
+	m_vItems.lock();
 	for (Item* item : vItems)
 	{
 
 		item->tTexture->Draw(0, 4 + nItem * 32, nScreenHeight - 4 - 32, true);
 		Graphics::DrawRectangle(4 + nItem * 32, nScreenHeight - 4 - 32, 32, 32, nItem == nCurrentItem ? clrWhite : clrDarkGrey);
+		if (item->nCount > 1)
+		{
+			wchar_t txtItemCount[32];
+			swprintf_s(txtItemCount, 32, L"%d", item->nCount);
+			Graphics::WriteText(txtItemCount, 6 + nItem * 32, nScreenHeight - 4 - 16, 14.0f);
+		}
 		nItem++;
-
 	}
+	m_vItems.unlock();
 
 	wchar_t txtMoney[64];
 	swprintf_s(txtMoney, 64, L"$%d", (int)plPlayer->fMoney);
@@ -229,6 +241,7 @@ void SpaceGame::LeftClick()
 	float fAngle = atan(fGradient);
 	if (pntCursorPosition.x < plPlayer->fX) fAngle += 3.1415926f;
 	
+	m_vItems.lock();
 	vItems[nCurrentItem]->Use(this, plPlayer->fX, plPlayer->fY, fAngle);
 	if (vItems[nCurrentItem]->nCount == 0)
 	{
@@ -236,6 +249,7 @@ void SpaceGame::LeftClick()
 		if (nCurrentItem >= vItems.size())
 			nCurrentItem = vItems.size() - 1;
 	}
+	m_vItems.unlock();
 
 }
 

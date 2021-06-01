@@ -80,7 +80,7 @@ void LaserBeam::Update(double deltatime)
 		bSpeedChanged = true;
 	}
 
-	if (fX < 0.0f || fX > 5120.0f) { /*Delete entity */ }
+	if (fX < 0.0f || fX > 5120.0f) { Destroy(); return; }
 
 	if (bSpeedChanged)
 	{
@@ -108,7 +108,7 @@ LaserWeapon::LaserWeapon(LaserLevel nLaserLevel)
 {
 	tTexture = tLaserTexture;
 	this->nLaserLevel = nLaserLevel;
-	nCount = -1;
+	nCount = nLaserLevel;
 }
 
 void LaserWeapon::Use(SpaceGame* game, float fX, float fY, float fAngle)

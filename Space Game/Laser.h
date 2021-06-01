@@ -7,7 +7,7 @@ class LaserWeapon : public Weapon
 {
 public:
 	enum LaserLevel {
-		Normal,
+		Normal = 1,
 		DoubleShot
 	};
 	LaserLevel nLaserLevel;

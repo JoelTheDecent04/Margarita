@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "EnergyPowerup.h"
 #include "Laser.h"
+#include "Bomb.h"
 
 static D2D1::ColorF clrDarkGrey = D2D1::ColorF::DarkGray;
 static D2D1::ColorF clrWhite = D2D1::ColorF::White;
@@ -27,7 +28,8 @@ ShopScreen::ShopScreen(SpaceGame* lGameLevel)
 
 	vButtons.push_back(Button(700, 190, 880, 230, [](void* s) { ((ShopScreen*)s)->BuyEnergyPowerup(); }, L"Energy Powerup ($200)", 16.0f));
 
-	vButtons.push_back(Button(700, 340, 880, 380, [](void* s) { ((ShopScreen*)s)->BuyLaserUpgrade(); }, L"Laser ($200)", 16.0f));
+	vButtons.push_back(Button(700, 340, 880, 380, [](void* s) { ((ShopScreen*)s)->BuyLaserUpgrade(); }, L"Laser ($400)", 16.0f));
+	vButtons.push_back(Button(700, 390, 880, 430, [](void* s) { ((ShopScreen*)s)->BuyBombUpgrade(); }, L"Bomb ($500)", 16.0f));
 
 	nUpgrades = 0;
 }
@@ -94,7 +96,10 @@ void ShopScreen::Update(double deltatime)
 	vButtons[2].bClickable = (lGameLevel->plPlayer->fMoney >= 150.0f);
 	vButtons[3].bClickable = (lGameLevel->plPlayer->fMoney >= 50.0f);
 	vButtons[4].bClickable = (lGameLevel->plPlayer->fMoney >= 200.0f);
-	vButtons[5].bClickable = (lGameLevel->plPlayer->fMoney >= 200.0f && ((LaserWeapon*)lGameLevel->vItems[0])->nLaserLevel != LaserWeapon::DoubleShot);
+	lGameLevel->m_vItems.lock();
+	vButtons[5].bClickable = (lGameLevel->plPlayer->fMoney >= 400.0f && ((LaserWeapon*)lGameLevel->vItems[0])->nLaserLevel != LaserWeapon::DoubleShot);
+	lGameLevel->m_vItems.unlock();
+	vButtons[6].bClickable = (lGameLevel->plPlayer->fMoney >= 500.0f);
 }
 
 void ShopScreen::LeftClick()
@@ -141,29 +146,35 @@ void ShopScreen::BuyEnergyPowerup()
 	if (lGameLevel->plPlayer->fMoney >= 200.0f)
 	{
 		lGameLevel->plPlayer->fMoney -= 200.0f;
-		for (Item*& item : lGameLevel->vItems)
-		{
-			if (item == nullptr)
-			{
-				item = new EnergyPowerupItem();
-				return;
-			}
-		}
-		
+		lGameLevel->m_vItems.lock();
 		lGameLevel->vItems.push_back(new EnergyPowerupItem());
+		lGameLevel->m_vItems.unlock();
 	}
 }
 
 void ShopScreen::BuyLaserUpgrade()
 {
-	if (lGameLevel->plPlayer->fMoney >= 200.0f && ((LaserWeapon*)lGameLevel->vItems[0])->nLaserLevel != LaserWeapon::DoubleShot)
+	lGameLevel->m_vItems.lock();
+	if (lGameLevel->plPlayer->fMoney >= 400.0f && ((LaserWeapon*)lGameLevel->vItems[0])->nLaserLevel != LaserWeapon::DoubleShot)
 	{
-		lGameLevel->plPlayer->fMoney -= 200.0f;
-		LaserWeapon* new_weapon = new LaserWeapon(LaserWeapon::DoubleShot);
-		Item* old_weapon = lGameLevel->vItems[0];
-		lGameLevel->vItems[0] = new_weapon;
-		delete old_weapon;
+		lGameLevel->plPlayer->fMoney -= 400.0f;
+		delete lGameLevel->vItems[0];
+		lGameLevel->vItems[0] = new LaserWeapon(LaserWeapon::DoubleShot);
 	}
+	lGameLevel->m_vItems.unlock();
+}
+
+void ShopScreen::BuyBombUpgrade()
+{
+	lGameLevel->m_vItems.lock();
+	if (lGameLevel->plPlayer->fMoney >= 500.0f)
+	{
+		lGameLevel->plPlayer->fMoney -= 500.0f;
+		int nOldLevel = ((BombWeapon*)lGameLevel->vItems[2])->nLevel;
+		delete lGameLevel->vItems[2];
+		lGameLevel->vItems[2] = new BombWeapon(++nOldLevel);
+	}
+	lGameLevel->m_vItems.unlock();
 }
 
 void ShopScreen::KeyDown(int key)

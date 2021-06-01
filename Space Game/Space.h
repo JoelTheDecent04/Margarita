@@ -4,6 +4,7 @@
 #include "BackgroundObject.h"
 #include <concurrent_vector.h>
 #include <vector>
+#include <mutex>
 
 class Item;
 class Entity;
@@ -16,6 +17,7 @@ public:
 
 	int nCurrentItem;
 	std::vector<Item*> vItems;
+	std::mutex m_vItems;
 
 	Player* plPlayer;
 

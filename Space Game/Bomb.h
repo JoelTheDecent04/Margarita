@@ -5,8 +5,9 @@
 class Bomb : public Entity
 {
 	float fAge;
+	int nLevel;
 public:
-	Bomb(SpaceGame* game, float fX, float fY, float fSpeedX, float fSpeedY);
+	Bomb(SpaceGame* game, float fX, float fY, float fSpeedX, float fSpeedY, int nLevel);
 	void Collide(Entity* entity) override;
 	void Explode();
 	void Update(double deltatime) override;
@@ -15,7 +16,8 @@ public:
 class BombWeapon : public Weapon
 {
 public:
-	BombWeapon();
+	int nLevel;
+	BombWeapon(int nLevel);
 	void Use(SpaceGame* game, float fX, float fY, float fAngle) override;
 	
 };
