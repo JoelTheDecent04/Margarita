@@ -3,6 +3,8 @@
 #include "EntityHealthChangeText.h"
 #include "Utilities.h"
 
+static D2D1::ColorF clrWhite = D2D1::ColorF(D2D1::ColorF::White);
+
 Entity::Entity(SpaceGame* sgGame, Texture* tTexture, float fX, float fY)
 {
 	this->sgGame = sgGame;
@@ -23,6 +25,8 @@ Entity::Entity(SpaceGame* sgGame, Texture* tTexture, float fX, float fY)
 }
 void Entity::Draw()
 {
+	if (bShowHitboxes)
+		Graphics::FillRectangle(fScaleH * (fX - fWidth / 2 - fBackgroundPosition), fScaleV * (fY - fHeight / 2), fScaleH * fWidth, fScaleV * fHeight, clrWhite, 0.5f);
 	tTexture->Draw(nFrame, (fX - fBackgroundPosition - (tTexture->fTextureDrawnWidth / 2)), fY - tTexture->fTextureDrawnHeight / 2);
 }
 
@@ -42,22 +46,29 @@ bool Entity::Update(double deltatime)
 	if (bCanCollide) //If this entity can collide
 	{
 		bool bCollided = false;
+		sgGame->m_u_vEntities.lock(); //In update thread
 		for (Entity* entity : sgGame->vEntities) //Check for collisions
-		{
+		{ //TODO fix
 			if (!entity) continue;
 			if (entity == this || !entity->bCanCollide) continue;
 			if (entity == (Entity*)sgGame->plPlayer && !bCanCollideWithPlayer) continue;
 			if (entity->WillOverlap(this, fNewX, fNewY))
 			{
 				bCollided = true;
-				if (Collide(entity) == false) return false;
+				if (Collide(entity) == false)
+				{
+					sgGame->m_u_vEntities.unlock(); //In update thread
+					return false;
+				}
 				break;
 			}
 		}
+		sgGame->m_u_vEntities.unlock(); //In update thread
 
 		if (bCollided)
 		{
  			bool bCollidedVertically = false;
+			sgGame->m_u_vEntities.lock(); //In update thread
 			for (Entity* entity : sgGame->vEntities) //Check if it can move vertically
 			{
 				if (!entity) continue;
@@ -69,9 +80,11 @@ bool Entity::Update(double deltatime)
 					break;
 				}
 			}
+			sgGame->m_u_vEntities.unlock(); //In update thread
 			if (bCollidedVertically)
 			{
 				bool bCollidedHorizontally = false;
+				sgGame->m_u_vEntities.lock(); //In update thread
 				for (Entity* entity : sgGame->vEntities) //Check if it can move horizontally
 				{
 					if (!entity) continue;
@@ -83,6 +96,7 @@ bool Entity::Update(double deltatime)
 						break;
 					}
 				}
+				sgGame->m_u_vEntities.unlock(); //In update thread
 				if (bCollidedHorizontally)
 				{
 					fSpeedX = 0.0f;

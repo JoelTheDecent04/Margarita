@@ -26,7 +26,7 @@ Player::Player(SpaceGame* game, float fX, float fY, Texture* tTexture, std::wstr
 	fEnergyRechargeSpeed = 3.0f;
 	fMaxEnergyRechargeSpeed = 9.0f;
 	fMaxHealthUpgrade = 450.0f;
-	fWidth = 72.0f;
+	fWidth = 50.0f;
 	fHeight = 58.0f;
 	fMovementSpeed = 150.0f;
 	fMaxMovementSpeed = 190.0f;

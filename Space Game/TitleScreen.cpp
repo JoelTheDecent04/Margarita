@@ -17,7 +17,7 @@ TitleScreen::TitleScreen()
 
 	vButtons.push_back(Button(500, 200, 780, 325, [] { Game::LoadLevel(new SpaceGame()); }, L"Play"));
 	vButtons.push_back(Button(500, 500, 780, 625, [] { PostQuitMessage(0); }, L"Quit"));
-	vButtons.push_back(Button(500, 350, 780, 475, [] { MessageBox(Graphics::hWindow, L"Space Game\nVersion Alpha 0.1.1\nBy Joel Kruger\nand Isaac Dyt", L"Info", MB_OK); }, L"Info"));
+	vButtons.push_back(Button(500, 350, 780, 475, [] { MessageBox(Graphics::hWindow, L"Space Game\nVersion Alpha 0.1.2\nBy Joel Kruger\nand Isaac Dyt", L"Info", MB_OK); }, L"Info"));
 }
 
 void TitleScreen::Render()

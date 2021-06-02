@@ -23,7 +23,7 @@ void EnergyPowerup::Update(double deltatime)
 
 EnergyPowerupItem::EnergyPowerupItem()
 {
-	tTexture = tNoTexture;
+	tTexture = tEnergyPowerupTexture;
 	nCount = 1;
 }
 

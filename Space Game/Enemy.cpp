@@ -14,6 +14,7 @@ Enemy::Enemy(SpaceGame* game, float fX, float fY)
 	fSecondsUntilNextAttack = 0.0f;
 	bLegalPosition = true;
 
+	game->m_u_vEntities.lock(); //In update thread
 	for (Entity* entity : game->vEntities)
 	{
 		if (entity)
@@ -23,6 +24,7 @@ Enemy::Enemy(SpaceGame* game, float fX, float fY)
 				break;
 			}
 	}
+	game->m_u_vEntities.unlock(); //In update thread
 }
 
 bool Enemy::Update(double deltatime)
@@ -33,7 +35,7 @@ bool Enemy::Update(double deltatime)
 		return false;
 	}
 
-	if (Distance(sgGame->plPlayer) > 80.0f)
+	if (Distance(sgGame->plPlayer) > 55.0f)
 	{
 		float fGradient = (sgGame->plPlayer->fY - fY) / (sgGame->plPlayer->fX - fX);
 		float fAngle = atan(fGradient);

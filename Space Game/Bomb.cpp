@@ -22,6 +22,7 @@ bool Bomb::Collide(Entity* entity)
 void Bomb::Explode()
 {
 	sgGame->vBackgroundObjects.push_back(new BombAnimation(this));
+	sgGame->m_u_vEntities.lock(); //In update thread
 	for (Entity* entity : sgGame->vEntities)
 	{
 		if (entity == nullptr || entity == this) continue;
@@ -30,6 +31,7 @@ void Bomb::Explode()
 		if (fDistance < fDamageDistance)
 			entity->ChangeHealth((-250.0f - 20.0f * nLevel) * ((fDamageDistance - fDistance) / fDamageDistance));
 	}
+	sgGame->m_u_vEntities.unlock(); //In update thread
 
 	fHealth = 0.0f;
 }
@@ -57,7 +59,10 @@ void BombWeapon::Use(SpaceGame* game, float fX, float fY, float fAngle)
 {
 	if (game->plPlayer->nEnergy >= 8.0f + 3.0f * nLevel)
 	{
+		OutputDebugString(L"Bombweapon::Use locking\n");
+		game->m_r_vEntities.lock(); game->m_u_vEntities.lock(); game->m_w_vEntities.lock();
 		game->vEntities.push_back(new Bomb(game, fX, fY, 300.0f * cos(fAngle), 300.0f * sin(fAngle), nLevel));
+		game->m_r_vEntities.unlock(); game->m_u_vEntities.unlock(); game->m_w_vEntities.unlock();
 		game->plPlayer->nEnergy -= 8.0f + 3.0f * nLevel;
 	}
 }

@@ -5,6 +5,7 @@
 #include <concurrent_vector.h>
 #include <vector>
 #include <mutex>
+#include <memory>
 
 class Item;
 class Entity;
@@ -13,7 +14,10 @@ class Player;
 class SpaceGame : public Level
 {	
 public:
-	concurrency::concurrent_vector<Entity*> vEntities;
+	std::vector<Entity*> vEntities;
+	std::recursive_mutex m_r_vEntities; //Mutex for render thread
+	std::recursive_mutex m_u_vEntities; //Mutex for update thread
+	std::recursive_mutex m_w_vEntities; //Mutex for window thread
 
 	int nCurrentItem;
 	std::vector<Item*> vItems;
@@ -46,7 +50,7 @@ public:
 
 extern float fBackgroundPosition;
 extern Texture* tCharacterTexture, * tOrbTexture, * tBackground, * tLaserTexture, * tLaserBeamTexture, * tEnemyTexture, * tBombTexture, * tCrabTexture;
-extern Texture* tCometTexture, * tNoTexture, * tBombAnimationTexture;
+extern Texture* tCometTexture, * tNoTexture, * tBombAnimationTexture, *tEnergyPowerupTexture;
 
 static const float fPlayerAcceleration = 3000.0f;
 static const float fPlayerDecceleration = 1500.0f;
@@ -59,3 +63,5 @@ extern int keyOpenShop1, keyOpenShop2;
 
 extern int keyChangeWeapon1[9];
 extern int keyChangeWeapon2[9];
+
+extern bool bShowHitboxes;

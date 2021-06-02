@@ -35,6 +35,7 @@ namespace Game {
 		wcscpy_s(txtNewWindowTitle, 128, txtWindowTitle);
 		wcscat_s(txtNewWindowTitle, 128, L" - Loading");
 		SetWindowText(Graphics::hWindow, txtNewWindowTitle);
+		SetCursor(LoadCursor(nullptr, IDC_WAIT));
 
 		if (lCurrentLevel && bUnloadPrevious)
 		{
@@ -60,6 +61,7 @@ namespace Game {
 		}
 
 		loading = false;
+		SetCursor(LoadCursor(nullptr, IDC_ARROW));
 		SetWindowText(Graphics::hWindow, txtWindowTitle);
 	}
 
