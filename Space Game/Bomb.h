@@ -5,8 +5,8 @@
 class Bomb : public Entity
 {
 	float fAge;
-	int nLevel;
 public:
+	int nLevel;
 	Bomb(SpaceGame* game, float fX, float fY, float fSpeedX, float fSpeedY, int nLevel);
 	bool Collide(Entity* entity) override;
 	void Explode();

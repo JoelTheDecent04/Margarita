@@ -5,5 +5,5 @@ class BackgroundObject
 
 public:
 	virtual void Draw() = 0;
-	virtual void Update(double deltatime) = 0;
+	virtual bool Update(double deltatime) = 0;
 };

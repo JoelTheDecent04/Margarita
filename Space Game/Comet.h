@@ -11,5 +11,5 @@ class Comet : public BackgroundObject
 public:
 	Comet();
 	void Draw() override;
-	void Update(double deltatime) override;
+	bool Update(double deltatime) override;
 };

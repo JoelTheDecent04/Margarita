@@ -15,6 +15,6 @@ public:
 	std::wstring strText;
 	TextObject(float fX, float fY, const std::wstring& strText);
 	TextObject();
-	void Update(double deltatime) override;
+	bool Update(double deltatime) override;
 	void Draw() override;
 };

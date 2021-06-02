@@ -27,6 +27,12 @@ Enemy::Enemy(SpaceGame* game, float fX, float fY)
 
 bool Enemy::Update(double deltatime)
 {
+	if (fHealth == 0.0f)
+	{
+		Destroy();
+		return false;
+	}
+
 	if (Distance(sgGame->plPlayer) > 80.0f)
 	{
 		float fGradient = (sgGame->plPlayer->fY - fY) / (sgGame->plPlayer->fX - fX);
@@ -57,5 +63,4 @@ void Enemy::Destroy()
 {
 	sgGame->plPlayer->fMoney += 10.0f;
 	sgGame->nEnemies--;
-	Entity::Destroy();
 }

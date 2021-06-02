@@ -18,13 +18,15 @@
 
 float fBackgroundPosition = 0.0f;
 Texture* tCharacterTexture, * tOrbTexture, * tBackground, * tLaserTexture, * tLaserBeamTexture, * tEnemyTexture, * tBombTexture, * tCrabTexture;
-Texture* tForegroundTexture, * tCometTexture, * tNoTexture;
+Texture* tForegroundTexture, * tCometTexture, * tNoTexture, * tBombAnimationTexture;
 
 int keyOpenShop1 = 'E';
 int keyOpenShop2 = 0;
 int keyChangeWeapon1[9] = { '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 int keyChangeWeapon2[9];
 
+bool bShowDebugInfo = false;
+double fPhysicsUpdatesPerSeconds;
 
 D2D1::ColorF clrBlack		= D2D1::ColorF(0.0f, 0.0f, 0.0f);
 D2D1::ColorF clrRed			= D2D1::ColorF(1.0f, 0.0f, 0.0f);
@@ -47,6 +49,8 @@ void SpaceGame::Load()
 	tForegroundTexture = new Texture(L"foreground.png", 15360, 382, 5120, 127.33f);
 	tCometTexture = new Texture(L"comet.png", 640, 360, 100, 50);
 	tNoTexture = new Texture(L"notexture.png");
+	tBombAnimationTexture = new Texture(L"bomb_animation.png", 1280, 720, 100.0f, 100.0f);
+
 
 	plPlayer = new Player(this, 384.0f, 384.0f, tCharacterTexture, L"Player");
 	vEntities.push_back(plPlayer);
@@ -60,8 +64,8 @@ void SpaceGame::Load()
 
 	fNextEnemySpawn = 0.0;
 
-	fDifficulty = 1000.0f;//80.0f;
-	nWave = 8;
+	fDifficulty = 80.0f;
+	nWave = 0;
 	fSecondsUntilNextWave = 0.0f;
 	nEnemies = 0;
 	fSecondsUntilNextComet = 40 + random() * 40;
@@ -78,6 +82,8 @@ void SpaceGame::Unload()
 	delete tCrabTexture;
 	delete tForegroundTexture;
 	delete tCometTexture;
+	delete tNoTexture;
+	delete tBombAnimationTexture;
 	for (Entity* entity : vEntities)
 		if (entity) delete entity;
 	m_vItems.lock();
@@ -103,7 +109,8 @@ void SpaceGame::Render()
 	tForegroundTexture->Draw(0, -fBackgroundPosition - 65.0f, 475.0f);
 
 	for (BackgroundObject* backgroundobject : vBackgroundObjects)
-		backgroundobject->Draw();
+		if (backgroundobject)
+			backgroundobject->Draw();
 
 	wchar_t txtHealth[64];
 	swprintf_s(txtHealth, 64, L"HP %u / %u", (int)plPlayer->fHealth, (int)plPlayer->fMaxHealth);
@@ -150,9 +157,19 @@ void SpaceGame::Render()
 	Graphics::FillRectangle(nScreenWidth - 5 - tmTextMetrics.width - 5, nScreenHeight - 5 - tmTextMetrics.height - 5, 5 + tmTextMetrics.width + 3, 5 + 16 + 5, clrBlack);
 	Graphics::WriteText(txtWave, nScreenWidth - 5 - tmTextMetrics.width, nScreenHeight - 5 - tmTextMetrics.height, 16.0f);
 
+	if (bShowDebugInfo)
+	{
+		wchar_t txtDebug[64];
+		swprintf_s(txtDebug, 64, L"%d physics updates per second", (int)(fPhysicsUpdatesPerSeconds / 10) * 10
+		);
+		Graphics::TextMetrics(txtDebug, 16.0f, tmTextMetrics);
+		Graphics::WriteText(txtDebug, nScreenWidth / 2 - tmTextMetrics.width / 2, 4, 16.0f);
+	}
 }
 void SpaceGame::Update(double deltatime)
 {
+	fPhysicsUpdatesPerSeconds = 1.0 / deltatime;
+
 	for (Entity*& entity : vEntities) //Entity updates
 	{
 		if (entity)
@@ -171,11 +188,14 @@ void SpaceGame::Update(double deltatime)
 		}
 	}
 
-	for (BackgroundObject* backgroundobjects : vBackgroundObjects) //Object updates
+	for (BackgroundObject*& backgroundobjects : vBackgroundObjects) //Object updates
 	{
 		if (backgroundobjects)
-			backgroundobjects->Update(deltatime);
-		//TODO delete when opacity is 0
+			if (backgroundobjects->Update(deltatime) == false)
+			{
+				delete backgroundobjects; //TODO fix
+				backgroundobjects = nullptr;
+			}
 	}
 
 	fNextEnemySpawn -= deltatime; //Enemy spawning
@@ -239,9 +259,7 @@ void SpaceGame::LeftClick()
 	pntCursorPosition.x /= fScaleH;
 	pntCursorPosition.y /= fScaleV;
 
-	pntCursorPosition.x += fBackgroundPosition;
-
-	
+	pntCursorPosition.x += fBackgroundPosition;	
 
 	float fGradient = (pntCursorPosition.y - plPlayer->fY) / (pntCursorPosition.x - plPlayer->fX);
 	float fAngle = atan(fGradient);
@@ -274,6 +292,8 @@ void SpaceGame::KeyDown(int key)
 	if (key == 'P')
 		if (plPlayer->puCurrentPowerup == nullptr)
 			plPlayer->puCurrentPowerup = new EnergyPowerup(this);
+	if (key == VK_F2)
+		bShowDebugInfo = !bShowDebugInfo;
 	for (int i = 0; i < 9; i++)
 	{
 		if (key == keyChangeWeapon1[i] || key == keyChangeWeapon2[i])

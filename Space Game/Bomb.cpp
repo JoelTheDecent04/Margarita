@@ -1,6 +1,7 @@
 #include "Bomb.h"
 #include "Space.h"
 #include "Player.h"
+#include "BombAnimation.h"
 
 Bomb::Bomb(SpaceGame* game, float fX, float fY, float fSpeedX, float fSpeedY, int nLevel)
 	: Entity(game, tBombTexture, fX, fY)
@@ -20,6 +21,7 @@ bool Bomb::Collide(Entity* entity)
 
 void Bomb::Explode()
 {
+	sgGame->vBackgroundObjects.push_back(new BombAnimation(this));
 	for (Entity* entity : sgGame->vEntities)
 	{
 		if (entity == nullptr || entity == this) continue;

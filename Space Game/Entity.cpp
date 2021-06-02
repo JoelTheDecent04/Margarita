@@ -28,7 +28,11 @@ void Entity::Draw()
 
 bool Entity::Update(double deltatime)
 {
-	if (fHealth == 0.0f) return false;
+	if (fHealth == 0.0f)
+	{
+		Destroy();
+		return false;
+	}
 
 	if (bAffectedByGravity) fSpeedY += fGravity * deltatime; //Gravity force
 
@@ -49,18 +53,59 @@ bool Entity::Update(double deltatime)
 				if (Collide(entity) == false) return false;
 				break;
 			}
-
 		}
-		if (!bCollided)
+
+		if (bCollided)
+		{
+ 			bool bCollidedVertically = false;
+			for (Entity* entity : sgGame->vEntities) //Check if it can move vertically
+			{
+				if (!entity) continue;
+				if (entity == this || !entity->bCanCollide) continue;
+				if (entity == (Entity*)sgGame->plPlayer && !bCanCollideWithPlayer) continue;
+				if (entity->WillOverlap(this, fX, fNewY))
+				{
+					bCollidedVertically = true;
+					break;
+				}
+			}
+			if (bCollidedVertically)
+			{
+				bool bCollidedHorizontally = false;
+				for (Entity* entity : sgGame->vEntities) //Check if it can move horizontally
+				{
+					if (!entity) continue;
+					if (entity == this || !entity->bCanCollide) continue;
+					if (entity == (Entity*)sgGame->plPlayer && !bCanCollideWithPlayer) continue;
+					if (entity->WillOverlap(this, fNewX, fY))
+					{
+						bCollidedHorizontally = true;
+						break;
+					}
+				}
+				if (bCollidedHorizontally)
+				{
+					fSpeedX = 0.0f;
+					fSpeedY = 0.0f;
+				}
+				else
+				{
+					fX = fNewX;
+					fSpeedY = 0.0f;
+				}
+			}
+			else
+			{
+				fSpeedX = 0.0f;
+				fY = fNewY;
+			}
+		}
+		else
 		{
 			fX = fNewX;
 			fY = fNewY;
 		}
-		else
-		{
-			fSpeedX = 0.0f;
-			fSpeedY = 0.0f;
-		}
+
 	}
 	else
 	{
@@ -108,9 +153,7 @@ void Entity::ChangeHealth(float fChange)
 	sgGame->vBackgroundObjects.push_back(new EntityHealthChangeText(this, fChange));
 	fHealth += fChange;
 	if (fHealth <= 0.0f)
-	{
 		fHealth = 0.0f; //When Destroy() is called on the player, it won't get deleted straight away
-	}
 }
 
 bool Entity::Overlapping(Entity* e)

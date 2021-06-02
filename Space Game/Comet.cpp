@@ -17,9 +17,10 @@ void Comet::Draw()
 	tCometTexture->Draw(nFrame, fX, fY);
 }
 
-void Comet::Update(double deltatime)
+bool Comet::Update(double deltatime)
 {
 	fX += fSpeedX * deltatime;
 	fY += fSpeedY * deltatime;
 	animation.Update(deltatime);
+	return true;
 }

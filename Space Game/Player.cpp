@@ -20,8 +20,8 @@ Player::Player(SpaceGame* game, float fX, float fY, Texture* tTexture, std::wstr
 	this->sName = sName;
 	fHealth = 200.0f;
 	fMaxHealth = 200.0f;
-	nEnergy = 100.0f;
-	nMaxEnergy = 100;
+	nEnergy = 150.0f;
+	nMaxEnergy = 150.0f;
 	fMoney = 0.0f;
 	fEnergyRechargeSpeed = 3.0f;
 	fMaxEnergyRechargeSpeed = 9.0f;

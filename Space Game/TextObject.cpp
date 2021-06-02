@@ -20,12 +20,13 @@ TextObject::TextObject(float fX, float fY, const std::wstring& strText)
 
 TextObject::TextObject() {}
 
-void TextObject::Update(double deltatime)
+bool TextObject::Update(double deltatime)
 {
 	fX += fSpeedX * deltatime;
 	fY += fSpeedY * deltatime;
 	fOpacity += fOpacityChangePerSecond * deltatime;
-	if (fOpacity < 0.0f) fOpacity = 0.0f;
+	if (fOpacity < 0.0f) return false;
+	return true;
 }
 
 void TextObject::Draw()
