@@ -39,6 +39,8 @@ public:
 	void Update(double deltatime) override;
 	void LeftClick() override;
 	void KeyDown(int key) override;
+	void Save();
+	void LoadFromFile();
 	SpaceGame() {};
 };
 

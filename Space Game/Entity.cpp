@@ -22,6 +22,8 @@ Entity::Entity(SpaceGame* sgGame, Texture* tTexture, float fX, float fY)
 	fWidth = tTexture->fTextureDrawnWidth;
 	bCanCollide = true;
 	bCanCollideWithPlayer = false;
+
+	nType = Type::None;
 }
 void Entity::Draw()
 {
@@ -183,4 +185,14 @@ bool Entity::WillOverlap(Entity* e, float fNewX, float fNewY)
 float Entity::Distance(Entity* entity)
 {
 	return distance(fX, fY, entity->fX, entity->fY);
+}
+
+void Entity::Save(std::fstream& f)
+{
+	f << (int)nType << " " << fX << " " << fY << " " << fSpeedX << " " << fSpeedY << " " << fHealth << " " << fMaxHealth << " ";
+}
+
+void Entity::Load(std::fstream& f)
+{
+	f >> fX >> fY >> fSpeedX >> fSpeedY >> fHealth >> fMaxHealth;
 }

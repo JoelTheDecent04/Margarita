@@ -14,10 +14,9 @@ int keyMoveRight2 = 0;
 int keyMoveDown1 = 'S';
 int keyMoveDown2 = 0;
 
-Player::Player(SpaceGame* game, float fX, float fY, Texture* tTexture, std::wstring sName)
-	: Entity(game, tTexture, fX, fY)
+Player::Player(SpaceGame* game, float fX, float fY)
+	: Entity(game, tCharacterTexture, fX, fY)
 {
-	this->sName = sName;
 	fHealth = 200.0f;
 	fMaxHealth = 200.0f;
 	nEnergy = 150.0f;
@@ -31,6 +30,8 @@ Player::Player(SpaceGame* game, float fX, float fY, Texture* tTexture, std::wstr
 	fMovementSpeed = 150.0f;
 	fMaxMovementSpeed = 190.0f;
 	puCurrentPowerup = nullptr;
+
+	nType = Type::Player;
 }
 
 bool Player::Update(double deltatime)
@@ -114,4 +115,16 @@ bool Player::Update(double deltatime)
 		nFrame = 0;
 
 	return true;
+}
+
+void Player::Save(std::fstream& f)
+{
+	Entity::Save(f);
+	f << fMoney << " " << nEnergy << " " << nMaxEnergy << " " << fEnergyRechargeSpeed << " " << fMaxEnergyRechargeSpeed << " " << fMaxHealthUpgrade << " " << fMovementSpeed << " " << fMaxMovementSpeed << " ";
+}
+
+void Player::Load(std::fstream& f)
+{
+	Entity::Load(f);
+	f >> fMoney >> nEnergy >> nMaxEnergy >> fEnergyRechargeSpeed >> fMaxEnergyRechargeSpeed >> fMaxHealthUpgrade >> fMovementSpeed >> fMaxMovementSpeed;
 }

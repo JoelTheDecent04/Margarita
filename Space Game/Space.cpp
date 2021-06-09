@@ -15,6 +15,7 @@
 #include <math.h>
 #include <random>
 #include <time.h>
+#include <fstream>
 
 float fBackgroundPosition = 0.0f;
 Texture* tCharacterTexture, * tOrbTexture, * tBackground, * tLaserTexture, * tLaserBeamTexture, * tEnemyTexture, * tBombTexture, * tCrabTexture;
@@ -54,7 +55,7 @@ void SpaceGame::Load()
 	tBombAnimationTexture = new Texture(L"bomb_animation.png", 1280, 720, 100.0f, 100.0f);
 	tEnergyPowerupTexture = new Texture(L"energy_powerup.png", 2415, 2415, 32.0f, 32.0f);
 
-	plPlayer = new Player(this, 384.0f, 384.0f, tCharacterTexture, L"Player");
+	plPlayer = new Player(this, 384.0f, 384.0f);
 	vEntities.push_back(plPlayer);
 
 	vItems.push_back(new LaserWeapon(LaserWeapon::Normal));
@@ -69,6 +70,8 @@ void SpaceGame::Load()
 	fSecondsUntilNextWave = 0.0f;
 	nEnemies = 0;
 	fSecondsUntilNextComet = 40 + random() * 40;
+
+	Game::sgSpaceGame = this;
 }
 void SpaceGame::Unload()
 {
@@ -293,6 +296,10 @@ void SpaceGame::KeyDown(int key)
 		bShowHitboxes = !bShowHitboxes;
 	if (key == VK_F2)
 		bShowDebugInfo = !bShowDebugInfo;
+	if (key == 'O')
+		Save();
+	if (key == 'L')
+		LoadFromFile();
 	for (int i = 0; i < 9; i++)
 	{
 		if (key == keyChangeWeapon1[i] || key == keyChangeWeapon2[i])
@@ -310,4 +317,86 @@ void SpaceGame::KeyDown(int key)
 		nCurrentItem--;
 		if (nCurrentItem < 0) nCurrentItem = vItems.size() - 1;
 	}
+}
+
+void SpaceGame::Save()
+{
+	std::fstream f;
+	f.open("savegame.txt", std::fstream::out);
+
+
+	for (Entity* entity : vEntities)
+		entity->Save(f);
+
+	f.close();
+}
+
+void SpaceGame::LoadFromFile()
+{
+	std::fstream f;
+	f.open("savegame.txt", std::fstream::in);
+
+	vEntities.clear(); //TODO free
+	while (f.peek() != EOF)
+	{
+		int t;
+		f >> t;
+		Entity::Type type = (Entity::Type)t;
+
+		switch (type)
+		{
+		case Entity::Type::None:
+			abort();
+			break;
+		case Entity::Type::Player:
+		{
+			Player* e = new Player(this, 0.0f, 0.0f);
+			e->Load(f);
+			vEntities.push_back(e);
+			plPlayer = e;
+			break;
+		}
+		case Entity::Type::Bomb:
+		{
+			Bomb* e = new Bomb(this, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+			e->Load(f);
+			vEntities.push_back(e);
+			break;
+		}
+		case Entity::Type::Crab:
+		{
+			Crab* e = new Crab(this, 0.0f);
+			e->Load(f);
+			vEntities.push_back(e);
+			break;
+		}
+		case Entity::Type::Enemy:
+		{
+			Enemy* e = new Enemy(this, 0.0f, 0.0f);
+			e->Load(f);
+			vEntities.push_back(e);
+			break;
+		}
+		case Entity::Type::Laser:
+		{
+			LaserBeam* e = new LaserBeam(this, nullptr, 0.0f, 0.0f, 0.0f, 0.0f);
+			e->Load(f);
+			vEntities.push_back(e);
+			break;
+		}
+		case Entity::Type::Orb:
+		{
+			Orb* e = new Orb(this, 0.0f, 0.0f, 0.0f, 0.0f);
+			e->Load(f);
+			vEntities.push_back(e);
+			break;
+		}
+		default:
+			abort();
+		}
+
+	}
+	plPlayer->Load(f);
+
+	f.close();
 }

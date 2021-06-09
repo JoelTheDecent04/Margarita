@@ -11,6 +11,8 @@ Bomb::Bomb(SpaceGame* game, float fX, float fY, float fSpeedX, float fSpeedY, in
 	bCanCollideWithPlayer = false;
 	fAge = 0.0f;
 	this->nLevel = nLevel;
+
+	nType = Type::Bomb;
 }
 
 bool Bomb::Collide(Entity* entity)
@@ -44,6 +46,18 @@ bool Bomb::Update(double deltatime)
 		return false;
 	}
 	return true;
+}
+
+void Bomb::Save(std::fstream& f)
+{
+	Entity::Save(f);
+	f << fAge << " " << nLevel << " ";
+}
+
+void Bomb::Load(std::fstream& f)
+{
+	Entity::Save(f);
+	f >> fAge >> nLevel;
 }
 
 BombWeapon::BombWeapon(int nLevel)

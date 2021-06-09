@@ -8,6 +8,8 @@ Orb::Orb(SpaceGame* game, float fX, float fY, float fSpeedX, float fSpeedY)
 	this->fSpeedX = fSpeedX;
 	this->fSpeedY = fSpeedY;
 	bCanCollideWithPlayer = false;
+
+	nType = Type::Orb;
 }
 
 bool Orb::Update(double deltatime)

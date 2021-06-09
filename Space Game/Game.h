@@ -12,14 +12,19 @@ public:
 	virtual void KeyDown(int key) {};
 };
 
+class SpaceGame;
+
 namespace Game {
 	void GameMain();
 	void LoadLevel(Level* lNewLevel, bool bUnloadPrevious = true, bool bLoadNext = true);
 	void LeftClick();
 	void KeyDown(int key);
 	void Resize();
+
+	extern SpaceGame* sgSpaceGame;
 }
 
 extern int32_t nScreenWidth, nScreenHeight;
 extern int32_t nRenderTargetWidth, nRenderTargetHeight;
 extern float fScaleH, fScaleV;
+

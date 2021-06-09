@@ -26,4 +26,6 @@ public:
 	bool Collide(Entity* entity) override;
 	bool Update(double deltatime) override;
 	void Draw() override;
+	void Save(std::fstream& f) override;
+	void Load(std::fstream& f) override;
 };

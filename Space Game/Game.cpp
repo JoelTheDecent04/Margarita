@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "Graphics.h"
 #include "TitleScreen.h"
+#include "Space.h"
 #include <stdint.h>
 #include <string.h>
 #include <queue>
@@ -15,13 +16,11 @@ int32_t nRenderTargetHeight;
 float fScaleH = (float)nScreenWidth / 1280;
 float fScaleV = (float)nScreenHeight / 720;
 
-
 namespace Game {
 	Level* lCurrentLevel = nullptr;
-	bool loading = false;
-	bool resize = false;
-	HANDLE hRenderThread = 0;
-	HANDLE hUpdateThread = 0;
+	SpaceGame* sgSpaceGame = nullptr;
+	static bool loading = false;
+	static bool resize = false;
 
 	int nClicks;
 	std::queue<int> qKeys;

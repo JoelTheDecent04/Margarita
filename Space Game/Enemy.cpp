@@ -23,6 +23,8 @@ Enemy::Enemy(SpaceGame* game, float fX, float fY)
 				break;
 			}
 	}
+
+	nType = Type::Enemy;
 }
 
 bool Enemy::Update(double deltatime)

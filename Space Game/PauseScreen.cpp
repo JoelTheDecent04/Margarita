@@ -25,9 +25,9 @@ void PauseScreen::Resume()
 
 void PauseScreen::ReturnToTitleScreen()
 {
-	Level* prev = lPrevLevel;
+	/*Level* prev = lPrevLevel;
 	lPrevLevel = nullptr;
-	prev->Unload();
+	prev->Unload();*/
 	Game::LoadLevel(new TitleScreen());
 }
 

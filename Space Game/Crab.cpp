@@ -23,6 +23,8 @@ Crab::Crab(SpaceGame* game, float fX)
 				break;
 			}
 	}
+
+	nType = Type::Crab;
 }
 bool Crab::Update(double deltatime)
 {

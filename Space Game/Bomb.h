@@ -11,6 +11,8 @@ public:
 	bool Collide(Entity* entity) override;
 	void Explode();
 	bool Update(double deltatime) override;
+	void Save(std::fstream& f) override;
+	void Load(std::fstream& f) override;
 };
 
 class BombWeapon : public Weapon

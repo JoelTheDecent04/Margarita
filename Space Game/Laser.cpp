@@ -30,6 +30,8 @@ LaserBeam::LaserBeam(SpaceGame* game, LaserWeapon* weapon, float fX, float fY, f
 	fAngle = atan(fGradient) * 180 / 3.1415926f;
 	if (fSpeedX < 0.0f)
 		fAngle += 180.0f;
+
+	nType = Type::Laser;
 }
 
 bool LaserBeam::Collide(Entity* entity)
@@ -42,6 +44,18 @@ bool LaserBeam::Collide(Entity* entity)
 void LaserBeam::Draw()
 {
 	tTexture->Draw(nFrame, (fX - fBackgroundPosition - (tTexture->fTextureDrawnWidth / 2)), fY - tTexture->fTextureDrawnHeight / 2, false, fAngle);
+}
+
+void LaserBeam::Save(std::fstream& f)
+{
+	Entity::Save(f);
+	f << fAngle << " ";
+}
+
+void LaserBeam::Load(std::fstream& f)
+{
+	Entity::Load(f);
+	f >> fAngle;
 }
 
 bool LaserBeam::Update(double deltatime)
