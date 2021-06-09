@@ -4,6 +4,8 @@
 #include <d2d1_1.h>
 #include <cassert>
 #include <dwrite.h>
+#include <wrl/client.h>
+#include <mutex>
 
 namespace Graphics {
 	extern D2D1::ColorF clrWhite;
@@ -19,7 +21,7 @@ namespace Graphics {
 	void FillRectangle(float fX, float fY, float fW, float fH, D2D1::ColorF& cColour, float fOpacity = 1.0f);
 	void Resize();
 
-	extern ID2D1HwndRenderTarget* iRenderTarget;
-	extern ID2D1DeviceContext* iDeviceContext;
+	extern Microsoft::WRL::ComPtr<ID2D1DeviceContext> m_d2dContext;
 	extern HWND hWindow;	
+	extern std::mutex mGraphics;
 }

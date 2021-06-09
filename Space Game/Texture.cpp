@@ -5,7 +5,7 @@
 
 Texture::Texture(const wchar_t* filename)
 {
-	int n = Graphics::iRenderTarget->GetMaximumBitmapSize();
+	int n = Graphics::m_d2dContext->GetMaximumBitmapSize();
 
 	iBitmap = nullptr;
 
@@ -37,7 +37,7 @@ Texture::Texture(const wchar_t* filename)
 	hr = iWicConverter->Initialize(iWicFrame, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.0, WICBitmapPaletteTypeCustom);
 	assert(SUCCEEDED(hr));
 
-	hr = Graphics::iRenderTarget->CreateBitmapFromWicBitmap(iWicConverter, NULL, &iBitmap);
+	hr = Graphics::m_d2dContext->CreateBitmapFromWicBitmap(iWicConverter, NULL, &iBitmap);
 	assert(SUCCEEDED(hr));
 
 	if (iWicFactory) iWicFactory->Release();
@@ -68,11 +68,11 @@ Texture::~Texture()
 
 void Texture::Draw()
 {
-	Graphics::iRenderTarget->DrawBitmap(
+	Graphics::m_d2dContext->DrawBitmap(
 		iBitmap,
 		D2D1::RectF(0.0f, 0.0f, iBitmap->GetSize().width, iBitmap->GetSize().height),
 		1.0f,
-		D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
+		D2D1_INTERPOLATION_MODE_CUBIC,
 		D2D1::RectF(0.0f, 0.0f, iBitmap->GetSize().width, iBitmap->GetSize().height)
 	);
 }
@@ -101,12 +101,12 @@ void Texture::Draw(int index, float x, float y, bool bRealCoordinates, float fAn
 
 	if (fAngle != 0.0f)
 	{
-		Graphics::iRenderTarget->SetTransform(D2D1::Matrix3x2F::Rotation(fAngle, D2D1::Point2F(fScaleH * (x + fTextureDrawnWidth / 2), fScaleV * (y + fTextureDrawnHeight / 2))));
-		Graphics::iRenderTarget->DrawBitmap(iBitmap, rDest, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, rSrc); //Display bitmap
-		Graphics::iRenderTarget->SetTransform(D2D1::Matrix3x2F::Identity());
+		Graphics::m_d2dContext->SetTransform(D2D1::Matrix3x2F::Rotation(fAngle, D2D1::Point2F(fScaleH * (x + fTextureDrawnWidth / 2), fScaleV * (y + fTextureDrawnHeight / 2))));
+		Graphics::m_d2dContext->DrawBitmap(iBitmap, rDest, 1.0f, D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC, rSrc); //Display bitmap
+		Graphics::m_d2dContext->SetTransform(D2D1::Matrix3x2F::Identity());
 	}
 	else
-		Graphics::iRenderTarget->DrawBitmap(iBitmap, rDest, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, rSrc); //Display bitmap
+		Graphics::m_d2dContext->DrawBitmap(iBitmap, rDest, 1.0f, D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC, rSrc); //Display bitmap
 }
 void Texture::DrawPanorama(float x)
 {
@@ -117,5 +117,5 @@ void Texture::DrawPanorama(float x)
 	D2D_RECT_F rSrc = D2D1::RectF(fBitmapScale * x, 0.0f, fBitmapScale * (x + 1280), iBitmap->GetSize().height); //Get source coordinates
 	D2D_RECT_F rDest = D2D1::RectF(rClientRect.left, rClientRect.top, rClientRect.right, rClientRect.bottom); //Get destination coordinates
 
-	Graphics::iRenderTarget->DrawBitmap(iBitmap, rDest, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, rSrc);//Display bitmap
+	Graphics::m_d2dContext->DrawBitmap(iBitmap, rDest, 1.0f, D2D1_INTERPOLATION_MODE_CUBIC, rSrc);//Display bitmap
 }

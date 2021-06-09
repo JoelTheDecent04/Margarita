@@ -1,76 +1,206 @@
 #include <Windows.h>
-#include <d2d1.h>
 #include <d2d1_1.h>
+#include <d3d11.h>
+#include <dxgi1_2.h>
 #include <cassert>
 #include <dwrite.h>
+#include <wrl/client.h>
+#include <mutex>
 #include "Game.h"
+
+using namespace Microsoft::WRL;
 
 namespace Graphics {
 
-	static ID2D1Factory1* iFactory;
-	ID2D1HwndRenderTarget* iRenderTarget;
-	static IDWriteFactory* iWriteFactory;
-	static ID2D1SolidColorBrush* iSolidColourBrush;
-	ID2D1DeviceContext* iDeviceContext;
-	ID2D1Bitmap1* iTargetBitmap;
+	inline void ThrowIfFailed(HRESULT hr)
+	{
+		if (FAILED(hr))
+		{
+			// Set a breakpoint on this line to catch Win32 API errors.
+			ExitProcess(0);
+		}
+	}
 
-	//static IDWriteTextFormat* iTextFormat;
+	ComPtr<ID2D1Factory1> m_d2dFactory;
+	D3D_FEATURE_LEVEL m_featureLevel;
+	ComPtr<ID2D1Device> m_d2dDevice;
+	ComPtr<ID2D1DeviceContext> m_d2dContext;
+
+	ComPtr<IDXGISwapChain1> m_swapChain;
+	ComPtr<ID2D1Bitmap1> m_d2dTargetBitmap;
+
+	static ComPtr<IDWriteFactory> iWriteFactory;
+	static ComPtr<ID2D1SolidColorBrush> iSolidColourBrush;
+
+	std::mutex mGraphics;
+
+	bool init = false;
+
+	ComPtr<ID3D11Device> device;
+	ComPtr<ID3D11DeviceContext> context;
+
 	HWND hWindow;
 
 	D2D1::ColorF clrWhite = D2D1::ColorF(1.0f, 1.0f, 1.0f);
 
 	bool Initialise(HWND window)
 	{
+		mGraphics.lock();
 		hWindow = window;
-		HRESULT hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_MULTI_THREADED, __uuidof(ID2D1Factory1), nullptr, (void**)&iFactory); //D2D1CreateFactory(D2D1_FACTORY_TYPE_MULTI_THREADED, &iFactory); //Single threaded direct2d factory
-		assert(SUCCEEDED(hr));
-		if (FAILED(hr)) return false;
 
-		RECT rClientRect;
-		GetClientRect(window, &rClientRect); //Get window area
+		D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof(ID2D1Factory1), (void**)&m_d2dFactory);
 
-		hr = iFactory->CreateHwndRenderTarget(
-			D2D1::RenderTargetProperties(), //Default properties
-			D2D1::HwndRenderTargetProperties(window, D2D1::SizeU(rClientRect.right, rClientRect.bottom)),
-			&iRenderTarget);
-		assert(SUCCEEDED(hr));
-		if (FAILED(hr)) return 0;
+		UINT creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 
-		hr = iRenderTarget->CreateSolidColorBrush(D2D1::ColorF(0.0f, 0.0f, 0.0f), &iSolidColourBrush);
-		assert(SUCCEEDED(hr));
+		D3D_FEATURE_LEVEL featureLevels[] =
+		{
+			D3D_FEATURE_LEVEL_11_1,
+			D3D_FEATURE_LEVEL_11_0,
+			D3D_FEATURE_LEVEL_10_1,
+			D3D_FEATURE_LEVEL_10_0,
+			D3D_FEATURE_LEVEL_9_3,
+			D3D_FEATURE_LEVEL_9_2,
+			D3D_FEATURE_LEVEL_9_1
+		};
 
-		hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), (IUnknown**)&iWriteFactory);
-		assert(SUCCEEDED(hr));
-		if (FAILED(hr)) return 0;
+		ThrowIfFailed(
+			D3D11CreateDevice(
+				nullptr,                    // specify null to use the default adapter
+				D3D_DRIVER_TYPE_HARDWARE,
+				0,
+				creationFlags,              // optionally set debug and Direct2D compatibility flags
+				featureLevels,              // list of feature levels this app can support
+				ARRAYSIZE(featureLevels),   // number of possible feature levels
+				D3D11_SDK_VERSION,
+				&device,                    // returns the Direct3D device created
+				&m_featureLevel,            // returns feature level of device created
+				&context                    // returns the device immediate context
+			)
+		);
 
-		D2D1_ANTIALIAS_MODE mode = iRenderTarget->GetAntialiasMode();
+		ComPtr<IDXGIDevice> dxgiDevice;
 
-		nRenderTargetWidth = rClientRect.right;
-		nRenderTargetHeight = rClientRect.bottom;
+		ThrowIfFailed(
+			device.As(&dxgiDevice)
+		);
+
+		ThrowIfFailed(m_d2dFactory->CreateDevice(dxgiDevice.Get(), &m_d2dDevice));
+
+		ThrowIfFailed(
+			m_d2dDevice->CreateDeviceContext(
+				D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
+				&m_d2dContext
+			)
+		);
+
+		DXGI_SWAP_CHAIN_DESC1 swapChainDesc = { 0 };
+		swapChainDesc.Width = 0;                           // use automatic sizing
+		swapChainDesc.Height = 0;
+		swapChainDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM; // this is the most common swapchain format
+		swapChainDesc.Stereo = false;
+		swapChainDesc.SampleDesc.Count = 1;                // don't use multi-sampling
+		swapChainDesc.SampleDesc.Quality = 0;
+		swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+		swapChainDesc.BufferCount = 2;                     // use double buffering to enable flip
+		swapChainDesc.Scaling = DXGI_SCALING_NONE;
+		swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL; // all apps must use this SwapEffect
+		swapChainDesc.Flags = 0;
+
+		ComPtr<IDXGIAdapter> dxgiAdapter;
+		ThrowIfFailed(
+			dxgiDevice->GetAdapter(&dxgiAdapter)
+		);
+
+		// Get the factory object that created the DXGI device.
+		ComPtr<IDXGIFactory2> dxgiFactory;
+
+		ThrowIfFailed(
+			dxgiAdapter->GetParent(IID_PPV_ARGS(&dxgiFactory))
+		);
+
+		// Get the final swap chain for this window from the DXGI factory.
+		ThrowIfFailed(
+			dxgiFactory->CreateSwapChainForHwnd(
+				device.Get(),
+				hWindow,
+				&swapChainDesc,
+				nullptr,
+				nullptr,
+				&m_swapChain
+			)
+		);
+
+		// Get the backbuffer for this window which is be the final 3D render target.
+		ComPtr<ID3D11Texture2D> backBuffer;
+
+		ThrowIfFailed(
+			m_swapChain->GetBuffer(0, IID_PPV_ARGS(&backBuffer))
+		);
+
+		FLOAT m_dpi = GetDpiForWindow(hWindow);
+
+		// Now we set up the Direct2D render target bitmap linked to the swapchain. 
+		// Whenever we render to this bitmap, it is directly rendered to the 
+		// swap chain associated with the window.
+		D2D1_BITMAP_PROPERTIES1 bitmapProperties =
+			D2D1::BitmapProperties1(
+				D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
+				D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE),
+				m_dpi,
+				m_dpi
+			);
+
+		// Direct2D needs the dxgi version of the backbuffer surface pointer.
+
+		ComPtr<IDXGISurface> dxgiBackBuffer;
+
+		ThrowIfFailed(
+			m_swapChain->GetBuffer(0, IID_PPV_ARGS(&dxgiBackBuffer))
+		);
+
+		// Get a D2D surface from the DXGI back buffer to use as the D2D render target.
+		ThrowIfFailed(
+			m_d2dContext->CreateBitmapFromDxgiSurface(
+				dxgiBackBuffer.Get(),
+				&bitmapProperties,
+				&m_d2dTargetBitmap
+			)
+		);
+
+		// Now we can set the Direct2D render target.
+		m_d2dContext->SetTarget(m_d2dTargetBitmap.Get());
+
+		m_d2dContext->CreateSolidColorBrush(D2D1::ColorF(0.0f, 0.0f, 0.0f), &iSolidColourBrush);
+
+		DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), (IUnknown**)&iWriteFactory);
+
+		init = true;
+		mGraphics.unlock();
 
 		return true;
 	}
 
 	void Close()
 	{
-		if (iFactory) iFactory->Release();
-		if (iRenderTarget) iRenderTarget->Release();
-		if (iWriteFactory) iWriteFactory->Release();
+		//TODO cleanup
 	}
 
 	void BeginDraw()
 	{
-		iRenderTarget->BeginDraw();
+		mGraphics.lock();
+		m_d2dContext->BeginDraw();
 	}
 
 	void EndDraw()
 	{
-		iRenderTarget->EndDraw();
+		m_d2dContext->EndDraw();
+		m_swapChain->Present(1, 0);
+		mGraphics.unlock();
 	}
 
 	void Clear(D2D1_COLOR_F& colour)
 	{
-		iRenderTarget->Clear(colour);
+		m_d2dContext->Clear(colour);
 	}
 
 	void WriteText(const wchar_t* text, int x, int y, float size, const D2D1::ColorF& clrColour, float fOpacity)
@@ -87,7 +217,7 @@ namespace Graphics {
 		RECT rClientRect;
 		GetClientRect(hWindow, &rClientRect);
 
-		iRenderTarget->DrawTextW(text, lstrlenW(text), iTextFormat, D2D1::RectF( x,  y,  rClientRect.right,  rClientRect.bottom), iSolidColourBrush);
+		m_d2dContext->DrawTextW(text, lstrlenW(text), iTextFormat, D2D1::RectF( x,  y,  rClientRect.right,  rClientRect.bottom), iSolidColourBrush.Get());
 		iSolidColourBrush->SetOpacity(fOpacity);
 		iTextFormat->Release();
 	}
@@ -120,7 +250,7 @@ namespace Graphics {
 		iSolidColourBrush->SetColor(cColour);
 		iSolidColourBrush->SetOpacity(fOpacity);
 		D2D1_RECT_F rRect = D2D1::RectF( fX,  fY,  (fX + fW),  (fY + fH));
-		iRenderTarget->DrawRectangle(rRect, iSolidColourBrush);
+		m_d2dContext->DrawRectangle(rRect, iSolidColourBrush.Get());
 		iSolidColourBrush->SetOpacity(1.0f);
 	}
 
@@ -129,24 +259,52 @@ namespace Graphics {
 		iSolidColourBrush->SetColor(cColour);
 		iSolidColourBrush->SetOpacity(fOpacity);
 		D2D1_RECT_F rRect = D2D1::RectF( fX,  fY,  (fX + fW),  (fY + fH));
-		iRenderTarget->FillRectangle(rRect, iSolidColourBrush);
+		m_d2dContext->FillRectangle(rRect, iSolidColourBrush.Get());
 		iSolidColourBrush->SetOpacity(1.0f);
 	}
 
 	void Resize()
 	{
-		if (iRenderTarget)
+		if (init)
 		{
 			RECT rcClientRect;
 			GetClientRect(hWindow, &rcClientRect);
-			D2D1_SIZE_U size = D2D1::SizeU(rcClientRect.right, rcClientRect.bottom);
-			HRESULT hr = iRenderTarget->Resize(size);
 			nScreenWidth = rcClientRect.right;
 			nScreenHeight = rcClientRect.bottom;
-			nRenderTargetWidth = rcClientRect.right;
-			nRenderTargetHeight = rcClientRect.bottom;
+
+			m_d2dTargetBitmap.Reset();
+			m_d2dContext.Reset();
+
+			context->ClearState();
+			HRESULT hr = m_swapChain->ResizeBuffers(0, nScreenWidth, nScreenHeight, DXGI_FORMAT_UNKNOWN, 0);
+
+			m_d2dDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &m_d2dContext);
+
+			ComPtr<IDXGISurface> dxgiBackBuffer;
+			hr = m_swapChain->GetBuffer(0, IID_PPV_ARGS(&dxgiBackBuffer));
+
+			float m_dpi = GetDpiForWindow(hWindow);
+
+			D2D1_BITMAP_PROPERTIES1 bitmapProperties =
+				D2D1::BitmapProperties1(
+					D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
+					D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE),
+					m_dpi,
+					m_dpi
+				);
+
+			ComPtr<ID3D11Texture2D> backBuffer;
+
+			m_d2dContext->CreateBitmapFromDxgiSurface(dxgiBackBuffer.Get(), bitmapProperties, &m_d2dTargetBitmap);
+
+			m_d2dContext->SetTarget(m_d2dTargetBitmap.Get());
+
+			dxgiBackBuffer->Release();
+
 			fScaleV = (float)nScreenHeight / 720.0f;
 			fScaleH = (float)nScreenWidth / 1280.0f;
+
+			//InvalidateRect(Graphics::hWindow, NULL, true);
 		}
 	}
 

@@ -54,7 +54,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	switch (message)
 	{
 	case WM_DESTROY:
-		PostQuitMessage(0);
+		ExitProcess(0);
 		return 0;
 	case WM_LBUTTONDOWN:
 		Game::LeftClick();
@@ -65,8 +65,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		return 0;
 	case WM_SIZE:
 	{
+		//Game::Resize();
+		Graphics::mGraphics.lock();
+		Graphics::Resize();
+		Graphics::mGraphics.unlock();
 		nScreenWidth = LOWORD(lParam);
 		nScreenHeight = HIWORD(lParam);
+		InvalidateRect(Graphics::hWindow, NULL, true);
 		return 0;
 	}
 	case WM_MOUSEWHEEL:

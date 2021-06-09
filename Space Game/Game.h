@@ -17,6 +17,7 @@ namespace Game {
 	void LoadLevel(Level* lNewLevel, bool bUnloadPrevious = true, bool bLoadNext = true);
 	void LeftClick();
 	void KeyDown(int key);
+	void Resize();
 }
 
 extern int32_t nScreenWidth, nScreenHeight;

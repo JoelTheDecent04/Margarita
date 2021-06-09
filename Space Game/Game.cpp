@@ -19,6 +19,7 @@ float fScaleV = (float)nScreenHeight / 720;
 namespace Game {
 	Level* lCurrentLevel = nullptr;
 	bool loading = false;
+	bool resize = false;
 	HANDLE hRenderThread = 0;
 	HANDLE hUpdateThread = 0;
 
@@ -56,6 +57,11 @@ namespace Game {
 					lCurrentLevel->KeyDown(key);
 				}
 				m_qKeys.unlock();
+				if (resize)
+				{
+					resize = false;
+					Graphics::Resize();
+				}
 				
 				uint64_t nCurrentTime;
 				QueryPerformanceCounter((LARGE_INTEGER*)&nCurrentTime);
@@ -64,8 +70,6 @@ namespace Game {
 
 				lCurrentLevel->Update(dDeltaTime);
 
-				if (nRenderTargetHeight != nScreenHeight || nRenderTargetWidth != nScreenWidth)
-					Graphics::Resize();
 				Graphics::BeginDraw();
 				lCurrentLevel->Render();
 				Graphics::EndDraw();
@@ -115,5 +119,10 @@ namespace Game {
 		m_qKeys.lock();
 		qKeys.push(key);
 		m_qKeys.unlock();
+	}
+
+	void Resize()
+	{
+		resize = true;
 	}
 }
