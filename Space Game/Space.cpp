@@ -55,15 +55,10 @@ void SpaceGame::Load()
 	tEnergyPowerupTexture = new Texture(L"energy_powerup.png", 2415, 2415, 32.0f, 32.0f);
 
 	plPlayer = new Player(this, 384.0f, 384.0f, tCharacterTexture, L"Player");
-	OutputDebugString(L"SpaceGame::Load locking\n");
-	m_r_vEntities.lock(); m_u_vEntities.lock(); m_w_vEntities.lock();
 	vEntities.push_back(plPlayer);
-	m_r_vEntities.unlock(); m_u_vEntities.unlock(); m_w_vEntities.unlock();
 
-	m_vItems.lock();
 	vItems.push_back(new LaserWeapon(LaserWeapon::Normal));
 	vItems.push_back(new OrbWeapon());
-	m_vItems.unlock();
 
 	nCurrentItem = 0;
 
@@ -91,18 +86,14 @@ void SpaceGame::Unload()
 	delete tBombAnimationTexture;
 
 	OutputDebugString(L"SpaceGame::Unload locking\n");
-	m_r_vEntities.lock(); m_u_vEntities.lock(); m_w_vEntities.lock();
 	for (Entity* entity : vEntities)
 		delete entity;
-	m_r_vEntities.unlock(); m_u_vEntities.unlock(); m_w_vEntities.unlock();
 
-	m_vItems.lock();
 	for (Item* item : vItems)
-		if (item) delete item;
-	m_vItems.unlock();
+		delete item;
 
 	for (BackgroundObject* BackgroundObject : vBackgroundObjects)
-		if (BackgroundObject) delete BackgroundObject;
+		delete BackgroundObject;
 }
 void SpaceGame::Render()
 {
@@ -114,10 +105,9 @@ void SpaceGame::Render()
 
 	tBackground->DrawPanorama(fBackgroundPosition);
 
-	m_r_vEntities.lock();
 	for (Entity* entity : vEntities)
-		entity->Draw();
-	m_r_vEntities.unlock();
+		if (entity)
+			entity->Draw();
 
 	tForegroundTexture->Draw(0, -fBackgroundPosition - 65.0f, 475.0f);
 
@@ -143,10 +133,8 @@ void SpaceGame::Render()
 	Graphics::WriteText(L"Items", 5, nScreenHeight - 4 - 32 - 4 - 14, 14);
 
 	int nItem = 0;
-	m_vItems.lock();
 	for (Item* item : vItems)
 	{
-
 		item->tTexture->Draw(0, 4 + nItem * 32, nScreenHeight - 4 - 32, true);
 		Graphics::DrawRectangle(4 + nItem * 32, nScreenHeight - 4 - 32, 32, 32, nItem == nCurrentItem ? clrWhite : clrDarkGrey);
 		if (item->nCount > 1)
@@ -157,7 +145,6 @@ void SpaceGame::Render()
 		}
 		nItem++;
 	}
-	m_vItems.unlock();
 
 	wchar_t txtMoney[64];
 	swprintf_s(txtMoney, 64, L"$%d", (int)plPlayer->fMoney);
@@ -180,33 +167,25 @@ void SpaceGame::Render()
 	}
 }
 void SpaceGame::Update(double deltatime)
-{
-	if (deltatime > 0.01)
-		OutputDebugString(L"Long deltatime\n");
-
+{	 
 	fPhysicsUpdatesPerSeconds = 1.0 / deltatime;
 
-	m_u_vEntities.lock();
 	for (int i = 0; i < vEntities.size(); i++) //Entity updates //TODO optimise
 	{
 		Entity* entity = vEntities[i];
 		bool bEntityExists = entity->Update(deltatime);
 		if (!bEntityExists)
 		{
-			OutputDebugString(L"SpaceGame::Update locking 1\n");
-			m_r_vEntities.lock(); m_w_vEntities.lock();
-			delete entity;
 			vEntities.erase(vEntities.begin() + i);
-			m_r_vEntities.unlock(); m_w_vEntities.unlock();
+			delete entity;
+			i--;
 		}
 		if (!bGameRunning) //Game could end after any entity update
 		{
 			Game::LoadLevel(new DeathScreen());
-			m_u_vEntities.unlock();
 			return;
 		}
 	}
-	m_u_vEntities.unlock();
 
 	for (BackgroundObject*& backgroundobjects : vBackgroundObjects) //Object updates
 	{
@@ -230,10 +209,7 @@ void SpaceGame::Update(double deltatime)
 					delete enemy;
 				else
 				{
-					OutputDebugString(L"SpaceGame::Update locking 2\n");
-					m_r_vEntities.lock(); m_w_vEntities.lock();
 					vEntities.push_back(enemy);
-					m_r_vEntities.unlock(); m_w_vEntities.unlock();
 					nEnemies++;
 				}
 			}
@@ -244,10 +220,7 @@ void SpaceGame::Update(double deltatime)
 					delete crab;
 				else
 				{
-					OutputDebugString(L"SpaceGame::Update locking 3\n");
-					m_r_vEntities.lock(); m_w_vEntities.lock();
 					vEntities.push_back(crab);
-					m_r_vEntities.unlock(); m_w_vEntities.unlock();
 					nEnemies++;
 				}
 			}
@@ -291,7 +264,6 @@ void SpaceGame::LeftClick()
 	float fAngle = atan(fGradient);
 	if (pntCursorPosition.x < plPlayer->fX) fAngle += 3.1415926f;
 	
-	m_vItems.lock();
 	vItems[nCurrentItem]->Use(this, plPlayer->fX, plPlayer->fY, fAngle);
 	if (vItems[nCurrentItem]->nCount == 0)
 	{
@@ -299,7 +271,6 @@ void SpaceGame::LeftClick()
 		if (nCurrentItem >= vItems.size())
 			nCurrentItem = vItems.size() - 1;
 	}
-	m_vItems.unlock();
 
 }
 

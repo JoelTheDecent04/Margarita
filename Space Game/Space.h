@@ -2,9 +2,7 @@
 #include "Game.h"
 #include "Texture.h"
 #include "BackgroundObject.h"
-#include <concurrent_vector.h>
 #include <vector>
-#include <mutex>
 #include <memory>
 
 class Item;
@@ -15,17 +13,13 @@ class SpaceGame : public Level
 {	
 public:
 	std::vector<Entity*> vEntities;
-	std::recursive_mutex m_r_vEntities; //Mutex for render thread
-	std::recursive_mutex m_u_vEntities; //Mutex for update thread
-	std::recursive_mutex m_w_vEntities; //Mutex for window thread
 
 	int nCurrentItem;
 	std::vector<Item*> vItems;
-	std::mutex m_vItems;
 
 	Player* plPlayer;
 
-	concurrency::concurrent_vector<BackgroundObject*> vBackgroundObjects;
+	std::vector<BackgroundObject*> vBackgroundObjects;
 	
 	float fFps;
 	bool bGameRunning;

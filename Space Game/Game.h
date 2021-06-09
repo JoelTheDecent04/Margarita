@@ -13,9 +13,8 @@ public:
 };
 
 namespace Game {
+	void GameMain();
 	void LoadLevel(Level* lNewLevel, bool bUnloadPrevious = true, bool bLoadNext = true);
-	void Render();
-	void Update(double dDeltaTime);
 	void LeftClick();
 	void KeyDown(int key);
 }

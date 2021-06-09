@@ -96,9 +96,7 @@ void ShopScreen::Update(double deltatime)
 	vButtons[2].bClickable = (lGameLevel->plPlayer->fMoney >= 150.0f);
 	vButtons[3].bClickable = (lGameLevel->plPlayer->fMoney >= 50.0f);
 	vButtons[4].bClickable = (lGameLevel->plPlayer->fMoney >= 200.0f);
-	lGameLevel->m_vItems.lock();
 	vButtons[5].bClickable = (lGameLevel->plPlayer->fMoney >= 400.0f && ((LaserWeapon*)lGameLevel->vItems[0])->nLaserLevel != LaserWeapon::DoubleShot);
-	lGameLevel->m_vItems.unlock();
 	vButtons[6].bClickable = (lGameLevel->plPlayer->fMoney >= 500.0f);
 }
 
@@ -146,27 +144,22 @@ void ShopScreen::BuyEnergyPowerup()
 	if (lGameLevel->plPlayer->fMoney >= 200.0f)
 	{
 		lGameLevel->plPlayer->fMoney -= 200.0f;
-		lGameLevel->m_vItems.lock();
 		lGameLevel->vItems.push_back(new EnergyPowerupItem());
-		lGameLevel->m_vItems.unlock();
 	}
 }
 
 void ShopScreen::BuyLaserUpgrade()
 {
-	lGameLevel->m_vItems.lock();
 	if (lGameLevel->plPlayer->fMoney >= 400.0f && ((LaserWeapon*)lGameLevel->vItems[0])->nLaserLevel != LaserWeapon::DoubleShot)
 	{
 		lGameLevel->plPlayer->fMoney -= 400.0f;
 		delete lGameLevel->vItems[0];
 		lGameLevel->vItems[0] = new LaserWeapon(LaserWeapon::DoubleShot);
 	}
-	lGameLevel->m_vItems.unlock();
 }
 
 void ShopScreen::BuyBombUpgrade()
 {
-	lGameLevel->m_vItems.lock();
 	if (lGameLevel->plPlayer->fMoney >= 500.0f)
 	{
 		lGameLevel->plPlayer->fMoney -= 500.0f;
@@ -174,7 +167,6 @@ void ShopScreen::BuyBombUpgrade()
 		delete lGameLevel->vItems[2];
 		lGameLevel->vItems[2] = new BombWeapon(++nOldLevel);
 	}
-	lGameLevel->m_vItems.unlock();
 }
 
 void ShopScreen::KeyDown(int key)

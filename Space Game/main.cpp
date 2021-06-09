@@ -4,6 +4,7 @@
 #include "Game.h"
 #include "Space.h"
 #include "TitleScreen.h"
+#include "Utilities.h"
 
 const wchar_t* ClassName = L"WindowClass";
 
@@ -33,7 +34,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR lpCmdLine, int nCmdSh
 	MSG msg;
 
 	Graphics::Initialise(hwnd);
-	Game::LoadLevel(new TitleScreen());
+	CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)Game::GameMain, nullptr, 0, nullptr);
 
 	while (1)
 	{

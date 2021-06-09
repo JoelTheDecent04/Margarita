@@ -53,7 +53,6 @@ bool LaserBeam::Update(double deltatime)
 	float fNewY = fY + fSpeedY * deltatime;
 
 	bool bCollided = false;
-	sgGame->m_u_vEntities.lock(); //In update thread
 	for (Entity* entity : sgGame->vEntities) //Check for collisions
 	{
 		if (!entity) continue;
@@ -62,11 +61,9 @@ bool LaserBeam::Update(double deltatime)
 		if (entity->WillOverlap(this, fBulletX, fBulletY))
 		{
 			bCollided = true;
-			sgGame->m_u_vEntities.unlock(); //In update thread
 			return Collide(entity);
 		}
 	}
-	sgGame->m_u_vEntities.unlock(); //In update thread
 	if (!bCollided)
 	{
 		fX = fNewX;
@@ -101,10 +98,7 @@ bool LaserBeam::Update(double deltatime)
 			lbNextShot->fX = sgGame->plPlayer->fX;
 			lbNextShot->fY = sgGame->plPlayer->fY;
 
-			OutputDebugString(L"LaserBeam::Update locking\n");
-			sgGame->m_r_vEntities.lock(); sgGame->m_u_vEntities.lock(); sgGame->m_w_vEntities.lock(); //In update thread. Adding to vector
 			sgGame->vEntities.push_back(lbNextShot);
-			sgGame->m_r_vEntities.unlock(); sgGame->m_u_vEntities.unlock(); sgGame->m_w_vEntities.unlock();
 			bFireSecond = false;
 		}
 	}
@@ -126,10 +120,7 @@ void LaserWeapon::Use(SpaceGame* game, float fX, float fY, float fAngle)
 	case Normal:
 		if (game->plPlayer->nEnergy >= 4)
 		{
-			OutputDebugString(L"LaserWeapon::Use locking 1\n");
-			game->m_r_vEntities.lock(); game->m_u_vEntities.lock(); game->m_w_vEntities.lock(); //In window thread. Adding to vector
 			game->vEntities.push_back(new LaserBeam(game, this, fX, fY, 1000.0f * cos(fAngle), 1000.0f * sin(fAngle)));
-			game->m_r_vEntities.unlock(); game->m_u_vEntities.unlock(); game->m_w_vEntities.unlock();
 
 			game->plPlayer->nEnergy -= 4;
 		}
@@ -137,10 +128,7 @@ void LaserWeapon::Use(SpaceGame* game, float fX, float fY, float fAngle)
 	case DoubleShot:
 		if (game->plPlayer->nEnergy >= 6)
 		{
-			OutputDebugString(L"LaserWeapon::Use locking 2\n");
-			game->m_r_vEntities.lock(); game->m_u_vEntities.lock(); game->m_w_vEntities.lock(); //In window thread. Adding to vector
 			game->vEntities.push_back(new LaserBeam(game, this, fX, fY, 1000.0f * cos(fAngle), 1000.0f * sin(fAngle)));
-			game->m_r_vEntities.unlock(); game->m_u_vEntities.unlock(); game->m_w_vEntities.unlock(); //In window thread. Adding to vector
 			game->plPlayer->nEnergy -= 6;
 		}
 		break;

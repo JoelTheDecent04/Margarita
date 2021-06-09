@@ -1,7 +1,10 @@
 #include "Game.h"
 #include "Graphics.h"
+#include "TitleScreen.h"
 #include <stdint.h>
 #include <string.h>
+#include <queue>
+#include <mutex>
 
 int32_t nScreenWidth = 1600;
 int32_t nScreenHeight = 900;
@@ -19,8 +22,56 @@ namespace Game {
 	HANDLE hRenderThread = 0;
 	HANDLE hUpdateThread = 0;
 
-	static void UpdateThread();
-	static void RenderThread();
+	int nClicks;
+	std::queue<int> qKeys;
+	std::mutex m_qKeys;
+
+	void GameMain()
+	{
+		CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+
+		LoadLevel(new TitleScreen());
+
+		uint64_t nPerformanceFrequency;
+		QueryPerformanceFrequency((LARGE_INTEGER*)&nPerformanceFrequency);
+		double dSecondsPerCount = 1.0 / (double)nPerformanceFrequency;
+
+		uint64_t nStartTime;
+		QueryPerformanceCounter((LARGE_INTEGER*)&nStartTime);
+
+		while (1)
+		{
+			if (!loading)
+			{
+				while (nClicks > 0)
+				{
+					lCurrentLevel->LeftClick();
+					nClicks--;
+				}
+				m_qKeys.lock();
+				while (!qKeys.empty())
+				{
+					int key = qKeys.front();
+					qKeys.pop();
+					lCurrentLevel->KeyDown(key);
+				}
+				m_qKeys.unlock();
+				
+				uint64_t nCurrentTime;
+				QueryPerformanceCounter((LARGE_INTEGER*)&nCurrentTime);
+				double dDeltaTime = (nCurrentTime - nStartTime) * dSecondsPerCount;
+				nStartTime = nCurrentTime;
+
+				lCurrentLevel->Update(dDeltaTime);
+
+				if (nRenderTargetHeight != nScreenHeight || nRenderTargetWidth != nScreenWidth)
+					Graphics::Resize();
+				Graphics::BeginDraw();
+				lCurrentLevel->Render();
+				Graphics::EndDraw();
+			}
+		}
+	}
 
 	void LoadLevel(Level* lNewLevel, bool bUnloadPrevious, bool bLoadNext)
 	{
@@ -49,84 +100,20 @@ namespace Game {
 		if (bLoadNext) lNewLevel->Load();
 		lCurrentLevel = lNewLevel;
 
-		if (!hUpdateThread)
-		{
-			hUpdateThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)UpdateThread, NULL, 0, NULL);
-			assert(hUpdateThread);
-		}
-		if (!hRenderThread)
-		{
-			hRenderThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)RenderThread, NULL, 0, NULL);
-			assert(hRenderThread);
-		}
-
 		loading = false;
 		SetCursor(LoadCursor(nullptr, IDC_ARROW));
 		SetWindowText(Graphics::hWindow, txtWindowTitle);
 	}
 
-	void Render()
-	{
-		if (!lCurrentLevel) return;
-		Graphics::BeginDraw();
-		lCurrentLevel->Render();
-		DWRITE_TEXT_METRICS tmTextMetrics;
-		Graphics::TextMetrics(L"Alpha 0.0.2", 16, tmTextMetrics);
-		Graphics::WriteText(L"Alpha 0.0.2", 1280 - tmTextMetrics.width - 4, 4, 16);
-		Graphics::EndDraw();
-	}
-
-	void Update(double dDeltaTime)
-	{
-		if (!lCurrentLevel) return;
-		lCurrentLevel->Update(dDeltaTime);
-	}
-
 	void LeftClick()
 	{
-		if (!lCurrentLevel) return;
-		lCurrentLevel->LeftClick();
+		nClicks++;
 	}
 
 	void KeyDown(int key)
 	{
-		if (!lCurrentLevel) return;
-		lCurrentLevel->KeyDown(key);
-	}
-
-	static void UpdateThread()
-	{
-		uint64_t nPerformanceFrequency;
-		QueryPerformanceFrequency((LARGE_INTEGER*)&nPerformanceFrequency);
-		double dSecondsPerCount = 1.0 / (double)nPerformanceFrequency;
-
-		uint64_t nStartTime;
-		QueryPerformanceCounter((LARGE_INTEGER*)&nStartTime);
-
-		while (1)
-		{
-			if (loading) continue;
-			
-			uint64_t nCurrentTime;
-			QueryPerformanceCounter((LARGE_INTEGER*)&nCurrentTime);
-			double dDeltaTime = (nCurrentTime - nStartTime) * dSecondsPerCount;
-			nStartTime = nCurrentTime;
-
-			lCurrentLevel->Update(dDeltaTime);
-		}
-	}
-
-	static void RenderThread()
-	{
-		while (1)
-		{
-			if (loading) continue;
-			if (nRenderTargetHeight != nScreenHeight || nRenderTargetWidth != nScreenWidth)
-				Graphics::Resize();
-			Graphics::BeginDraw();
-			lCurrentLevel->Render();
-			DWRITE_TEXT_METRICS tmTextMetrics;
-			Graphics::EndDraw();
-		}
+		m_qKeys.lock();
+		qKeys.push(key);
+		m_qKeys.unlock();
 	}
 }

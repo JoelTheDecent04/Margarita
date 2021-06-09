@@ -14,7 +14,6 @@ Crab::Crab(SpaceGame* game, float fX)
 	fSecondsUntilNextAttack = 0.0f;
 	bLegalPosition = true;
 
-	game->m_u_vEntities.lock(); //In update thread
 	for (Entity* entity : game->vEntities)
 	{
 		if (entity)
@@ -24,7 +23,6 @@ Crab::Crab(SpaceGame* game, float fX)
 				break;
 			}
 	}
-	game->m_u_vEntities.unlock(); //In update thread
 }
 bool Crab::Update(double deltatime)
 {

@@ -46,7 +46,6 @@ bool Entity::Update(double deltatime)
 	if (bCanCollide) //If this entity can collide
 	{
 		bool bCollided = false;
-		sgGame->m_u_vEntities.lock(); //In update thread
 		for (Entity* entity : sgGame->vEntities) //Check for collisions
 		{ //TODO fix
 			if (!entity) continue;
@@ -57,18 +56,15 @@ bool Entity::Update(double deltatime)
 				bCollided = true;
 				if (Collide(entity) == false)
 				{
-					sgGame->m_u_vEntities.unlock(); //In update thread
 					return false;
 				}
 				break;
 			}
 		}
-		sgGame->m_u_vEntities.unlock(); //In update thread
 
 		if (bCollided)
 		{
  			bool bCollidedVertically = false;
-			sgGame->m_u_vEntities.lock(); //In update thread
 			for (Entity* entity : sgGame->vEntities) //Check if it can move vertically
 			{
 				if (!entity) continue;
@@ -80,11 +76,10 @@ bool Entity::Update(double deltatime)
 					break;
 				}
 			}
-			sgGame->m_u_vEntities.unlock(); //In update thread
+
 			if (bCollidedVertically)
 			{
 				bool bCollidedHorizontally = false;
-				sgGame->m_u_vEntities.lock(); //In update thread
 				for (Entity* entity : sgGame->vEntities) //Check if it can move horizontally
 				{
 					if (!entity) continue;
@@ -96,7 +91,6 @@ bool Entity::Update(double deltatime)
 						break;
 					}
 				}
-				sgGame->m_u_vEntities.unlock(); //In update thread
 				if (bCollidedHorizontally)
 				{
 					fSpeedX = 0.0f;
