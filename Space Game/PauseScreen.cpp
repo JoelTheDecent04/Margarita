@@ -12,9 +12,9 @@ PauseScreen::PauseScreen(Level* lPrevLevel)
 {
 	this->lPrevLevel = lPrevLevel;
 	nButtonHover = -1;
-	vButtons.push_back(Button(500, 150, 780, 250, [](PauseScreen* p) { Game::LoadLevel(p->lPrevLevel, true, false); delete p; }, L"Resume"));
-	vButtons.push_back(Button(500, 275, 780, 375, [](PauseScreen* p) { Game::LoadLevel(new ControlsScreen(p)); }, L"Controls"));
-	vButtons.push_back(Button(500, 400, 780, 500, [](PauseScreen* p) { Game::LoadLevel(new TitleScreen); delete p; }, L"Title Screen"));
+	vButtons.push_back(Button(500, 150, 780, 250, [](PauseScreen* p) { Game::LoadLevel(p->lPrevLevel, true, false); }, L"Resume"));
+	vButtons.push_back(Button(500, 275, 780, 375, [](PauseScreen* p) { Game::LoadLevel(new ControlsScreen(p), false, true); }, L"Controls"));
+	vButtons.push_back(Button(500, 400, 780, 500, [](PauseScreen* p) { Game::LoadLevel(new TitleScreen, true, true);}, L"Title Screen"));
 	vButtons.push_back(Button(500, 525, 780, 625, [](PauseScreen* p) { Game::Quit(); }, L"Quit"));
 }
 

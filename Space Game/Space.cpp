@@ -166,10 +166,6 @@ void SpaceGame::Render()
 	Graphics::FillRectangle(nScreenWidth - 5 - tmTextMetrics.width - 5, nScreenHeight - 5 - tmTextMetrics.height - 5, 5 + tmTextMetrics.width + 3, 5 + 16 + 5, clrBlack);
 	Graphics::WriteText(txtWave, nScreenWidth - 5 - tmTextMetrics.width, nScreenHeight - 5 - tmTextMetrics.height, 16.0f);
 
-	swprintf_s(txtWave, 64, L"%d enemies", vEntities.size());
-	Graphics::TextMetrics(txtWave, 16.0f, tmTextMetrics);
-	Graphics::WriteText(txtWave, 0, nScreenHeight / 2 - tmTextMetrics.height, 16.0f);
-
 	if (bShowDebugInfo)
 	{
 		wchar_t txtDebug[64];
@@ -458,6 +454,14 @@ void SpaceGame::LoadFromFile()
 			i->Load(f);
 			vItems.push_back(i);
 			break;
+		}
+		case Item::Type::EnergyPowerup:
+		{
+			EnergyPowerupItem* i = new EnergyPowerupItem();
+			i->Load(f);
+			vItems.push_back(i);
+			break;
+
 		}
 
 		default:

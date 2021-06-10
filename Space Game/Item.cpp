@@ -12,5 +12,4 @@ void Item::Save(std::fstream& f)
 }
 void Item::Load(std::fstream& f)
 {
-
 }
