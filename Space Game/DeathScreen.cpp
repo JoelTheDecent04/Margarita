@@ -1,17 +1,11 @@
 #include "DeathScreen.h"
 #include "Game.h"
 #include "Space.h"
+#include <fstream>
 
 static D2D1::ColorF clrDarkGrey = D2D1::ColorF::DarkGray;
 static D2D1::ColorF clrWhite = D2D1::ColorF::White;
 static D2D1::ColorF clrBlack = D2D1::ColorF(0.0f, 0.0f, 0.0f);
-
-DeathScreen::DeathScreen()
-{
-	nButtonHover = -1;
-	vButtons.push_back(Button(500, 200, 780, 300, [] (void*) { Game::LoadLevel(new SpaceGame()); }, L"Restart"));
-	bRenderedFirstFrame = false;
-}
 
 void DeathScreen::Render()
 {
@@ -56,4 +50,13 @@ void DeathScreen::LeftClick()
 {
 	if (nButtonHover != -1)
 		vButtons[nButtonHover].function(this);
+}
+
+void DeathScreen::Load()
+{
+	nButtonHover = -1;
+	vButtons.push_back(Button(500, 200, 780, 300, [](void*) { Game::LoadLevel(new SpaceGame()); }, L"Restart"));
+	bRenderedFirstFrame = false;
+
+	remove("savegame.txt");
 }

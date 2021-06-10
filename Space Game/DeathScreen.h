@@ -10,8 +10,8 @@ class DeathScreen : public Level
 	int nButtonHover;
 	bool bRenderedFirstFrame;
 public:
-	DeathScreen();
-	void Load() override {};
+	DeathScreen() {};
+	void Load();
 	void Unload() override {};
 	void Render() override;
 	void Update(double deltatime) override;
