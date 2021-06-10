@@ -126,6 +126,9 @@
     <ClCompile Include="BombAnimation.cpp">
       <Filter>Source Files\Space\BackgroundObjects</Filter>
     </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>Source Files\Space</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -212,5 +215,10 @@
     <ClInclude Include="BombAnimation.h">
       <Filter>Source Files\Space\BackgroundObjects</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Save Game Format.txt">
+      <Filter>Source Files\Space</Filter>
+    </Text>
   </ItemGroup>
 </Project>

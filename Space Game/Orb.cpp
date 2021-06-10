@@ -35,6 +35,7 @@ OrbWeapon::OrbWeapon()
 {
 	nCount = -1;
 	tTexture = tOrbTexture;
+	nType = Type::Orb;
 }
 
 void OrbWeapon::Use(SpaceGame* game, float fX, float fY, float fAngle)

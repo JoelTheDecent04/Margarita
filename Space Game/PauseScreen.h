@@ -22,10 +22,6 @@ public:
 	int nButtonHover;
 
 	PauseScreen(Level* lPrevLevel);
-	void Resume();
-	void ReturnToTitleScreen();
-	void GoToControlsScreen();
-	void Quit();
 	void Load() override;
 	void Unload() override;
 	void Render() override;

@@ -12,42 +12,15 @@ PauseScreen::PauseScreen(Level* lPrevLevel)
 {
 	this->lPrevLevel = lPrevLevel;
 	nButtonHover = -1;
-	vButtons.push_back(Button(500, 150, 780, 250, [](PauseScreen* p) { p->Resume(); }, L"Resume"));
-	vButtons.push_back(Button(500, 275, 780, 375, [](PauseScreen* p) { p->GoToControlsScreen(); }, L"Controls"));
-	vButtons.push_back(Button(500, 400, 780, 500, [](PauseScreen* p) { p->ReturnToTitleScreen(); }, L"Title Screen"));
-	vButtons.push_back(Button(500, 525, 780, 625, [](PauseScreen* p) { p->Quit(); }, L"Quit"));
+	vButtons.push_back(Button(500, 150, 780, 250, [](PauseScreen* p) { Game::LoadLevel(p->lPrevLevel, true, false); delete p; }, L"Resume"));
+	vButtons.push_back(Button(500, 275, 780, 375, [](PauseScreen* p) { Game::LoadLevel(new ControlsScreen(p)); }, L"Controls"));
+	vButtons.push_back(Button(500, 400, 780, 500, [](PauseScreen* p) { Game::LoadLevel(new TitleScreen); delete p; }, L"Title Screen"));
+	vButtons.push_back(Button(500, 525, 780, 625, [](PauseScreen* p) { Game::Quit(); }, L"Quit"));
 }
 
-void PauseScreen::Resume()
-{
-	Game::LoadLevel(lPrevLevel, true, false);
-}
+void PauseScreen::Load(){}
 
-void PauseScreen::ReturnToTitleScreen()
-{
-	/*Level* prev = lPrevLevel;
-	lPrevLevel = nullptr;
-	prev->Unload();*/
-	Game::LoadLevel(new TitleScreen());
-}
-
-void PauseScreen::GoToControlsScreen()
-{
-	Game::LoadLevel(new ControlsScreen(this));
-}
-
-void PauseScreen::Quit()
-{
-	PostQuitMessage(0);
-}
-
-void PauseScreen::Load()
-{
-}
-
-void PauseScreen::Unload()
-{
-}
+void PauseScreen::Unload() { delete this; }
 
 void PauseScreen::Render()
 {
@@ -105,5 +78,7 @@ void PauseScreen::LeftClick()
 void PauseScreen::KeyDown(int key)
 {
 	if (key == VK_ESCAPE)
-		Resume();
+	{
+		Game::LoadLevel(lPrevLevel, true, false);
+	}
 }

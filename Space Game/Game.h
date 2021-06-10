@@ -20,6 +20,7 @@ namespace Game {
 	void LeftClick();
 	void KeyDown(int key);
 	void Resize();
+	void Quit();
 
 	extern SpaceGame* sgSpaceGame;
 }

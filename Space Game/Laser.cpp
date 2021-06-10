@@ -125,6 +125,7 @@ LaserWeapon::LaserWeapon(LaserLevel nLaserLevel)
 	tTexture = tLaserTexture;
 	this->nLaserLevel = nLaserLevel;
 	nCount = nLaserLevel;
+	nType = Type::Laser;
 }
 
 void LaserWeapon::Use(SpaceGame* game, float fX, float fY, float fAngle)
@@ -147,4 +148,19 @@ void LaserWeapon::Use(SpaceGame* game, float fX, float fY, float fAngle)
 		}
 		break;
 	}
+}
+
+void LaserWeapon::Save(std::fstream& f)
+{
+	Item::Save(f);
+	f << (int)nLaserLevel << " ";
+}
+
+void LaserWeapon::Load(std::fstream& f)
+{
+	Item::Load(f);
+	int level;
+	f >> level;
+	nLaserLevel = (LaserLevel)level;
+	nCount = nLaserLevel;
 }

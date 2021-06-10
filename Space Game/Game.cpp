@@ -22,6 +22,8 @@ namespace Game {
 	static bool loading = false;
 	static bool resize = false;
 
+	bool bHighDetail = true;
+
 	int nClicks;
 	std::queue<int> qKeys;
 	std::mutex m_qKeys;
@@ -94,7 +96,6 @@ namespace Game {
 		if (lCurrentLevel && bUnloadPrevious)
 		{
 			Level* lLastLevel = lCurrentLevel;
-			Sleep(50); //Give threads enough time to finish using level
 			lCurrentLevel = nullptr;
 			lLastLevel->Unload();
 		}
@@ -123,5 +124,11 @@ namespace Game {
 	void Resize()
 	{
 		resize = true;
+	}
+	void Quit()
+	{
+		if (sgSpaceGame)
+			sgSpaceGame->Save();
+		ExitProcess(0);
 	}
 }

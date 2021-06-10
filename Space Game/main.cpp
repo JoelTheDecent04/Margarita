@@ -53,9 +53,17 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch (message)
 	{
-	case WM_DESTROY:
-		ExitProcess(0);
+	case WM_CREATE:
+	{
+		/*int nMonitorWidth = GetSystemMetrics(0);
+		int nMonitorHeight = GetSystemMetrics(1);
+		RECT rect = { 0, 0, nMonitorWidth, nMonitorHeight };
+		bool b = InvalidateRect(Graphics::hWindow, &rect, false);*/
 		return 0;
+	}
+	case WM_DESTROY:
+		Game::Quit();
+		while (1);
 	case WM_LBUTTONDOWN:
 		Game::LeftClick();
 		return 0;
@@ -65,13 +73,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		return 0;
 	case WM_SIZE:
 	{
-		//Game::Resize();
-		Graphics::mGraphics.lock();
-		Graphics::Resize();
-		Graphics::mGraphics.unlock();
-		nScreenWidth = LOWORD(lParam);
-		nScreenHeight = HIWORD(lParam);
-		InvalidateRect(Graphics::hWindow, NULL, true);
+			//Game::Resize();
+			Graphics::mGraphics.lock();
+			Graphics::Resize();
+			Graphics::mGraphics.unlock();
+			nScreenWidth = LOWORD(lParam);
+			nScreenHeight = HIWORD(lParam);
+			bool b = InvalidateRect(Graphics::hWindow, NULL, true);
 		return 0;
 	}
 	case WM_MOUSEWHEEL:

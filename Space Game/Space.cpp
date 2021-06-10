@@ -37,6 +37,8 @@ D2D1::ColorF clrDarkGrey	= D2D1::ColorF(0.3f, 0.3f, 0.3f);
 D2D1::ColorF clrWhite		= D2D1::ColorF(1.0f, 1.0f, 1.0f);
 D2D1::ColorF clrBlue		= D2D1::ColorF(0.0f, 0.0f, 1.0f);
 
+int nCurrentVersion = 13;
+
 void SpaceGame::Load()
 {
 	bGameRunning = true;
@@ -71,6 +73,8 @@ void SpaceGame::Load()
 	nEnemies = 0;
 	fSecondsUntilNextComet = 40 + random() * 40;
 
+	LoadFromFile(); //Load save game if it exists
+
 	Game::sgSpaceGame = this;
 }
 void SpaceGame::Unload()
@@ -97,6 +101,8 @@ void SpaceGame::Unload()
 
 	for (BackgroundObject* BackgroundObject : vBackgroundObjects)
 		delete BackgroundObject;
+
+	Game::sgSpaceGame = nullptr;
 }
 void SpaceGame::Render()
 {
@@ -159,6 +165,10 @@ void SpaceGame::Render()
 	Graphics::TextMetrics(txtWave, 16.0f, tmTextMetrics);
 	Graphics::FillRectangle(nScreenWidth - 5 - tmTextMetrics.width - 5, nScreenHeight - 5 - tmTextMetrics.height - 5, 5 + tmTextMetrics.width + 3, 5 + 16 + 5, clrBlack);
 	Graphics::WriteText(txtWave, nScreenWidth - 5 - tmTextMetrics.width, nScreenHeight - 5 - tmTextMetrics.height, 16.0f);
+
+	swprintf_s(txtWave, 64, L"%d enemies", vEntities.size());
+	Graphics::TextMetrics(txtWave, 16.0f, tmTextMetrics);
+	Graphics::WriteText(txtWave, 0, nScreenHeight / 2 - tmTextMetrics.height, 16.0f);
 
 	if (bShowDebugInfo)
 	{
@@ -324,9 +334,15 @@ void SpaceGame::Save()
 	std::fstream f;
 	f.open("savegame.txt", std::fstream::out);
 
+	f << nCurrentVersion << " " << fDifficulty << " " << nWave << " " << fSecondsUntilNextWave << " " << nEnemies << " ";
 
+	f << vEntities.size() << " ";
 	for (Entity* entity : vEntities)
 		entity->Save(f);
+
+	f << vItems.size() << " ";
+	for (Item* item : vItems)
+		item->Save(f);
 
 	f.close();
 }
@@ -336,8 +352,20 @@ void SpaceGame::LoadFromFile()
 	std::fstream f;
 	f.open("savegame.txt", std::fstream::in);
 
+	if (!f.good()) return;
+
+
+
+	int nVersion;
+	f >> nVersion >> fDifficulty >> nWave >> fSecondsUntilNextWave >> nEnemies;
+	if (nVersion != nCurrentVersion) return;
+
+
 	vEntities.clear(); //TODO free
-	while (f.peek() != EOF)
+	int nEntities;
+	f >> nEntities;
+
+	for (int i = 0; i < nEntities; i++)
 	{
 		int t;
 		f >> t;
@@ -394,9 +422,48 @@ void SpaceGame::LoadFromFile()
 		default:
 			abort();
 		}
-
 	}
-	plPlayer->Load(f);
+	
+	vItems.clear();
+	int nItems;
+	f >> nItems;
+	for (int i = 0; i < nItems; i++)
+	{
+		int t;
+		f >> t;
+		Item::Type type = (Item::Type)t;
+
+		switch (type)
+		{
+		case Item::Type::None:
+			abort();
+			break;
+		case Item::Type::Bomb:
+		{
+			BombWeapon* i = new BombWeapon(0);
+			i->Load(f);
+			vItems.push_back(i);
+			break;
+		}
+		case Item::Type::Laser:
+		{
+			LaserWeapon* i = new LaserWeapon(LaserWeapon::LaserLevel::Normal);
+			i->Load(f);
+			vItems.push_back(i);
+			break;
+		}
+		case Item::Type::Orb:
+		{
+			OrbWeapon* i = new OrbWeapon();
+			i->Load(f);
+			vItems.push_back(i);
+			break;
+		}
+
+		default:
+			abort();
+		}
+	}
 
 	f.close();
 }

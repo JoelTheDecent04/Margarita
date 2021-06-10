@@ -35,6 +35,7 @@ void ControlsScreen::Load()
 
 void ControlsScreen::Unload()
 {
+	delete this;
 }
 
 void ControlsScreen::Render()

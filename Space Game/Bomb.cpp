@@ -65,14 +65,27 @@ BombWeapon::BombWeapon(int nLevel)
 	this->nLevel = nLevel;
 	nCount = nLevel;
 	tTexture = tBombTexture;
+	nType = Type::Bomb;
 }
 
 void BombWeapon::Use(SpaceGame* game, float fX, float fY, float fAngle)
 {
 	if (game->plPlayer->nEnergy >= 8.0f + 3.0f * nLevel)
 	{
-		OutputDebugString(L"Bombweapon::Use locking\n");
 		game->vEntities.push_back(new Bomb(game, fX, fY, 300.0f * cos(fAngle), 300.0f * sin(fAngle), nLevel));
 		game->plPlayer->nEnergy -= 8.0f + 3.0f * nLevel;
 	}
+}
+
+void BombWeapon::Load(std::fstream& f)
+{
+	Item::Load(f);
+	f >> nLevel;
+	nCount = nLevel;
+}
+
+void BombWeapon::Save(std::fstream& f)
+{
+	Item::Save(f);
+	f << nLevel << " ";
 }

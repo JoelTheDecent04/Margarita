@@ -13,6 +13,8 @@ public:
 	LaserLevel nLaserLevel;
 	LaserWeapon(LaserLevel nLaserLevel);
 	void Use(SpaceGame* game, float fX, float fY, float fAngle) override;
+	void Save(std::fstream& f) override;
+	void Load(std::fstream& f) override;
 };
 
 class LaserBeam : public Entity

@@ -130,6 +130,8 @@ namespace Graphics {
 			)
 		);
 
+		//dxgiFactory->MakeWindowAssociation(hWindow, 0);
+
 		// Get the backbuffer for this window which is be the final 3D render target.
 		ComPtr<ID3D11Texture2D> backBuffer;
 
@@ -173,6 +175,8 @@ namespace Graphics {
 		m_d2dContext->CreateSolidColorBrush(D2D1::ColorF(0.0f, 0.0f, 0.0f), &iSolidColourBrush);
 
 		DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), (IUnknown**)&iWriteFactory);
+
+
 
 		init = true;
 		mGraphics.unlock();
@@ -276,6 +280,7 @@ namespace Graphics {
 			m_d2dContext.Reset();
 
 			context->ClearState();
+
 			HRESULT hr = m_swapChain->ResizeBuffers(0, nScreenWidth, nScreenHeight, DXGI_FORMAT_UNKNOWN, 0);
 
 			m_d2dDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &m_d2dContext);
@@ -295,16 +300,12 @@ namespace Graphics {
 
 			ComPtr<ID3D11Texture2D> backBuffer;
 
-			m_d2dContext->CreateBitmapFromDxgiSurface(dxgiBackBuffer.Get(), bitmapProperties, &m_d2dTargetBitmap);
+			hr = m_d2dContext->CreateBitmapFromDxgiSurface(dxgiBackBuffer.Get(), bitmapProperties, &m_d2dTargetBitmap);
 
 			m_d2dContext->SetTarget(m_d2dTargetBitmap.Get());
 
-			dxgiBackBuffer->Release();
-
 			fScaleV = (float)nScreenHeight / 720.0f;
 			fScaleH = (float)nScreenWidth / 1280.0f;
-
-			//InvalidateRect(Graphics::hWindow, NULL, true);
 		}
 	}
 

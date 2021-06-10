@@ -21,5 +21,6 @@ public:
 	int nLevel;
 	BombWeapon(int nLevel);
 	void Use(SpaceGame* game, float fX, float fY, float fAngle) override;
-	
+	void Load(std::fstream& f) override;
+	void Save(std::fstream& f) override;
 };
