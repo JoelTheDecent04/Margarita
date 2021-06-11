@@ -55,7 +55,8 @@ void DeathScreen::LeftClick()
 void DeathScreen::Load()
 {
 	nButtonHover = -1;
-	vButtons.push_back(Button(500, 200, 780, 300, [](void*) { Game::LoadLevel(new SpaceGame()); }, L"Restart"));
+	vButtons.push_back(Button(500, 200, 780, 300, [](void*) { Game::LoadLevel(new SpaceGame()); }, L"New Game"));
+	vButtons.push_back(Button(500, 320, 780, 420, [](void*) { Game::Quit(); }, L"Quit"));
 	bRenderedFirstFrame = false;
 
 	remove("savegame.txt");

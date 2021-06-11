@@ -207,11 +207,12 @@ namespace Graphics {
 		m_d2dContext->Clear(colour);
 	}
 
-	void WriteText(const wchar_t* text, int x, int y, float size, const D2D1::ColorF& clrColour, float fOpacity)
+	void WriteText(const wchar_t* text, int x, int y, float size, const D2D1::ColorF& clrColour, float fOpacity, const wchar_t* font)
 	{
 		if (size == 0.0f) return;
+		if (font == nullptr) font = L"Bahnschrift";
 		IDWriteTextFormat* iTextFormat;
-		HRESULT hr = iWriteFactory->CreateTextFormat(L"Arial", NULL, DWRITE_FONT_WEIGHT_REGULAR, DWRITE_FONT_STYLE_NORMAL,
+		HRESULT hr = iWriteFactory->CreateTextFormat(font, NULL, DWRITE_FONT_WEIGHT_REGULAR, DWRITE_FONT_STYLE_NORMAL,
 			DWRITE_FONT_STRETCH_NORMAL,  size, L"en-US", &iTextFormat);
 		assert(SUCCEEDED(hr));
 
@@ -226,11 +227,12 @@ namespace Graphics {
 		iTextFormat->Release();
 	}
 
-	void TextMetrics(const wchar_t* text, float size, DWRITE_TEXT_METRICS& textmetrics)
+	void TextMetrics(const wchar_t* text, float size, DWRITE_TEXT_METRICS& textmetrics, const wchar_t* font)
 	{
 		if (size == 0.0f) return;
+		if (font == nullptr) font = L"Bahnschrift";
 		IDWriteTextFormat* iTextFormat;
-		HRESULT hr = iWriteFactory->CreateTextFormat(L"Arial", NULL, DWRITE_FONT_WEIGHT_REGULAR, DWRITE_FONT_STYLE_NORMAL,
+		HRESULT hr = iWriteFactory->CreateTextFormat(font, NULL, DWRITE_FONT_WEIGHT_REGULAR, DWRITE_FONT_STYLE_NORMAL,
 			DWRITE_FONT_STRETCH_NORMAL, size, L"en-US", &iTextFormat);
 		assert(SUCCEEDED(hr));
 
@@ -249,12 +251,12 @@ namespace Graphics {
 		iTextFormat->Release();
 	}
 	
-	void DrawRectangle(float fX, float fY, float fW, float fH, D2D1::ColorF& cColour, float fOpacity)
+	void DrawRectangle(float fX, float fY, float fW, float fH, D2D1::ColorF& cColour, float fOpacity, float thickness)
 	{
 		iSolidColourBrush->SetColor(cColour);
 		iSolidColourBrush->SetOpacity(fOpacity);
 		D2D1_RECT_F rRect = D2D1::RectF( fX,  fY,  (fX + fW),  (fY + fH));
-		m_d2dContext->DrawRectangle(rRect, iSolidColourBrush.Get());
+		m_d2dContext->DrawRectangle(rRect, iSolidColourBrush.Get(), thickness);
 		iSolidColourBrush->SetOpacity(1.0f);
 	}
 

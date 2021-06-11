@@ -12,6 +12,7 @@
 #include "Crab.h"
 #include "Comet.h"
 #include "EnergyPowerup.h"
+#include "RegenerationPowerup.h"
 #include <math.h>
 #include <random>
 #include <time.h>
@@ -19,7 +20,7 @@
 
 float fBackgroundPosition = 0.0f;
 Texture* tCharacterTexture, * tOrbTexture, * tBackground, * tLaserTexture, * tLaserBeamTexture, * tEnemyTexture, * tBombTexture, * tCrabTexture;
-Texture* tForegroundTexture, * tCometTexture, * tNoTexture, * tBombAnimationTexture, * tEnergyPowerupTexture;
+Texture* tForegroundTexture, * tCometTexture, * tNoTexture, * tBombAnimationTexture, * tEnergyPowerupTexture, * tRegenerationPowerupTexture;
 
 int keyOpenShop1 = 'E';
 int keyOpenShop2 = 0;
@@ -55,7 +56,8 @@ void SpaceGame::Load()
 	tCometTexture = new Texture(L"comet.png", 640, 360, 100, 50);
 	tNoTexture = new Texture(L"notexture.png");
 	tBombAnimationTexture = new Texture(L"bomb_animation.png", 1280, 720, 100.0f, 100.0f);
-	tEnergyPowerupTexture = new Texture(L"energy_powerup.png", 2415, 2415, 32.0f, 32.0f);
+	tEnergyPowerupTexture = new Texture(L"energy_powerup.png", 2600, 2600, 32.0f, 32.0f);
+	tRegenerationPowerupTexture = new Texture(L"regen_powerup.png", 2415, 2415, 32.0f, 32.0f);
 
 	plPlayer = new Player(this, 384.0f, 384.0f);
 	vEntities.push_back(plPlayer);
@@ -126,15 +128,15 @@ void SpaceGame::Render()
 
 	wchar_t txtHealth[64];
 	swprintf_s(txtHealth, 64, L"HP %u / %u", (int)plPlayer->fHealth, (int)plPlayer->fMaxHealth);
-	Graphics::WriteText(txtHealth, 5, 2, 14);
-	Graphics::FillRectangle(5, 2 + 14 + 2, 100.0f * (plPlayer->fHealth / plPlayer->fMaxHealth), 20, clrRed);
-	Graphics::DrawRectangle(5, 2 + 14 + 2, 100, 20, clrDarkGrey);
+	Graphics::WriteText(txtHealth, 5, 2, 14); //2
+	Graphics::FillRectangle(5, 2 + 14 + 4, 100.0f * (plPlayer->fHealth / plPlayer->fMaxHealth), 20, clrRed); //18
+	Graphics::DrawRectangle(5, 2 + 14 + 4, 100, 20, clrDarkGrey);
 
 	wchar_t txtEnergy[64];
 	swprintf_s(txtEnergy, 64, L"Energy %u / %u", (int)plPlayer->nEnergy, (int)plPlayer->nMaxEnergy);
-	Graphics::WriteText(txtEnergy, 5, 2 + 14 + 2 + 20 + 2, 14);
-	Graphics::FillRectangle(5, 2 + 14 + 2 + 20 + 2 + 14 + 2, 100.0f * (plPlayer->nEnergy / plPlayer->nMaxEnergy), 20, clrBlue);
-	Graphics::DrawRectangle(5, 2 + 14 + 2 + 20 + 2 + 14 + 2, 100, 20, clrDarkGrey);
+	Graphics::WriteText(txtEnergy, 5, 2 + 14 + 2 + 20 + 2, 14); //40
+	Graphics::FillRectangle(5, 2 + 14 + 2 + 20 + 2 + 14 + 5, 100.0f * (plPlayer->nEnergy / plPlayer->nMaxEnergy), 20, clrBlue); //56
+	Graphics::DrawRectangle(5, 2 + 14 + 2 + 20 + 2 + 14 + 5, 100, 20, clrDarkGrey);
 
 	DWRITE_TEXT_METRICS tmTextMetrics;
 	Graphics::TextMetrics(L"Items", 14.0f, tmTextMetrics);
@@ -249,6 +251,7 @@ void SpaceGame::Update(double deltatime)
 		plPlayer->fMaxHealthUpgrade += 50.0f;
 		plPlayer->fMaxEnergyRechargeSpeed += 1.0f;
 		plPlayer->fMaxMovementSpeed += 10.0f;
+		plPlayer->fMaxHealthRegeneration += 1.0f;
 	}
 
 	fSecondsUntilNextComet -= deltatime; //Comet
@@ -461,7 +464,13 @@ void SpaceGame::LoadFromFile()
 			i->Load(f);
 			vItems.push_back(i);
 			break;
-
+		}
+		case Item::Type::RegenerationPowerup:
+		{
+			RegenerationPowerupItem* i = new RegenerationPowerupItem();
+			i->Load(f);
+			vItems.push_back(i);
+			break;
 		}
 
 		default:

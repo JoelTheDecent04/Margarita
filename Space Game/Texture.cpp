@@ -76,6 +76,38 @@ void Texture::Draw()
 		D2D1::RectF(0.0f, 0.0f, iBitmap->GetSize().width, iBitmap->GetSize().height)
 	);
 }
+void Texture::DrawDifferentSize(int index, float x, float y, float width, float height, bool bRealCoordinates, float fAngle)
+{
+	D2D_RECT_F rSrc;
+	if (nTexturesAcross != 0) //We are using multiple textures in one file
+	{
+		rSrc = D2D1::RectF(
+			(float)((index % nTexturesAcross) * nTextureWidth),
+			(float)((index / nTexturesAcross) * nTextureHeight),
+			(float)((index % nTexturesAcross) * nTextureWidth) + nTextureWidth,
+			(float)((index / nTexturesAcross) * nTextureHeight) + nTextureHeight);
+	}
+	else
+		rSrc = D2D1::RectF(0.0f, 0.0f, nTextureWidth, nTextureHeight);
+
+	D2D_RECT_F rDest = D2D1::RectF(x, y, (x + width), (y + height)); //Calculate destination coordinates
+	if (!bRealCoordinates)
+	{
+		rDest.top *= fScaleV;
+		rDest.bottom *= fScaleV;
+		rDest.left *= fScaleH;
+		rDest.right *= fScaleH;
+	}
+
+	if (fAngle != 0.0f)
+	{
+		Graphics::m_d2dContext->SetTransform(D2D1::Matrix3x2F::Rotation(fAngle, D2D1::Point2F(fScaleH * (x + width / 2), fScaleV * (y + height / 2))));
+		Graphics::m_d2dContext->DrawBitmap(iBitmap, rDest, 1.0f, D2D1_INTERPOLATION_MODE_MULTI_SAMPLE_LINEAR, rSrc); //Display bitmap
+		Graphics::m_d2dContext->SetTransform(D2D1::Matrix3x2F::Identity());
+	}
+	else
+		Graphics::m_d2dContext->DrawBitmap(iBitmap, rDest, 1.0f, D2D1_INTERPOLATION_MODE_MULTI_SAMPLE_LINEAR, rSrc); //Display bitmap
+}
 void Texture::Draw(int index, float x, float y, bool bRealCoordinates, float fAngle)
 {
 	D2D_RECT_F rSrc;
@@ -102,11 +134,11 @@ void Texture::Draw(int index, float x, float y, bool bRealCoordinates, float fAn
 	if (fAngle != 0.0f)
 	{
 		Graphics::m_d2dContext->SetTransform(D2D1::Matrix3x2F::Rotation(fAngle, D2D1::Point2F(fScaleH * (x + fTextureDrawnWidth / 2), fScaleV * (y + fTextureDrawnHeight / 2))));
-		Graphics::m_d2dContext->DrawBitmap(iBitmap, rDest, 1.0f, D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC, rSrc); //Display bitmap
+		Graphics::m_d2dContext->DrawBitmap(iBitmap, rDest, 1.0f, D2D1_INTERPOLATION_MODE_MULTI_SAMPLE_LINEAR, rSrc); //Display bitmap
 		Graphics::m_d2dContext->SetTransform(D2D1::Matrix3x2F::Identity());
 	}
 	else
-		Graphics::m_d2dContext->DrawBitmap(iBitmap, rDest, 1.0f, D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC, rSrc); //Display bitmap
+		Graphics::m_d2dContext->DrawBitmap(iBitmap, rDest, 1.0f, D2D1_INTERPOLATION_MODE_MULTI_SAMPLE_LINEAR, rSrc); //Display bitmap
 }
 void Texture::DrawPanorama(float x)
 {

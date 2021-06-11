@@ -6,9 +6,10 @@
 static D2D1::ColorF clrDarkGrey = D2D1::ColorF::DarkGray;
 static D2D1::ColorF clrWhite = D2D1::ColorF::White;
 static D2D1::ColorF clrBlack = D2D1::ColorF(0.0f, 0.0f, 0.0f);
+static D2D1::ColorF clrRed = D2D1::ColorF::Red;
 
-
-Texture* tButtons;
+static Texture* tButtons;
+static Texture* tTitlescreenBackground;
 
 TitleScreen::TitleScreen()
 {
@@ -23,11 +24,17 @@ TitleScreen::TitleScreen()
 	}, L"Play"));
 	vButtons.push_back(Button(500, 500, 780, 625, [] { Game::Quit(); }, L"Quit"));
 	vButtons.push_back(Button(500, 350, 780, 475, [] {  }, L"Info"));
+
+	tTitlescreenBackground = new Texture(L"titlescreen_background.png", 3022, 1700, 1280.0f, 720.0f);
 }
 
 void TitleScreen::Render()
 {
-	Graphics::Clear(clrBlack);
+	tTitlescreenBackground->Draw(0, 0.0f, 0.0f);
+
+	DWRITE_TEXT_METRICS tmTextMetrics;
+	Graphics::TextMetrics(L"Margarita", fScaleH * 125.0f, tmTextMetrics, L"Chiller");
+	Graphics::WriteText(L"Margarita", fScaleH * 640 - tmTextMetrics.width / 2, fScaleV * 30, fScaleH * 125.0f, clrRed, 1.0f, L"Chiller");
 
 	int nIndex = 0;
 	for (Button& button : vButtons)

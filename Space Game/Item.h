@@ -6,7 +6,7 @@
 class Item
 {
 public:
-	enum class Type { None, Bomb, Laser, Orb, EnergyPowerup};
+	enum class Type { None, Bomb, Laser, Orb, EnergyPowerup, RegenerationPowerup };
 	Type nType;
 	int nCount;
 	Texture* tTexture;

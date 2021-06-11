@@ -30,6 +30,8 @@ Player::Player(SpaceGame* game, float fX, float fY)
 	fMovementSpeed = 150.0f;
 	fMaxMovementSpeed = 190.0f;
 	puCurrentPowerup = nullptr;
+	fHealthRegeneration = 2.0f;
+	fMaxHealthRegeneration = 5.0f;
 
 	nType = Type::Player;
 }
@@ -101,7 +103,7 @@ bool Player::Update(double deltatime)
 
 	nEnergy += (bOnGround ? fEnergyRechargeSpeed : fEnergyRechargeSpeed / 2.0f) * deltatime;
 	if (nEnergy > nMaxEnergy) nEnergy = nMaxEnergy;
-	fHealth += 3.0f * deltatime;
+	fHealth += fHealthRegeneration * deltatime;
 	if (fHealth > fMaxHealth) fHealth = fMaxHealth;
 
 	if (fMoney >= 150.0f && sgGame->vItems.size() <= 2) sgGame->vItems.push_back(new BombWeapon(1)); //TODO improve
@@ -120,11 +122,11 @@ bool Player::Update(double deltatime)
 void Player::Save(std::fstream& f)
 {
 	Entity::Save(f);
-	f << fMoney << " " << nEnergy << " " << nMaxEnergy << " " << fEnergyRechargeSpeed << " " << fMaxEnergyRechargeSpeed << " " << fMaxHealthUpgrade << " " << fMovementSpeed << " " << fMaxMovementSpeed << " ";
+	f << fMoney << " " << nEnergy << " " << nMaxEnergy << " " << fEnergyRechargeSpeed << " " << fMaxEnergyRechargeSpeed << " " << fMaxHealthUpgrade << " " << fMovementSpeed << " " << fMaxMovementSpeed << " " << fHealthRegeneration << " " << fMaxHealthRegeneration << " ";
 }
 
 void Player::Load(std::fstream& f)
 {
 	Entity::Load(f);
-	f >> fMoney >> nEnergy >> nMaxEnergy >> fEnergyRechargeSpeed >> fMaxEnergyRechargeSpeed >> fMaxHealthUpgrade >> fMovementSpeed >> fMaxMovementSpeed;
+	f >> fMoney >> nEnergy >> nMaxEnergy >> fEnergyRechargeSpeed >> fMaxEnergyRechargeSpeed >> fMaxHealthUpgrade >> fMovementSpeed >> fMaxMovementSpeed >> fHealthRegeneration >> fMaxHealthRegeneration;
 }

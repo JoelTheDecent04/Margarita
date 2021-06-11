@@ -28,5 +28,7 @@ public:
 	void UpgradeMovementSpeed();
 	void BuyLaserUpgrade();
 	void BuyEnergyPowerup();
+	void BuyRegenerationPowerup();
 	void BuyBombUpgrade();
+	void UpgradeRegeneration();
 };

@@ -129,6 +129,9 @@
     <ClCompile Include="Item.cpp">
       <Filter>Source Files\Space</Filter>
     </ClCompile>
+    <ClCompile Include="RegenerationPowerup.cpp">
+      <Filter>Source Files\Space\Entities\Player\Powerups</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -214,6 +217,9 @@
     </ClInclude>
     <ClInclude Include="BombAnimation.h">
       <Filter>Source Files\Space\BackgroundObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="RegenerationPowerup.h">
+      <Filter>Source Files\Space\Entities\Player\Powerups</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

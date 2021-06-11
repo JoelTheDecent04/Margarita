@@ -18,6 +18,8 @@ public:
 	float fMaxHealthUpgrade;
 	float fMovementSpeed;
 	float fMaxMovementSpeed;
+	float fHealthRegeneration;
+	float fMaxHealthRegeneration;
 	Player(SpaceGame* game, float fX, float fY);
 	bool Update(double deltatime) override;
 	void Save(std::fstream& f) override;

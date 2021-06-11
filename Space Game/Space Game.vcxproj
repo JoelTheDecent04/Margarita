@@ -164,6 +164,7 @@
     <ClCompile Include="PauseScreen.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Powerup.cpp" />
+    <ClCompile Include="RegenerationPowerup.cpp" />
     <ClCompile Include="Shop.cpp" />
     <ClCompile Include="Space.cpp" />
     <ClCompile Include="TextObject.cpp" />
@@ -193,6 +194,7 @@
     <ClInclude Include="PauseScreen.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Powerup.h" />
+    <ClInclude Include="RegenerationPowerup.h" />
     <ClInclude Include="Shop.h" />
     <ClInclude Include="Space.h" />
     <ClInclude Include="TextObject.h" />
