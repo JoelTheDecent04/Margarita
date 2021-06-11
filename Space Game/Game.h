@@ -1,5 +1,6 @@
 #pragma once
 #include <stdint.h>
+#include <memory>
 
 class Level
 {
@@ -22,8 +23,11 @@ namespace Game {
 	void Resize();
 	void Quit();
 
+	
 	extern SpaceGame* sgSpaceGame;
 }
+
+
 
 extern int32_t nScreenWidth, nScreenHeight;
 extern int32_t nRenderTargetWidth, nRenderTargetHeight;

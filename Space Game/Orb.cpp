@@ -42,7 +42,7 @@ void OrbWeapon::Use(SpaceGame* game, float fX, float fY, float fAngle)
 {
 	if (game->plPlayer->nEnergy >= 5.0f)
 	{
-		game->vEntities.push_back(new Orb(game, fX, fY, 300.0f * cos(fAngle), 300.0f * sin(fAngle)));
+		game->vEntities.push_back(std::make_shared<Orb>(game, fX, fY, 300.0f * cos(fAngle), 300.0f * sin(fAngle)));
 
 		game->plPlayer->nEnergy -= 5.0f;
 	}

@@ -21,7 +21,7 @@ class LaserBeam : public Entity
 {
 	bool bFireSecond;
 	float fSecondsUntilSecondFire;
-	LaserBeam* lbNextShot;
+	std::shared_ptr<LaserBeam> lbNextShot;
 	float fAngle;
 public:
 	LaserBeam(SpaceGame* game, LaserWeapon* weapon, float fX, float fY, float fSpeedX, float fSpeedY);

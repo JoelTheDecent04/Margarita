@@ -14,10 +14,10 @@ Enemy::Enemy(SpaceGame* game, float fX, float fY)
 	fSecondsUntilNextAttack = 0.0f;
 	bLegalPosition = true;
 
-	for (Entity* entity : game->vEntities)
+	for (auto entity : game->vEntities)
 	{
 		if (entity)
-			if (Overlapping(entity))
+			if (Overlapping(entity.get()))
 			{
 				bLegalPosition = false;
 				break;
@@ -35,7 +35,7 @@ bool Enemy::Update(double deltatime)
 		return false;
 	}
 
-	if (Distance(sgGame->plPlayer) > 55.0f)
+	if (Distance(sgGame->plPlayer.get()) > 55.0f)
 	{
 		float fGradient = (sgGame->plPlayer->fY - fY) / (sgGame->plPlayer->fX - fX);
 		float fAngle = atan(fGradient);

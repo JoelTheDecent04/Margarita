@@ -14,10 +14,10 @@ Crab::Crab(SpaceGame* game, float fX)
 	fSecondsUntilNextAttack = 0.0f;
 	bLegalPosition = true;
 
-	for (Entity* entity : game->vEntities)
+	for (auto entity : game->vEntities)
 	{
 		if (entity)
-			if (Overlapping(entity))
+			if (Overlapping(entity.get()))
 			{
 				bLegalPosition = false;
 				break;
@@ -37,7 +37,7 @@ bool Crab::Update(double deltatime)
 		fSpeedX = 0.0f;
 		if (fSecondsUntilNextAttack > 0.0f)
 			fSecondsUntilNextAttack -= deltatime;
-		else if (Distance(sgGame->plPlayer) <= 90.0f)
+		else if (Distance(sgGame->plPlayer.get()) <= 90.0f)
 		{
 			sgGame->plPlayer->ChangeHealth(-15.0f);
 			fSecondsUntilNextAttack = 1.0f;

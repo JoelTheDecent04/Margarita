@@ -23,11 +23,11 @@ bool Bomb::Collide(Entity* entity)
 
 void Bomb::Explode()
 {
-	sgGame->vBackgroundObjects.push_back(new BombAnimation(this));
-	for (Entity* entity : sgGame->vEntities)
+	sgGame->vBackgroundObjects.push_back(std::make_shared<BombAnimation>(this));
+	for (auto entity : sgGame->vEntities)
 	{
-		if (entity == this) continue;
-		float fDistance = Distance(entity);
+		if (entity.get() == this) continue;
+		float fDistance = Distance(entity.get());
 		float fDamageDistance = 75.0f + 25.0f * nLevel;
 		if (fDistance < fDamageDistance)
 			entity->ChangeHealth((-250.0f - 20.0f * nLevel) * ((fDamageDistance - fDistance) / fDamageDistance));
@@ -72,7 +72,7 @@ void BombWeapon::Use(SpaceGame* game, float fX, float fY, float fAngle)
 {
 	if (game->plPlayer->nEnergy >= 8.0f + 3.0f * nLevel)
 	{
-		game->vEntities.push_back(new Bomb(game, fX, fY, 300.0f * cos(fAngle), 300.0f * sin(fAngle), nLevel));
+		game->vEntities.push_back(std::make_shared<Bomb>(game, fX, fY, 300.0f * cos(fAngle), 300.0f * sin(fAngle), nLevel));
 		game->plPlayer->nEnergy -= 8.0f + 3.0f * nLevel;
 	}
 }

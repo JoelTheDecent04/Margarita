@@ -12,14 +12,14 @@ class Player;
 class SpaceGame : public Level
 {	
 public:
-	std::vector<Entity*> vEntities;
+	std::vector<std::shared_ptr<Entity>> vEntities;
 
 	int nCurrentItem;
-	std::vector<Item*> vItems;
+	std::vector<std::shared_ptr<Item>> vItems;
 
-	Player* plPlayer;
+	std::shared_ptr<Player> plPlayer;
 
-	std::vector<BackgroundObject*> vBackgroundObjects;
+	std::vector<std::shared_ptr<BackgroundObject>> vBackgroundObjects;
 	
 	float fFps;
 	bool bGameRunning;

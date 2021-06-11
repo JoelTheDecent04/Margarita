@@ -2,6 +2,7 @@
 #include "Texture.h"
 #include "Space.h"
 #include <fstream>
+#include <memory>
 
 class Entity
 {

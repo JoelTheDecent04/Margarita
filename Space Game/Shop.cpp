@@ -112,7 +112,7 @@ void ShopScreen::Update(double deltatime)
 	vButtons[4].bClickable = (lGameLevel->plPlayer->fMoney >= 50.0f);
 	vButtons[5].bClickable = (lGameLevel->plPlayer->fMoney >= 200.0f);
 	vButtons[6].bClickable = (lGameLevel->plPlayer->fMoney >= 250.0f);
-	vButtons[7].bClickable = (lGameLevel->plPlayer->fMoney >= 400.0f && ((LaserWeapon*)lGameLevel->vItems[0])->nLaserLevel != LaserWeapon::DoubleShot);
+	vButtons[7].bClickable = (lGameLevel->plPlayer->fMoney >= 400.0f && (((LaserWeapon*)lGameLevel->vItems[0].get())->nLaserLevel != LaserWeapon::DoubleShot));
 	vButtons[8].bClickable = (lGameLevel->plPlayer->fMoney >= 500.0f);
 }
 
@@ -160,7 +160,7 @@ void ShopScreen::BuyEnergyPowerup()
 	if (lGameLevel->plPlayer->fMoney >= 200.0f)
 	{
 		lGameLevel->plPlayer->fMoney -= 200.0f;
-		lGameLevel->vItems.push_back(new EnergyPowerupItem());
+		lGameLevel->vItems.push_back(std::make_shared<EnergyPowerupItem>());
 	}
 }
 
@@ -169,17 +169,16 @@ void ShopScreen::BuyRegenerationPowerup()
 	if (lGameLevel->plPlayer->fMoney >= 250.0f)
 	{
 		lGameLevel->plPlayer->fMoney -= 250.0f;
-		lGameLevel->vItems.push_back(new RegenerationPowerupItem());
+		lGameLevel->vItems.push_back(std::make_shared<RegenerationPowerupItem>());
 	}
 }
 
 void ShopScreen::BuyLaserUpgrade()
 {
-	if (lGameLevel->plPlayer->fMoney >= 400.0f && ((LaserWeapon*)lGameLevel->vItems[0])->nLaserLevel != LaserWeapon::DoubleShot)
+	if (lGameLevel->plPlayer->fMoney >= 400.0f && ((LaserWeapon*)lGameLevel->vItems[0].get())->nLaserLevel != LaserWeapon::DoubleShot)
 	{
 		lGameLevel->plPlayer->fMoney -= 400.0f;
-		delete lGameLevel->vItems[0];
-		lGameLevel->vItems[0] = new LaserWeapon(LaserWeapon::DoubleShot);
+		lGameLevel->vItems[0] = std::make_shared<LaserWeapon>(LaserWeapon::LaserLevel::DoubleShot);;
 	}
 }
 
@@ -188,9 +187,8 @@ void ShopScreen::BuyBombUpgrade()
 	if (lGameLevel->plPlayer->fMoney >= 500.0f)
 	{
 		lGameLevel->plPlayer->fMoney -= 500.0f;
-		int nOldLevel = ((BombWeapon*)lGameLevel->vItems[2])->nLevel;
-		delete lGameLevel->vItems[2];
-		lGameLevel->vItems[2] = new BombWeapon(++nOldLevel);
+		int nOldLevel = ((BombWeapon*)lGameLevel->vItems[2].get())->nLevel;
+		lGameLevel->vItems[2] = std::make_shared<BombWeapon>(++nOldLevel);
 	}
 }
 

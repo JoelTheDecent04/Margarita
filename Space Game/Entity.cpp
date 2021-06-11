@@ -48,15 +48,15 @@ bool Entity::Update(double deltatime)
 	if (bCanCollide) //If this entity can collide
 	{
 		bool bCollided = false;
-		for (Entity* entity : sgGame->vEntities) //Check for collisions
+		for (auto entity : sgGame->vEntities) //Check for collisions
 		{ //TODO fix
 			if (!entity) continue;
-			if (entity == this || !entity->bCanCollide) continue;
-			if (entity == (Entity*)sgGame->plPlayer && !bCanCollideWithPlayer) continue;
+			if (entity.get() == this || !entity->bCanCollide) continue;
+			if (entity.get() == (Entity*)sgGame->plPlayer.get() && !bCanCollideWithPlayer) continue; //TODO check if will work
 			if (entity->WillOverlap(this, fNewX, fNewY))
 			{
 				bCollided = true;
-				if (Collide(entity) == false)
+				if (Collide(entity.get()) == false)
 				{
 					return false;
 				}
@@ -67,11 +67,11 @@ bool Entity::Update(double deltatime)
 		if (bCollided)
 		{
  			bool bCollidedVertically = false;
-			for (Entity* entity : sgGame->vEntities) //Check if it can move vertically
+			for (auto entity : sgGame->vEntities) //Check if it can move vertically
 			{
 				if (!entity) continue;
-				if (entity == this || !entity->bCanCollide) continue;
-				if (entity == (Entity*)sgGame->plPlayer && !bCanCollideWithPlayer) continue;
+				if (entity.get() == this || !entity->bCanCollide) continue;
+				if (entity.get() == (Entity*)sgGame->plPlayer.get() && !bCanCollideWithPlayer) continue;
 				if (entity->WillOverlap(this, fX, fNewY))
 				{
 					bCollidedVertically = true;
@@ -82,11 +82,11 @@ bool Entity::Update(double deltatime)
 			if (bCollidedVertically)
 			{
 				bool bCollidedHorizontally = false;
-				for (Entity* entity : sgGame->vEntities) //Check if it can move horizontally
+				for (auto entity : sgGame->vEntities) //Check if it can move horizontally
 				{
 					if (!entity) continue;
-					if (entity == this || !entity->bCanCollide) continue;
-					if (entity == (Entity*)sgGame->plPlayer && !bCanCollideWithPlayer) continue;
+					if (entity.get() == this || !entity->bCanCollide) continue;
+					if (entity.get() == (Entity*)sgGame->plPlayer.get() && !bCanCollideWithPlayer) continue; //TODO check if works
 					if (entity->WillOverlap(this, fNewX, fY))
 					{
 						bCollidedHorizontally = true;
@@ -160,7 +160,7 @@ bool Entity::Update(double deltatime)
 
 void Entity::ChangeHealth(float fChange)
 {
-	sgGame->vBackgroundObjects.push_back(new EntityHealthChangeText(this, fChange));
+	sgGame->vBackgroundObjects.push_back(std::make_shared<EntityHealthChangeText>(this, fChange));
 	fHealth += fChange;
 	if (fHealth <= 0.0f)
 		fHealth = 0.0f; //When Destroy() is called on the player, it won't get deleted straight away

@@ -17,6 +17,7 @@ float fScaleH = (float)nScreenWidth / 1280;
 float fScaleV = (float)nScreenHeight / 720;
 
 namespace Game {
+
 	Level* lCurrentLevel = nullptr;
 	SpaceGame* sgSpaceGame = nullptr;
 	static bool loading = false;

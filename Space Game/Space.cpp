@@ -59,11 +59,12 @@ void SpaceGame::Load()
 	tEnergyPowerupTexture = new Texture(L"energy_powerup.png", 2600, 2600, 32.0f, 32.0f);
 	tRegenerationPowerupTexture = new Texture(L"regen_powerup.png", 2415, 2415, 32.0f, 32.0f);
 
-	plPlayer = new Player(this, 384.0f, 384.0f);
+	plPlayer = std::make_shared<Player>(this, 384.0f, 380.f);
 	vEntities.push_back(plPlayer);
 
-	vItems.push_back(new LaserWeapon(LaserWeapon::Normal));
-	vItems.push_back(new OrbWeapon());
+
+	vItems.push_back(std::make_shared<LaserWeapon>(LaserWeapon::Normal));
+	vItems.push_back(std::make_shared<OrbWeapon>());
 
 	nCurrentItem = 0;
 
@@ -95,14 +96,6 @@ void SpaceGame::Unload()
 	delete tBombAnimationTexture;
 
 	OutputDebugString(L"SpaceGame::Unload locking\n");
-	for (Entity* entity : vEntities)
-		delete entity;
-
-	for (Item* item : vItems)
-		delete item;
-
-	for (BackgroundObject* BackgroundObject : vBackgroundObjects)
-		delete BackgroundObject;
 
 	Game::sgSpaceGame = nullptr;
 }
@@ -116,15 +109,13 @@ void SpaceGame::Render()
 
 	tBackground->DrawPanorama(fBackgroundPosition);
 
-	for (Entity* entity : vEntities)
-		if (entity)
-			entity->Draw();
+	for (std::shared_ptr<Entity>& entity : vEntities)
+		entity->Draw();
 
 	tForegroundTexture->Draw(0, -fBackgroundPosition - 65.0f, 475.0f);
 
-	for (BackgroundObject* backgroundobject : vBackgroundObjects)
-		if (backgroundobject)
-			backgroundobject->Draw();
+	for (std::shared_ptr<BackgroundObject>& backgroundobject : vBackgroundObjects)
+		backgroundobject->Draw();
 
 	wchar_t txtHealth[64];
 	swprintf_s(txtHealth, 64, L"HP %u / %u", (int)plPlayer->fHealth, (int)plPlayer->fMaxHealth);
@@ -144,7 +135,7 @@ void SpaceGame::Render()
 	Graphics::WriteText(L"Items", 5, nScreenHeight - 4 - 32 - 4 - 14, 14);
 
 	int nItem = 0;
-	for (Item* item : vItems)
+	for (std::shared_ptr<Item> item : vItems)
 	{
 		item->tTexture->Draw(0, 4 + nItem * 32, nScreenHeight - 4 - 32, true);
 		Graphics::DrawRectangle(4 + nItem * 32, nScreenHeight - 4 - 32, 32, 32, nItem == nCurrentItem ? clrWhite : clrDarkGrey);
@@ -183,13 +174,11 @@ void SpaceGame::Update(double deltatime)
 
 	for (int i = 0; i < vEntities.size(); i++) //Entity updates //TODO optimise
 	{
-		Entity* entity = vEntities[i];
+		std::shared_ptr<Entity> entity = vEntities[i];
 		bool bEntityExists = entity->Update(deltatime);
 		if (!bEntityExists)
 		{
 			vEntities.erase(vEntities.begin() + i);
-			delete entity;
-
 			i--;
 		}
 		if (!bGameRunning) //Game could end after any entity update
@@ -199,14 +188,14 @@ void SpaceGame::Update(double deltatime)
 		}
 	}
 
-	for (BackgroundObject*& backgroundobjects : vBackgroundObjects) //Object updates
+	for (int i = 0; i < vBackgroundObjects.size(); i++)
 	{
-		if (backgroundobjects)
-			if (backgroundobjects->Update(deltatime) == false)
-			{
-				delete backgroundobjects; //TODO fix
-				backgroundobjects = nullptr;
-			}
+		std::shared_ptr<BackgroundObject> backgroundobjects = vBackgroundObjects[i];
+		if (backgroundobjects->Update(deltatime) == false)
+		{
+			vBackgroundObjects.erase(vBackgroundObjects.begin() + i);
+			i--;
+		}
 	}
 
 	fNextEnemySpawn -= deltatime; //Enemy spawning
@@ -216,10 +205,8 @@ void SpaceGame::Update(double deltatime)
 		{
 			if (random() >= 0.15f)
 			{
-				Enemy* enemy = new Enemy(this, random_off_screen(), random() * 500);
-				if (!enemy->bLegalPosition)
-					delete enemy;
-				else
+				std::shared_ptr<Enemy> enemy = std::make_shared<Enemy>(this, random_off_screen(), random() * 500);
+				if (enemy->bLegalPosition)
 				{
 					vEntities.push_back(enemy);
 					nEnemies++;
@@ -227,10 +214,8 @@ void SpaceGame::Update(double deltatime)
 			}
 			else
 			{
-				Crab* crab = new Crab(this, random_off_screen());
-				if (!crab->bLegalPosition)
-					delete crab;
-				else
+				std::shared_ptr<Crab> crab = std::make_shared<Crab>(this, random_off_screen());
+				if (crab->bLegalPosition)
 				{
 					vEntities.push_back(crab);
 					nEnemies++;
@@ -258,7 +243,7 @@ void SpaceGame::Update(double deltatime)
 	fSecondsUntilNextComet -= deltatime; //Comet
 	if (fSecondsUntilNextComet < 0.0f)
 	{
-		vBackgroundObjects.push_back(new Comet());
+		vBackgroundObjects.push_back(std::make_shared<Comet>());
 		fSecondsUntilNextComet = 40 + random() * 40;
 	}
 }
@@ -337,11 +322,11 @@ void SpaceGame::Save()
 	f << nCurrentVersion << " " << fDifficulty << " " << nWave << " " << fSecondsUntilNextWave << " " << nEnemies << " ";
 
 	f << vEntities.size() << " ";
-	for (Entity* entity : vEntities)
+	for (auto& entity : vEntities)
 		entity->Save(f);
 
 	f << vItems.size() << " ";
-	for (Item* item : vItems)
+	for (auto& item : vItems)
 		item->Save(f);
 
 	f.close();
@@ -378,7 +363,7 @@ void SpaceGame::LoadFromFile()
 			break;
 		case Entity::Type::Player:
 		{
-			Player* e = new Player(this, 0.0f, 0.0f);
+			auto e = std::make_shared<Player>(this, 0.0f, 0.0f);
 			e->Load(f);
 			vEntities.push_back(e);
 			plPlayer = e;
@@ -386,35 +371,35 @@ void SpaceGame::LoadFromFile()
 		}
 		case Entity::Type::Bomb:
 		{
-			Bomb* e = new Bomb(this, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+			auto e = std::make_shared<Bomb>(this, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 			e->Load(f);
 			vEntities.push_back(e);
 			break;
 		}
 		case Entity::Type::Crab:
 		{
-			Crab* e = new Crab(this, 0.0f);
+			auto e = std::make_shared<Crab>(this, 0.0f);
 			e->Load(f);
 			vEntities.push_back(e);
 			break;
 		}
 		case Entity::Type::Enemy:
 		{
-			Enemy* e = new Enemy(this, 0.0f, 0.0f);
+			auto e = std::make_shared<Enemy>(this, 0.0f, 0.0f);
 			e->Load(f);
 			vEntities.push_back(e);
 			break;
 		}
 		case Entity::Type::Laser:
 		{
-			LaserBeam* e = new LaserBeam(this, nullptr, 0.0f, 0.0f, 0.0f, 0.0f);
+			auto e = std::make_shared<LaserBeam>(this, nullptr, 0.0f, 0.0f, 0.0f, 0.0f);
 			e->Load(f);
 			vEntities.push_back(e);
 			break;
 		}
 		case Entity::Type::Orb:
 		{
-			Orb* e = new Orb(this, 0.0f, 0.0f, 0.0f, 0.0f);
+			auto e = std::make_shared<Orb>(this, 0.0f, 0.0f, 0.0f, 0.0f);
 			e->Load(f);
 			vEntities.push_back(e);
 			break;
@@ -440,35 +425,35 @@ void SpaceGame::LoadFromFile()
 			break;
 		case Item::Type::Bomb:
 		{
-			BombWeapon* i = new BombWeapon(0);
+			auto i = std::make_shared<BombWeapon>(0);
 			i->Load(f);
 			vItems.push_back(i);
 			break;
 		}
 		case Item::Type::Laser:
 		{
-			LaserWeapon* i = new LaserWeapon(LaserWeapon::LaserLevel::Normal);
+			auto i = std::make_shared<LaserWeapon>(LaserWeapon::LaserLevel::Normal);
 			i->Load(f);
 			vItems.push_back(i);
 			break;
 		}
 		case Item::Type::Orb:
 		{
-			OrbWeapon* i = new OrbWeapon();
+			auto i = std::make_shared<OrbWeapon>();
 			i->Load(f);
 			vItems.push_back(i);
 			break;
 		}
 		case Item::Type::EnergyPowerup:
 		{
-			EnergyPowerupItem* i = new EnergyPowerupItem();
+			auto i = std::make_shared<EnergyPowerupItem>();
 			i->Load(f);
 			vItems.push_back(i);
 			break;
 		}
 		case Item::Type::RegenerationPowerup:
 		{
-			RegenerationPowerupItem* i = new RegenerationPowerupItem();
+			auto i = std::make_shared<RegenerationPowerupItem>();
 			i->Load(f);
 			vItems.push_back(i);
 			break;

@@ -106,7 +106,7 @@ bool Player::Update(double deltatime)
 	fHealth += fHealthRegeneration * deltatime;
 	if (fHealth > fMaxHealth) fHealth = fMaxHealth;
 
-	if (fMoney >= 150.0f && sgGame->vItems.size() <= 2) sgGame->vItems.push_back(new BombWeapon(1)); //TODO improve
+	if (fMoney >= 150.0f && sgGame->vItems.size() <= 2) sgGame->vItems.push_back(std::make_shared<BombWeapon>(1)); //TODO improve
 
 	if (puCurrentPowerup)
 	{
