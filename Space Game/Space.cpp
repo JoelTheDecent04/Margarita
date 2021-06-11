@@ -38,7 +38,7 @@ D2D1::ColorF clrDarkGrey	= D2D1::ColorF(0.3f, 0.3f, 0.3f);
 D2D1::ColorF clrWhite		= D2D1::ColorF(1.0f, 1.0f, 1.0f);
 D2D1::ColorF clrBlue		= D2D1::ColorF(0.0f, 0.0f, 1.0f);
 
-int nCurrentVersion = 13;
+int nCurrentVersion = 14;
 
 void SpaceGame::Load()
 {
@@ -189,6 +189,7 @@ void SpaceGame::Update(double deltatime)
 		{
 			vEntities.erase(vEntities.begin() + i);
 			delete entity;
+
 			i--;
 		}
 		if (!bGameRunning) //Game could end after any entity update
