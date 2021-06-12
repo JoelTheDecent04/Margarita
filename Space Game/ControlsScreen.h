@@ -30,5 +30,5 @@ public:
 	void Resume();
 	void KeyDown(int key) override;
 	void LeftClick() override;
-	std::wstring KeyText(int nKey);
+	static std::wstring KeyText(int nKey);
 };

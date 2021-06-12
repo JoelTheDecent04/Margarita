@@ -13,6 +13,7 @@
 #include "Comet.h"
 #include "EnergyPowerup.h"
 #include "RegenerationPowerup.h"
+#include "ControlsScreen.h"
 #include <math.h>
 #include <random>
 #include <time.h>
@@ -27,7 +28,9 @@ int keyOpenShop2 = 0;
 int keyChangeWeapon1[9] = { '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 int keyChangeWeapon2[9];
 
-bool bShowDebugInfo = false;
+int keyNextWave1 = 'R';
+int keyNextWave2 = 0;
+
 double fPhysicsUpdatesPerSeconds;
 
 bool bShowHitboxes = false;
@@ -62,7 +65,6 @@ void SpaceGame::Load()
 	plPlayer = std::make_shared<Player>(this, 384.0f, 380.f);
 	vEntities.push_back(plPlayer);
 
-
 	vItems.push_back(std::make_shared<LaserWeapon>(LaserWeapon::Normal));
 	vItems.push_back(std::make_shared<OrbWeapon>());
 
@@ -75,6 +77,7 @@ void SpaceGame::Load()
 	fSecondsUntilNextWave = 0.0f;
 	nEnemies = 0;
 	fSecondsUntilNextComet = 40 + random() * 40;
+	NextWave();
 
 	LoadFromFile(); //Load save game if it exists
 
@@ -109,23 +112,23 @@ void SpaceGame::Render()
 
 	tBackground->DrawPanorama(fBackgroundPosition);
 
-	for (std::shared_ptr<Entity>& entity : vEntities)
+	for (auto& entity : vEntities)
 		entity->Draw();
 
 	tForegroundTexture->Draw(0, -fBackgroundPosition - 65.0f, 475.0f);
 
-	for (std::shared_ptr<BackgroundObject>& backgroundobject : vBackgroundObjects)
+	for (auto& backgroundobject : vBackgroundObjects)
 		backgroundobject->Draw();
 
-	wchar_t txtHealth[64];
-	swprintf_s(txtHealth, 64, L"HP %u / %u", (int)plPlayer->fHealth, (int)plPlayer->fMaxHealth);
-	Graphics::WriteText(txtHealth, 5, 2, 14); //2
+	wchar_t txtBuf[64];
+
+	swprintf_s(txtBuf, 64, L"HP %u / %u", (int)plPlayer->fHealth, (int)plPlayer->fMaxHealth);
+	Graphics::WriteText(txtBuf, 5, 2, 14); //2
 	Graphics::FillRectangle(5, 2 + 14 + 4, 100.0f * (plPlayer->fHealth / plPlayer->fMaxHealth), 20, clrRed); //18
 	Graphics::DrawRectangle(5, 2 + 14 + 4, 100, 20, clrDarkGrey);
 
-	wchar_t txtEnergy[64];
-	swprintf_s(txtEnergy, 64, L"Energy %u / %u", (int)plPlayer->nEnergy, (int)plPlayer->nMaxEnergy);
-	Graphics::WriteText(txtEnergy, 5, 2 + 14 + 2 + 20 + 2, 14); //40
+	swprintf_s(txtBuf, 64, L"Energy %u / %u", (int)plPlayer->nEnergy, (int)plPlayer->nMaxEnergy);
+	Graphics::WriteText(txtBuf, 5, 2 + 14 + 2 + 20 + 2, 14); //40
 	Graphics::FillRectangle(5, 2 + 14 + 2 + 20 + 2 + 14 + 5, 100.0f * (plPlayer->nEnergy / plPlayer->nMaxEnergy), 20, clrBlue); //56
 	Graphics::DrawRectangle(5, 2 + 14 + 2 + 20 + 2 + 14 + 5, 100, 20, clrDarkGrey);
 
@@ -135,46 +138,41 @@ void SpaceGame::Render()
 	Graphics::WriteText(L"Items", 5, nScreenHeight - 4 - 32 - 4 - 14, 14);
 
 	int nItem = 0;
-	for (std::shared_ptr<Item> item : vItems)
+	for (auto& item : vItems)
 	{
 		item->tTexture->Draw(0, 4 + nItem * 32, nScreenHeight - 4 - 32, true);
 		Graphics::DrawRectangle(4 + nItem * 32, nScreenHeight - 4 - 32, 32, 32, nItem == nCurrentItem ? clrWhite : clrDarkGrey);
 		if (item->nCount > 1)
 		{
-			wchar_t txtItemCount[32];
-			swprintf_s(txtItemCount, 32, L"%d", item->nCount);
-			Graphics::WriteText(txtItemCount, 6 + nItem * 32, nScreenHeight - 4 - 16, 14.0f);
+			swprintf_s(txtBuf, 64, L"%d", item->nCount);
+			Graphics::WriteText(txtBuf, 6 + nItem * 32, nScreenHeight - 4 - 16, 14.0f);
 		}
 		nItem++;
 	}
 
-	wchar_t txtMoney[64];
-	swprintf_s(txtMoney, 64, L"$%d", (int)plPlayer->fMoney);
-	Graphics::TextMetrics(txtMoney, 16.0f, tmTextMetrics);
-	Graphics::WriteText(txtMoney, nScreenWidth - 5 - tmTextMetrics.width, 5, 16.0f);
+	swprintf_s(txtBuf, 64, L"$%d", (int)plPlayer->fMoney);
+	Graphics::TextMetrics(txtBuf, 16.0f, tmTextMetrics);
+	Graphics::WriteText(txtBuf, nScreenWidth - 5 - tmTextMetrics.width, 5, 16.0f);
 
-	wchar_t txtWave[64];
-	swprintf_s(txtWave, 64, L"Wave %d (%d seconds left)", nWave, (int)fSecondsUntilNextWave);
-	Graphics::TextMetrics(txtWave, 16.0f, tmTextMetrics);
+	swprintf_s(txtBuf, 64, L"Wave %d (%d seconds left)", nWave, (int)fSecondsUntilNextWave);
+	Graphics::TextMetrics(txtBuf, 16.0f, tmTextMetrics);
 	Graphics::FillRectangle(nScreenWidth - 5 - tmTextMetrics.width - 5, nScreenHeight - 5 - tmTextMetrics.height - 5, 5 + tmTextMetrics.width + 3, 5 + 16 + 5, clrBlack);
-	Graphics::WriteText(txtWave, nScreenWidth - 5 - tmTextMetrics.width, nScreenHeight - 5 - tmTextMetrics.height, 16.0f);
+	Graphics::WriteText(txtBuf, nScreenWidth - 5 - tmTextMetrics.width, nScreenHeight - 5 - tmTextMetrics.height, 16.0f);
 
-	if (bShowDebugInfo)
+	if (bWaveFinished)
 	{
-		wchar_t txtDebug[64];
-		swprintf_s(txtDebug, 64, L"%d physics updates per second", (int)(fPhysicsUpdatesPerSeconds / 10) * 10
-		);
-		Graphics::TextMetrics(txtDebug, 16.0f, tmTextMetrics);
-		Graphics::WriteText(txtDebug, nScreenWidth / 2 - tmTextMetrics.width / 2, 4, 16.0f);
+		swprintf_s(txtBuf, 64, L"Wave Completed. Press '%s' To Continue.", ControlsScreen::KeyText(keyNextWave1).c_str());
+		Graphics::TextMetrics(txtBuf, 16.0f, tmTextMetrics);
+		Graphics::WriteText(txtBuf, nScreenWidth / 2 - tmTextMetrics.width / 2, 4, 16.0f);
 	}
 }
 void SpaceGame::Update(double deltatime)
-{	 
+{
 	fPhysicsUpdatesPerSeconds = 1.0 / deltatime;
 
 	for (int i = 0; i < vEntities.size(); i++) //Entity updates //TODO optimise
 	{
-		std::shared_ptr<Entity> entity = vEntities[i];
+		auto entity = vEntities[i];
 		bool bEntityExists = entity->Update(deltatime);
 		if (!bEntityExists)
 		{
@@ -190,7 +188,7 @@ void SpaceGame::Update(double deltatime)
 
 	for (int i = 0; i < vBackgroundObjects.size(); i++)
 	{
-		std::shared_ptr<BackgroundObject> backgroundobjects = vBackgroundObjects[i];
+		auto backgroundobjects = vBackgroundObjects[i];
 		if (backgroundobjects->Update(deltatime) == false)
 		{
 			vBackgroundObjects.erase(vBackgroundObjects.begin() + i);
@@ -199,27 +197,24 @@ void SpaceGame::Update(double deltatime)
 	}
 
 	fNextEnemySpawn -= deltatime; //Enemy spawning
-	if (fNextEnemySpawn <= 0)
+	if (fNextEnemySpawn <= 0 && fSecondsUntilNextWave > 0.0f)
 	{
-		if (fSecondsUntilNextWave > 0.0f) //Don't spawn near end of wave
+		if (random() >= 0.15f)
 		{
-			if (random() >= 0.15f)
+			auto enemy = std::make_shared<Enemy>(this, random_off_screen(), random() * 500);
+			if (enemy->bLegalPosition)
 			{
-				std::shared_ptr<Enemy> enemy = std::make_shared<Enemy>(this, random_off_screen(), random() * 500);
-				if (enemy->bLegalPosition)
-				{
-					vEntities.push_back(enemy);
-					nEnemies++;
-				}
+				vEntities.push_back(enemy);
+				nEnemies++;
 			}
-			else
+		}
+		else
+		{
+			auto crab = std::make_shared<Crab>(this, random_off_screen());
+			if (crab->bLegalPosition)
 			{
-				std::shared_ptr<Crab> crab = std::make_shared<Crab>(this, random_off_screen());
-				if (crab->bLegalPosition)
-				{
-					vEntities.push_back(crab);
-					nEnemies++;
-				}
+				vEntities.push_back(crab);
+				nEnemies++;
 			}
 		}
 
@@ -229,16 +224,7 @@ void SpaceGame::Update(double deltatime)
 	fSecondsUntilNextWave -= deltatime; //Waves
 	if (fSecondsUntilNextWave < 0.0f) fSecondsUntilNextWave = 0.0f;
 	if (fSecondsUntilNextWave <= 0.0f && nEnemies == 0)
-	{
-		nWave++;
-		fSecondsUntilNextWave = 60.0f;
-		fDifficulty *= 1.5f;
-
-		plPlayer->fMaxHealthUpgrade += 50.0f;
-		plPlayer->fMaxEnergyRechargeSpeed += 1.0f;
-		plPlayer->fMaxMovementSpeed += 10.0f;
-		plPlayer->fMaxHealthRegeneration += 1.0f;
-	}
+		bWaveFinished = true;
 
 	fSecondsUntilNextComet -= deltatime; //Comet
 	if (fSecondsUntilNextComet < 0.0f)
@@ -286,11 +272,11 @@ void SpaceGame::KeyDown(int key)
 		plPlayer->fMoney += 200.0f;
 	if (key == 'P')
 		if (plPlayer->puCurrentPowerup == nullptr)
-			plPlayer->puCurrentPowerup = new EnergyPowerup(this);
+			plPlayer->puCurrentPowerup = std::make_shared<EnergyPowerup>(this);
 	if (key == 'H')
 		bShowHitboxes = !bShowHitboxes;
-	if (key == VK_F2)
-		bShowDebugInfo = !bShowDebugInfo;
+	if (key == keyNextWave1 || key == keyNextWave2)
+		if (bWaveFinished) NextWave();
 	if (key == 'O')
 		Save();
 	if (key == 'L')
@@ -338,8 +324,6 @@ void SpaceGame::LoadFromFile()
 	f.open("savegame.txt", std::fstream::in);
 
 	if (!f.good()) return;
-
-
 
 	int nVersion;
 	f >> nVersion >> fDifficulty >> nWave >> fSecondsUntilNextWave >> nEnemies;
@@ -465,4 +449,17 @@ void SpaceGame::LoadFromFile()
 	}
 
 	f.close();
+}
+
+void SpaceGame::NextWave()
+{
+	nWave++;
+	fSecondsUntilNextWave = 60.0f;
+	fDifficulty *= 1.5f;
+
+	plPlayer->fMaxHealthUpgrade += 50.0f;
+	plPlayer->fMaxEnergyRechargeSpeed += 1.0f;
+	plPlayer->fMaxMovementSpeed += 10.0f;
+	plPlayer->fMaxHealthRegeneration += 1.0f;
+	bWaveFinished = false;
 }

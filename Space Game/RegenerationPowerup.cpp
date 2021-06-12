@@ -34,6 +34,6 @@ void RegenerationPowerupItem::Use(SpaceGame* game, float fX, float fY, float fAn
 	if (game->plPlayer->puCurrentPowerup == nullptr)
 	{
 		nCount--;
-		game->plPlayer->puCurrentPowerup = new RegenerationPowerup(game);
+		game->plPlayer->puCurrentPowerup = std::make_shared<RegenerationPowerup>(game);
 	}
 }

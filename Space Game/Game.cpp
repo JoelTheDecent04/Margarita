@@ -29,6 +29,8 @@ namespace Game {
 	std::queue<int> qKeys;
 	std::mutex m_qKeys;
 
+	double fSecondsSinceLastFrame = 0.0;
+
 	void GameMain()
 	{
 		CoInitializeEx(nullptr, COINIT_MULTITHREADED);
@@ -72,9 +74,15 @@ namespace Game {
 
 				lCurrentLevel->Update(dDeltaTime);
 
-				Graphics::BeginDraw();
-				lCurrentLevel->Render();
-				Graphics::EndDraw();
+				fSecondsSinceLastFrame += dDeltaTime;
+				if (fSecondsSinceLastFrame > 0.0025)
+				{
+					Graphics::BeginDraw();
+					lCurrentLevel->Render();
+					Graphics::EndDraw();
+					fSecondsSinceLastFrame = 0.0;
+				}
+				//Sleep(1);
 			}
 		}
 	}

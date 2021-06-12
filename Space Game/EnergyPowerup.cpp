@@ -33,6 +33,6 @@ void EnergyPowerupItem::Use(SpaceGame* game, float fX, float fY, float fAngle)
 	if (game->plPlayer->puCurrentPowerup == nullptr)
 	{
 		nCount--;
-		game->plPlayer->puCurrentPowerup = new EnergyPowerup(game);
+		game->plPlayer->puCurrentPowerup = std::make_shared<EnergyPowerup>(game);
 	}
 }

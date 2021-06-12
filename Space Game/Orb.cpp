@@ -9,6 +9,7 @@ Orb::Orb(SpaceGame* game, float fX, float fY, float fSpeedX, float fSpeedY)
 	this->fSpeedY = fSpeedY;
 	bCanCollideWithPlayer = false;
 
+	fAge = 0.0f;
 	nType = Type::Orb;
 }
 
@@ -43,7 +44,6 @@ void OrbWeapon::Use(SpaceGame* game, float fX, float fY, float fAngle)
 	if (game->plPlayer->nEnergy >= 5.0f)
 	{
 		game->vEntities.push_back(std::make_shared<Orb>(game, fX, fY, 300.0f * cos(fAngle), 300.0f * sin(fAngle)));
-
 		game->plPlayer->nEnergy -= 5.0f;
 	}
 }

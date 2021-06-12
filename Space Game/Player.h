@@ -8,7 +8,7 @@
 class Player : public Entity
 {
 public:
-	Powerup* puCurrentPowerup;
+	std::shared_ptr<Powerup> puCurrentPowerup;
 
 	float fMoney;
 	float nEnergy;

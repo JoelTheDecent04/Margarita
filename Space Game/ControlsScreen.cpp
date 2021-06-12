@@ -18,6 +18,7 @@ void ControlsScreen::Load()
 	vControls.push_back(Control(&keyMoveRight1, &keyMoveRight2, L"Move Right"));
 	vControls.push_back(Control(&keyMoveDown1, &keyMoveDown2, L"Move Down"));
 	vControls.push_back(Control(&keyOpenShop1, &keyOpenShop2, L"Open Shop"));
+	vControls.push_back(Control(&keyNextWave1, &keyNextWave2, L"Next Wave"));
 
 	vControls.push_back(Control(&keyChangeWeapon1[0], &keyChangeWeapon2[0], L"Slot 1"));
 	vControls.push_back(Control(&keyChangeWeapon1[1], &keyChangeWeapon2[1], L"Slot 2"));
@@ -27,7 +28,7 @@ void ControlsScreen::Load()
 	vControls.push_back(Control(&keyChangeWeapon1[5], &keyChangeWeapon2[5], L"Slot 6"));
 	vControls.push_back(Control(&keyChangeWeapon1[6], &keyChangeWeapon2[6], L"Slot 7"));
 	vControls.push_back(Control(&keyChangeWeapon1[7], &keyChangeWeapon2[7], L"Slot 8"));
-	vControls.push_back(Control(&keyChangeWeapon1[8], &keyChangeWeapon2[8], L"Slot 9"));
+	//vControls.push_back(Control(&keyChangeWeapon1[8], &keyChangeWeapon2[8], L"Slot 9"));
 
 	vButtons.push_back(Button(500, 600, 780, 680, [](void* c) {((ControlsScreen*)c)->Resume(); }, L"Back"));
 	keyToChange = nullptr;

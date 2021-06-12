@@ -30,6 +30,7 @@ public:
 	int nWave;
 	float fSecondsUntilNextWave;
 	int nEnemies;
+	bool bWaveFinished;
 
 	float fSecondsUntilNextComet;
 
@@ -41,6 +42,7 @@ public:
 	void KeyDown(int key) override;
 	void Save();
 	void LoadFromFile();
+	void NextWave();
 	SpaceGame() {};
 };
 
@@ -56,6 +58,7 @@ static const float fPlayerMoveDownSpeed = 500.0f;
 static const float fFriction = 100.0f;
 
 extern int keyOpenShop1, keyOpenShop2;
+extern int keyNextWave1, keyNextWave2;
 
 extern int keyChangeWeapon1[9];
 extern int keyChangeWeapon2[9];
