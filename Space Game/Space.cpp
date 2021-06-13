@@ -14,6 +14,8 @@
 #include "EnergyPowerup.h"
 #include "RegenerationPowerup.h"
 #include "ControlsScreen.h"
+#include "Graphics.h"
+#include "Light.h"
 #include <math.h>
 #include <random>
 #include <time.h>
@@ -22,6 +24,8 @@
 float fBackgroundPosition = 0.0f;
 Texture* tCharacterTexture, * tOrbTexture, * tBackground, * tLaserTexture, * tLaserBeamTexture, * tEnemyTexture, * tBombTexture, * tCrabTexture;
 Texture* tForegroundTexture, * tCometTexture, * tNoTexture, * tBombAnimationTexture, * tEnergyPowerupTexture, * tRegenerationPowerupTexture;
+
+Texture* tLight;
 
 int keyOpenShop1 = 'E';
 int keyOpenShop2 = 0;
@@ -61,9 +65,14 @@ void SpaceGame::Load()
 	tBombAnimationTexture = new Texture(L"bomb_animation.png", 1280, 720, 100.0f, 100.0f);
 	tEnergyPowerupTexture = new Texture(L"energy_powerup.png", 2600, 2600, 32.0f, 32.0f);
 	tRegenerationPowerupTexture = new Texture(L"regen_powerup.png", 2415, 2415, 32.0f, 32.0f);
+	tLight = new Texture(L"inverted_light.png", 512, 512, 384, 384);
+	tLight->light = true;
+
 
 	plPlayer = std::make_shared<Player>(this, 384.0f, 380.f);
 	vEntities.push_back(plPlayer);
+	vEntities.push_back(std::make_shared<Light>(plPlayer));
+	
 
 	vItems.push_back(std::make_shared<LaserWeapon>(LaserWeapon::Normal));
 	vItems.push_back(std::make_shared<OrbWeapon>());
@@ -82,6 +91,9 @@ void SpaceGame::Load()
 	LoadFromFile(); //Load save game if it exists
 
 	Game::sgSpaceGame = this;
+
+	fLightingLoopTime = 0.0f;
+	fBrightness = 1.0f;
 }
 void SpaceGame::Unload()
 {
@@ -98,7 +110,7 @@ void SpaceGame::Unload()
 	delete tNoTexture;
 	delete tBombAnimationTexture;
 
-	OutputDebugString(L"SpaceGame::Unload locking\n");
+	//TODO finish
 
 	Game::sgSpaceGame = nullptr;
 }
@@ -112,10 +124,17 @@ void SpaceGame::Render()
 
 	tBackground->DrawPanorama(fBackgroundPosition);
 
+	Graphics::iLightingDeviceContext->BeginDraw();
+
+	D2D1_COLOR_F col = { 1.0f, 1.0f, 1.0f, fBrightness };
+	Graphics::iLightingDeviceContext->Clear(col);
+
 	for (auto& entity : vEntities)
 		entity->Draw();
 
 	tForegroundTexture->Draw(0, -fBackgroundPosition - 65.0f, 475.0f);
+	
+	Graphics::DrawLighting();
 
 	for (auto& backgroundobject : vBackgroundObjects)
 		backgroundobject->Draw();
@@ -165,6 +184,8 @@ void SpaceGame::Render()
 		Graphics::TextMetrics(txtBuf, 16.0f, tmTextMetrics);
 		Graphics::WriteText(txtBuf, nScreenWidth / 2 - tmTextMetrics.width / 2, 4, 16.0f);
 	}
+
+	
 }
 void SpaceGame::Update(double deltatime)
 {
@@ -232,6 +253,19 @@ void SpaceGame::Update(double deltatime)
 		vBackgroundObjects.push_back(std::make_shared<Comet>());
 		fSecondsUntilNextComet = 40 + random() * 40;
 	}
+
+	fLightingLoopTime += deltatime; //Lighting
+	if (fLightingLoopTime > 90.0f)
+		fLightingLoopTime = fLightingLoopTime - 90.0f;
+
+	if (fLightingLoopTime >= 40.0f && fLightingLoopTime < 50.0f)
+		fBrightness = cosf((fLightingLoopTime - 40.0f) / 10 * 3.141592f) / 2.0f + 0.5f;
+	else if (fLightingLoopTime >= 50.0f && fLightingLoopTime < 80.0f)
+		fBrightness = 0.0f;
+	else if (fLightingLoopTime >= 80.0f && fLightingLoopTime < 90.0f)
+		fBrightness = cosf((90.0f - fLightingLoopTime) / 10 * 3.141592f) / 2.0f + 0.5f;
+	else
+		fBrightness = 1.0f;
 }
 void SpaceGame::LeftClick()
 {
@@ -350,6 +384,7 @@ void SpaceGame::LoadFromFile()
 			auto e = std::make_shared<Player>(this, 0.0f, 0.0f);
 			e->Load(f);
 			vEntities.push_back(e);
+			vEntities.push_back(std::make_shared<Light>(e));
 			plPlayer = e;
 			break;
 		}
@@ -388,6 +423,8 @@ void SpaceGame::LoadFromFile()
 			vEntities.push_back(e);
 			break;
 		}
+		case Entity::Type::Light:
+			break;
 		default:
 			abort();
 		}

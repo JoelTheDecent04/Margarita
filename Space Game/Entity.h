@@ -9,7 +9,7 @@ class Entity
 public:
 	enum class Type
 	{
-		None, Player, Bomb, Crab, Enemy, Laser, Orb
+		None, Player, Bomb, Crab, Enemy, Laser, Orb, Light
 	};
 
 	SpaceGame* sgGame;

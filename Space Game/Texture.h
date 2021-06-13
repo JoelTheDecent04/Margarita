@@ -11,6 +11,7 @@ public:
 	int nTextureWidth, nTextureHeight;
 	float fTextureDrawnWidth, fTextureDrawnHeight;
 	int nTexturesAcross;
+	bool light;
 
 	Texture(const wchar_t* filename);
 	Texture(const wchar_t* filename, int nTextureWidth, int nTextureHeight, float fTextureDrawnWidth, float fTextureDrawnHeight);

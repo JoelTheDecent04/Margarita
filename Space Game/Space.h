@@ -33,6 +33,8 @@ public:
 	bool bWaveFinished;
 
 	float fSecondsUntilNextComet;
+	float fLightingLoopTime;
+	float fBrightness;
 
 	void Load() override;
 	void Unload() override;
@@ -48,7 +50,7 @@ public:
 
 extern float fBackgroundPosition;
 extern Texture* tCharacterTexture, * tOrbTexture, * tBackground, * tLaserTexture, * tLaserBeamTexture, * tEnemyTexture, * tBombTexture, * tCrabTexture;
-extern Texture* tCometTexture, * tNoTexture, * tBombAnimationTexture, *tEnergyPowerupTexture, * tRegenerationPowerupTexture;
+extern Texture* tCometTexture, * tNoTexture, * tBombAnimationTexture, *tEnergyPowerupTexture, * tRegenerationPowerupTexture, * tLight;
 
 static const float fPlayerAcceleration = 3000.0f;
 static const float fPlayerDecceleration = 1500.0f;

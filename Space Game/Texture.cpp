@@ -50,6 +50,8 @@ Texture::Texture(const wchar_t* filename)
 	fTextureDrawnHeight = nTextureHeight;
 	fTextureDrawnWidth = nTextureWidth;
 	nTexturesAcross = 0;
+
+	light = false;
 }
 Texture::Texture(const wchar_t* filename, int nTextureWidth, int nTextureHeight, float fTextureDrawnWidth, float fTextureDrawnHeight)
 	: Texture(filename)
@@ -99,14 +101,21 @@ void Texture::DrawDifferentSize(int index, float x, float y, float width, float 
 		rDest.right *= fScaleH;
 	}
 
-	if (fAngle != 0.0f)
+	if (light)
 	{
-		Graphics::m_d2dContext->SetTransform(D2D1::Matrix3x2F::Rotation(fAngle, D2D1::Point2F(fScaleH * (x + width / 2), fScaleV * (y + height / 2))));
-		Graphics::m_d2dContext->DrawBitmap(iBitmap, rDest, 1.0f, D2D1_INTERPOLATION_MODE_MULTI_SAMPLE_LINEAR, rSrc); //Display bitmap
-		Graphics::m_d2dContext->SetTransform(D2D1::Matrix3x2F::Identity());
+		Graphics::iLightingDeviceContext->DrawBitmap(iBitmap, rDest, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, rSrc);
 	}
 	else
-		Graphics::m_d2dContext->DrawBitmap(iBitmap, rDest, 1.0f, D2D1_INTERPOLATION_MODE_MULTI_SAMPLE_LINEAR, rSrc); //Display bitmap
+	{
+		if (fAngle != 0.0f)
+		{
+			Graphics::m_d2dContext->SetTransform(D2D1::Matrix3x2F::Rotation(fAngle, D2D1::Point2F(fScaleH * (x + width / 2), fScaleV * (y + height / 2))));
+			Graphics::m_d2dContext->DrawBitmap(iBitmap, rDest, 1.0f, D2D1_INTERPOLATION_MODE_MULTI_SAMPLE_LINEAR, rSrc); //Display bitmap
+			Graphics::m_d2dContext->SetTransform(D2D1::Matrix3x2F::Identity());
+		}
+		else
+			Graphics::m_d2dContext->DrawBitmap(iBitmap, rDest, 1.0f, D2D1_INTERPOLATION_MODE_MULTI_SAMPLE_LINEAR, rSrc); //Display bitmap
+	}
 }
 void Texture::Draw(int index, float x, float y, bool bRealCoordinates, float fAngle)
 {
@@ -131,14 +140,21 @@ void Texture::Draw(int index, float x, float y, bool bRealCoordinates, float fAn
 		rDest.right *= fScaleH;
 	}
 
-	if (fAngle != 0.0f)
+	if (light)
 	{
-		Graphics::m_d2dContext->SetTransform(D2D1::Matrix3x2F::Rotation(fAngle, D2D1::Point2F(fScaleH * (x + fTextureDrawnWidth / 2), fScaleV * (y + fTextureDrawnHeight / 2))));
-		Graphics::m_d2dContext->DrawBitmap(iBitmap, rDest, 1.0f, D2D1_INTERPOLATION_MODE_MULTI_SAMPLE_LINEAR, rSrc); //Display bitmap
-		Graphics::m_d2dContext->SetTransform(D2D1::Matrix3x2F::Identity());
+		Graphics::iLightingDeviceContext->DrawBitmap(iBitmap, rDest, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, rSrc);
 	}
 	else
-		Graphics::m_d2dContext->DrawBitmap(iBitmap, rDest, 1.0f, D2D1_INTERPOLATION_MODE_MULTI_SAMPLE_LINEAR, rSrc); //Display bitmap
+	{
+		if (fAngle != 0.0f)
+		{
+			Graphics::m_d2dContext->SetTransform(D2D1::Matrix3x2F::Rotation(fAngle, D2D1::Point2F(fScaleH * (x + fTextureDrawnWidth / 2), fScaleV * (y + fTextureDrawnHeight / 2))));
+			Graphics::m_d2dContext->DrawBitmap(iBitmap, rDest, 1.0f, D2D1_INTERPOLATION_MODE_MULTI_SAMPLE_LINEAR, rSrc); //Display bitmap
+			Graphics::m_d2dContext->SetTransform(D2D1::Matrix3x2F::Identity());
+		}
+		else
+			Graphics::m_d2dContext->DrawBitmap(iBitmap, rDest, 1.0f, D2D1_INTERPOLATION_MODE_MULTI_SAMPLE_LINEAR, rSrc); //Display bitmap
+	}
 }
 void Texture::DrawPanorama(float x)
 {

@@ -132,6 +132,9 @@
     <ClCompile Include="RegenerationPowerup.cpp">
       <Filter>Source Files\Space\Entities\Player\Powerups</Filter>
     </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>Source Files\Space\Entities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -220,6 +223,9 @@
     </ClInclude>
     <ClInclude Include="RegenerationPowerup.h">
       <Filter>Source Files\Space\Entities\Player\Powerups</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Source Files\Space\Entities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

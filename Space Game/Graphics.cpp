@@ -6,7 +6,9 @@
 #include <dwrite.h>
 #include <wrl/client.h>
 #include <mutex>
+#include <wincodec.h>
 #include "Game.h"
+#include "Graphics.h"
 
 using namespace Microsoft::WRL;
 
@@ -38,6 +40,9 @@ namespace Graphics {
 
 	ComPtr<ID3D11Device> device;
 	ComPtr<ID3D11DeviceContext> context;
+
+	ID2D1Bitmap1* iLightingBitmap;
+	ID2D1DeviceContext* iLightingDeviceContext;
 
 	HWND hWindow;
 
@@ -147,7 +152,7 @@ namespace Graphics {
 		D2D1_BITMAP_PROPERTIES1 bitmapProperties =
 			D2D1::BitmapProperties1(
 				D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
-				D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE),
+				D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED/*D2D1_ALPHA_MODE_IGNORE*/),
 				m_dpi,
 				m_dpi
 			);
@@ -176,7 +181,25 @@ namespace Graphics {
 
 		DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), (IUnknown**)&iWriteFactory);
 
+		RECT rClientRect;
+		GetClientRect(hWindow, &rClientRect);
 
+		HRESULT hr = m_d2dDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &iLightingDeviceContext);
+
+		D2D1_SIZE_U size;
+		size.width = rClientRect.right;
+		size.height = rClientRect.bottom;
+
+		D2D1_BITMAP_PROPERTIES1 properties =
+			D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET, D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED/*D2D1_ALPHA_MODE_IGNORE*/), m_dpi, m_dpi);
+
+		hr = iLightingDeviceContext->CreateBitmap(size, nullptr, 0, properties, &iLightingBitmap);
+
+		iLightingDeviceContext->SetTarget(iLightingBitmap);
+
+		iLightingDeviceContext->BeginDraw();
+		iLightingDeviceContext->Clear(); //TODO check if automatically clears
+		hr = iLightingDeviceContext->EndDraw();
 
 		init = true;
 		mGraphics.unlock();
@@ -193,6 +216,8 @@ namespace Graphics {
 	{
 		mGraphics.lock();
 		m_d2dContext->BeginDraw();
+		
+		//iLightingDeviceContext->Clear(D2D1::ColorF(D2D1::ColorF::Black));
 	}
 
 	void EndDraw()
@@ -308,7 +333,34 @@ namespace Graphics {
 
 			fScaleV = (float)nScreenHeight / 720.0f;
 			fScaleH = (float)nScreenWidth / 1280.0f;
+
+
+			RECT rClientRect;
+			GetClientRect(hWindow, &rClientRect);
+
+			D2D1_SIZE_U size;
+			size.width = rClientRect.right;
+			size.height = rClientRect.bottom;
+
+			D2D1_BITMAP_PROPERTIES1 properties =
+				D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET, D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED/*D2D1_ALPHA_MODE_IGNORE*/), m_dpi, m_dpi);
+			iLightingBitmap->Release();
+			hr = iLightingDeviceContext->CreateBitmap(size, nullptr, 0, properties, &iLightingBitmap);
+			iLightingDeviceContext->SetTarget(iLightingBitmap);		
 		}
+	}
+
+	void DrawLighting()
+	{
+		
+		ComPtr<ID2D1Effect> effect;
+		HRESULT hr = m_d2dContext->CreateEffect(CLSID_D2D1Flood, &effect);
+		hr = effect->SetValue(D2D1_FLOOD_PROP_COLOR, D2D1::Vector4F(0.0f, 0.0f, 0.0f, 1.0f));
+		iLightingDeviceContext->DrawImage(effect.Get(), D2D1_INTERPOLATION_MODE_NEAREST_NEIGHBOR, D2D1_COMPOSITE_MODE_XOR);
+
+		hr = iLightingDeviceContext->EndDraw();
+
+		m_d2dContext->DrawBitmap(iLightingBitmap);
 	}
 
 }

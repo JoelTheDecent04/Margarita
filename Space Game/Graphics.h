@@ -20,8 +20,12 @@ namespace Graphics {
 	void DrawRectangle(float fX, float fY, float fW, float fH, D2D1::ColorF& cColour, float fOpacity = 1.0f, float fThickness = 1.0f);
 	void FillRectangle(float fX, float fY, float fW, float fH, D2D1::ColorF& cColour, float fOpacity = 1.0f);
 	void Resize();
+	void DrawLighting();
 
 	extern Microsoft::WRL::ComPtr<ID2D1DeviceContext> m_d2dContext;
 	extern HWND hWindow;	
 	extern std::mutex mGraphics;
+
+	extern ID2D1DeviceContext* iLightingDeviceContext;
+	extern ID2D1Bitmap1* iLightingBitmap;
 }
