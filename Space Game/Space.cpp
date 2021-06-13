@@ -152,9 +152,9 @@ void SpaceGame::Render()
 	Graphics::DrawRectangle(5, 2 + 14 + 2 + 20 + 2 + 14 + 5, 100, 20, clrDarkGrey);
 
 	DWRITE_TEXT_METRICS tmTextMetrics;
-	Graphics::TextMetrics(L"Items", 14.0f, tmTextMetrics);
+	Graphics::TextMetrics(vItems[nCurrentItem]->strName, 14.0f, tmTextMetrics);
 	Graphics::FillRectangle(0, nScreenHeight - 4 - 32 - 4 - 14, max(32 * vItems.size(), tmTextMetrics.width) + 10, 14 + 4 + 32 + 4, clrBlack);
-	Graphics::WriteText(L"Items", 5, nScreenHeight - 4 - 32 - 4 - 14, 14);
+	Graphics::WriteText(vItems[nCurrentItem]->strName, 5, nScreenHeight - 4 - 32 - 4 - 14, 14);
 
 	int nItem = 0;
 	for (auto& item : vItems)
@@ -304,9 +304,6 @@ void SpaceGame::KeyDown(int key)
 		plPlayer->ChangeHealth(20.0f);
 	if (key == 'M')
 		plPlayer->fMoney += 200.0f;
-	if (key == 'P')
-		if (plPlayer->puCurrentPowerup == nullptr)
-			plPlayer->puCurrentPowerup = std::make_shared<EnergyPowerup>(this);
 	if (key == 'H')
 		bShowHitboxes = !bShowHitboxes;
 	if (key == keyNextWave1 || key == keyNextWave2)
@@ -339,7 +336,7 @@ void SpaceGame::Save()
 	std::fstream f;
 	f.open("savegame.txt", std::fstream::out);
 
-	f << nCurrentVersion << " " << fDifficulty << " " << nWave << " " << fSecondsUntilNextWave << " " << nEnemies << " ";
+	f << nCurrentVersion << " " << fDifficulty << " " << nWave << " " << fSecondsUntilNextWave << " " << nEnemies << " " << fLightingLoopTime << " ";
 
 	f << vEntities.size() << " ";
 	for (auto& entity : vEntities)
@@ -360,7 +357,7 @@ void SpaceGame::LoadFromFile()
 	if (!f.good()) return;
 
 	int nVersion;
-	f >> nVersion >> fDifficulty >> nWave >> fSecondsUntilNextWave >> nEnemies;
+	f >> nVersion >> fDifficulty >> nWave >> fSecondsUntilNextWave >> nEnemies >> fLightingLoopTime;
 	if (nVersion != nCurrentVersion) return;
 
 

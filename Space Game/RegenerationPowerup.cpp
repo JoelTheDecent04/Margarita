@@ -27,6 +27,7 @@ RegenerationPowerupItem::RegenerationPowerupItem()
 	tTexture = tRegenerationPowerupTexture;
 	nCount = 1;
 	nType = Type::RegenerationPowerup;
+	strName = L"Regeneration Powerup";
 }
 
 void RegenerationPowerupItem::Use(SpaceGame* game, float fX, float fY, float fAngle)

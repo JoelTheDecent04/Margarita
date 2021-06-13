@@ -10,6 +10,7 @@ public:
 	Type nType;
 	int nCount;
 	Texture* tTexture;
+	const wchar_t* strName;
 	virtual void Use(SpaceGame* game, float fX, float fY, float fAngle) = 0;
 	Item();
 	virtual void Save(std::fstream& f);

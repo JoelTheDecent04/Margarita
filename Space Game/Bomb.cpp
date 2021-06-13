@@ -66,6 +66,7 @@ BombWeapon::BombWeapon(int nLevel)
 	nCount = nLevel;
 	tTexture = tBombTexture;
 	nType = Type::Bomb;
+	strName = L"Bomb";
 }
 
 void BombWeapon::Use(SpaceGame* game, float fX, float fY, float fAngle)

@@ -26,6 +26,7 @@ EnergyPowerupItem::EnergyPowerupItem()
 	tTexture = tEnergyPowerupTexture;
 	nCount = 1;
 	nType = Type::EnergyPowerup;
+	strName = L"Energy Powerup";
 }
 
 void EnergyPowerupItem::Use(SpaceGame* game, float fX, float fY, float fAngle)

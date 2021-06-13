@@ -126,6 +126,7 @@ LaserWeapon::LaserWeapon(LaserLevel nLaserLevel)
 	this->nLaserLevel = nLaserLevel;
 	nCount = nLaserLevel;
 	nType = Type::Laser;
+	strName = L"Laser";
 }
 
 void LaserWeapon::Use(SpaceGame* game, float fX, float fY, float fAngle)

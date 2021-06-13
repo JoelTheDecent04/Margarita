@@ -5,6 +5,7 @@ Item::Item()
 	nCount = 0; 
 	tTexture = nullptr; 
 	nType = Type::None; 
+	strName = L"Unknown";
 }
 void Item::Save(std::fstream& f)
 {
