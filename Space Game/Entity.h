@@ -29,7 +29,7 @@ public:
 
 	Entity(SpaceGame* sgGame, Texture* tTexture, float fX, float fY);
 	virtual bool Update(double deltatime);
-	virtual void ChangeHealth(float fChange);
+	virtual void ChangeHealth(float fChange, Entity* e);
 	virtual bool Collide(Entity* entity) { return true; };
 	virtual void Draw();
 	bool Overlapping(Entity* e);

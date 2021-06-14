@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "Texture.h"
 #include "BackgroundObject.h"
+#include "EventHandler.h"
 #include <vector>
 #include <memory>
 
@@ -36,6 +37,8 @@ public:
 	float fLightingLoopTime;
 	float fBrightness;
 
+	std::shared_ptr<EventHandler> pEventHandler;
+
 	void Load() override;
 	void Unload() override;
 	void Render() override;
@@ -45,7 +48,7 @@ public:
 	void Save();
 	void LoadFromFile();
 	void NextWave();
-	SpaceGame() {};
+	SpaceGame() : pEventHandler(std::make_shared<EventHandler>(this)) {};
 };
 
 extern float fBackgroundPosition;

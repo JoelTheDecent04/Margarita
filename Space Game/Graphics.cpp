@@ -223,7 +223,7 @@ namespace Graphics {
 	void EndDraw()
 	{
 		m_d2dContext->EndDraw();
-		m_swapChain->Present(0, 0); //m_swapChain->Present(1, 0);
+		m_swapChain->Present(1, 0); //m_swapChain->Present(1, 0);
 		mGraphics.unlock();
 	}
 

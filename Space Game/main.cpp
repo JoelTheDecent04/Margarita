@@ -26,7 +26,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR lpCmdLine, int nCmdSh
 	RECT rect = { 0, 0, nScreenWidth, nScreenHeight };
 	AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false);
 
-	HWND hwnd = CreateWindow(ClassName, L"Margarita 0.1.4", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
+	HWND hwnd = CreateWindow(ClassName, L"Margarita 0.1.5", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
 		rect.right - rect.left, rect.bottom - rect.top, NULL, NULL, hInstance, NULL);
 
 	ShowWindow(hwnd, nCmdShow);
@@ -34,7 +34,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR lpCmdLine, int nCmdSh
 	MSG msg;
 
 	Graphics::Initialise(hwnd);
-	CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)Game::GameMain, nullptr, 0, nullptr);
+	_beginthread(Game::GameMain, 0, nullptr);
+	//CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)Game::GameMain, nullptr, 0, nullptr);
 
 	while (1)
 	{

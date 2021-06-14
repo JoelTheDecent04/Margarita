@@ -39,7 +39,7 @@ bool Crab::Update(double deltatime)
 			fSecondsUntilNextAttack -= deltatime;
 		else if (Distance(sgGame->plPlayer.get()) <= 90.0f)
 		{
-			sgGame->plPlayer->ChangeHealth(-15.0f);
+			sgGame->plPlayer->ChangeHealth(-15.0f, this);
 			fSecondsUntilNextAttack = 1.0f;
 		}
 	}

@@ -36,7 +36,7 @@ LaserBeam::LaserBeam(SpaceGame* game, LaserWeapon* weapon, float fX, float fY, f
 
 bool LaserBeam::Collide(Entity* entity)
 {
-	entity->ChangeHealth(-50.0f);
+	entity->ChangeHealth(-50.0f, this);
 	Destroy();
 	return false;
 }

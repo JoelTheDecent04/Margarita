@@ -158,12 +158,20 @@ bool Entity::Update(double deltatime)
 	return true;
 }
 
-void Entity::ChangeHealth(float fChange)
+void Entity::ChangeHealth(float fChange, Entity* e)
 {
 	sgGame->vBackgroundObjects.push_back(std::make_shared<EntityHealthChangeText>(this, fChange));
 	fHealth += fChange;
 	if (fHealth <= 0.0f)
+	{
+		sgGame->pEventHandler->Event(EventHandler::Type::Kill, 0, e, this);
 		fHealth = 0.0f; //When Destroy() is called on the player, it won't get deleted straight away
+	}
+	else
+	{
+		sgGame->pEventHandler->Event(EventHandler::Type::Hit, 0, e, this);
+
+	}
 }
 
 bool Entity::Overlapping(Entity* e)

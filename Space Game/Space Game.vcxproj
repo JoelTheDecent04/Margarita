@@ -153,6 +153,7 @@
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnergyPowerup.cpp" />
     <ClCompile Include="EntityHealthChangeText.cpp" />
+    <ClCompile Include="EventHandler.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="GUI.cpp" />
@@ -185,6 +186,7 @@
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnergyPowerup.h" />
     <ClInclude Include="EntityHealthChangeText.h" />
+    <ClInclude Include="EventHandler.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="Entity.h" />

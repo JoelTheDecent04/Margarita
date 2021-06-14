@@ -45,7 +45,7 @@ D2D1::ColorF clrDarkGrey	= D2D1::ColorF(0.3f, 0.3f, 0.3f);
 D2D1::ColorF clrWhite		= D2D1::ColorF(1.0f, 1.0f, 1.0f);
 D2D1::ColorF clrBlue		= D2D1::ColorF(0.0f, 0.0f, 1.0f);
 
-int nCurrentVersion = 14;
+int nCurrentVersion = 15;
 
 void SpaceGame::Load()
 {
@@ -299,9 +299,9 @@ void SpaceGame::KeyDown(int key)
 	if (key == keyOpenShop1 || key == keyOpenShop2)
 		Game::LoadLevel(new ShopScreen(this), false, true);
 	if (key == 'K')
-		plPlayer->ChangeHealth(-20.0f);
+		plPlayer->ChangeHealth(-20.0f, nullptr);
 	if (key == 'J')
-		plPlayer->ChangeHealth(20.0f);
+		plPlayer->ChangeHealth(20.0f, nullptr);
 	if (key == 'M')
 		plPlayer->fMoney += 200.0f;
 	if (key == 'H')
@@ -357,9 +357,10 @@ void SpaceGame::LoadFromFile()
 	if (!f.good()) return;
 
 	int nVersion;
-	f >> nVersion >> fDifficulty >> nWave >> fSecondsUntilNextWave >> nEnemies >> fLightingLoopTime;
+	f >> nVersion;
 	if (nVersion != nCurrentVersion) return;
 
+	f >> fDifficulty >> nWave >> fSecondsUntilNextWave >> nEnemies >> fLightingLoopTime;
 
 	vEntities.clear(); //TODO free
 	int nEntities;

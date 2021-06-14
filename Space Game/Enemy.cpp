@@ -53,7 +53,7 @@ bool Enemy::Update(double deltatime)
 			fSecondsUntilNextAttack -= deltatime;
 		else
 		{
-			sgGame->plPlayer->ChangeHealth(-10.0f);
+			sgGame->plPlayer->ChangeHealth(-10.0f, this);
 			fSecondsUntilNextAttack = 1.0f;
 		}
 	}

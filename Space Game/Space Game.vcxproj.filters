@@ -135,6 +135,9 @@
     <ClCompile Include="Light.cpp">
       <Filter>Source Files\Space\Entities</Filter>
     </ClCompile>
+    <ClCompile Include="EventHandler.cpp">
+      <Filter>Source Files\Space</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -226,6 +229,9 @@
     </ClInclude>
     <ClInclude Include="Light.h">
       <Filter>Source Files\Space\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="EventHandler.h">
+      <Filter>Source Files\Space</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

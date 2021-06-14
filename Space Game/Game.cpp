@@ -31,7 +31,7 @@ namespace Game {
 
 	double fSecondsSinceLastFrame = 0.0;
 
-	void GameMain()
+	void GameMain(void*)
 	{
 		CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 
@@ -72,17 +72,14 @@ namespace Game {
 				double dDeltaTime = (nCurrentTime - nStartTime) * dSecondsPerCount;
 				nStartTime = nCurrentTime;
 
-				lCurrentLevel->Update(dDeltaTime);
+				dDeltaTime /= 4.0;
 
-				fSecondsSinceLastFrame += dDeltaTime;
-				if (fSecondsSinceLastFrame > 0.0025)
-				{
-					Graphics::BeginDraw();
-					lCurrentLevel->Render();
-					Graphics::EndDraw();
-					fSecondsSinceLastFrame = 0.0;
-				}
-				//Sleep(1);
+				for (int i = 0; i < 4; i++)
+					lCurrentLevel->Update(dDeltaTime);
+
+				Graphics::BeginDraw();
+				lCurrentLevel->Render();
+				Graphics::EndDraw();
 			}
 		}
 	}

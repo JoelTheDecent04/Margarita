@@ -27,7 +27,7 @@ bool Orb::Update(double deltatime)
 
 bool Orb::Collide(Entity* entity)
 {
-	entity->ChangeHealth(-100.0f);
+	entity->ChangeHealth(-100.0f, this);
 	Destroy();
 	return false;
 }

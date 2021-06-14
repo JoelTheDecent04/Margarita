@@ -30,7 +30,7 @@ void Bomb::Explode()
 		float fDistance = Distance(entity.get());
 		float fDamageDistance = 75.0f + 25.0f * nLevel;
 		if (fDistance < fDamageDistance)
-			entity->ChangeHealth((-250.0f - 20.0f * nLevel) * ((fDamageDistance - fDistance) / fDamageDistance));
+			entity->ChangeHealth((-250.0f - 20.0f * nLevel) * ((fDamageDistance - fDistance) / fDamageDistance), this);
 	}
 
 	fHealth = 0.0f;
