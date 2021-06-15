@@ -1,16 +1,10 @@
 #pragma once
-
-class Entity;
-class SpaceGame;
-
-class Objective
-{
-
-};
+#include "Entity.h"
 
 class EventHandler
 {
 	SpaceGame* game;
+	void MakeNewAchievement();
 public:
 	EventHandler(SpaceGame* game);
 	enum class Type
@@ -20,6 +14,14 @@ public:
 		Kill,
 		Hit
 	};
+	Type nAchievementType;
+	Entity::Type nAchievementEntityType1;
+	Entity::Type nAchievementEntityType2;
+	int nAchievementCount;
+	//Damage # enemies with $
+	//Kill # $s
+
 	
 	void Event(Type nType, int nCount, Entity* a, Entity* b);
+
 };

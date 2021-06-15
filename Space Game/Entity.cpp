@@ -4,6 +4,7 @@
 #include "Utilities.h"
 
 static D2D1::ColorF clrWhite = D2D1::ColorF(D2D1::ColorF::White);
+const wchar_t* astrEntityName[8] = { L"None", L"Player", L"Bomb", L"Crab", L"Alien", L"Laser", L"Orb", L"Light" };
 
 Entity::Entity(SpaceGame* sgGame, Texture* tTexture, float fX, float fY)
 {
@@ -167,7 +168,7 @@ void Entity::ChangeHealth(float fChange, Entity* e)
 		sgGame->pEventHandler->Event(EventHandler::Type::Kill, 0, e, this);
 		fHealth = 0.0f; //When Destroy() is called on the player, it won't get deleted straight away
 	}
-	else
+	else if (fChange < 0.0f)
 	{
 		sgGame->pEventHandler->Event(EventHandler::Type::Hit, 0, e, this);
 

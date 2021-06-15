@@ -1,8 +1,9 @@
 #pragma once
 #include "Texture.h"
-#include "Space.h"
 #include <fstream>
 #include <memory>
+
+class SpaceGame;
 
 class Entity
 {
@@ -39,3 +40,5 @@ public:
 	virtual void Save(std::fstream& f);
 	virtual void Load(std::fstream& f);
 };
+
+extern const wchar_t* astrEntityName[8];

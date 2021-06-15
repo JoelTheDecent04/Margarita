@@ -185,7 +185,10 @@ void SpaceGame::Render()
 		Graphics::WriteText(txtBuf, nScreenWidth / 2 - tmTextMetrics.width / 2, 4, 16.0f);
 	}
 
-	
+	swprintf_s(txtBuf, 64, L"Objective: Kill %d x %s using %s", pEventHandler->nAchievementCount, astrEntityName[(int)pEventHandler->nAchievementEntityType2], astrEntityName[(int)pEventHandler->nAchievementEntityType1]);
+	Graphics::TextMetrics(txtBuf, 16.0f, tmTextMetrics);
+	Graphics::WriteText(txtBuf, nScreenWidth / 2 - tmTextMetrics.width / 2, nScreenHeight - 2 - tmTextMetrics.height, 16.0f);
+
 }
 void SpaceGame::Update(double deltatime)
 {
