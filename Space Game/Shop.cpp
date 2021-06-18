@@ -133,7 +133,6 @@ void ShopScreen::UpgradeHealth()
 	{
 		lGameLevel->plPlayer->fMoney -= 150.0f;
 		lGameLevel->plPlayer->fMaxHealth += 50.0f;
-		lGameLevel->plPlayer->fHealth += 50.0f;
 	}
 }
 

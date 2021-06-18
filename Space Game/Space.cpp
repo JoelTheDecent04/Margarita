@@ -45,7 +45,7 @@ D2D1::ColorF clrDarkGrey	= D2D1::ColorF(0.3f, 0.3f, 0.3f);
 D2D1::ColorF clrWhite		= D2D1::ColorF(1.0f, 1.0f, 1.0f);
 D2D1::ColorF clrBlue		= D2D1::ColorF(0.0f, 0.0f, 1.0f);
 
-int nCurrentVersion = 15;
+int nCurrentVersion = 16;
 
 void SpaceGame::Load()
 {
@@ -181,20 +181,20 @@ void SpaceGame::Render()
 	if (bWaveFinished)
 	{
 		swprintf_s(txtBuf, 64, L"Wave Completed. Press '%s' To Continue.", ControlsScreen::KeyText(keyNextWave1).c_str());
-		Graphics::TextMetrics(txtBuf, 16.0f, tmTextMetrics);
-		Graphics::WriteText(txtBuf, nScreenWidth / 2 - tmTextMetrics.width / 2, 4, 16.0f);
+		Graphics::TextMetrics(txtBuf, 24.0f, tmTextMetrics);
+		Graphics::WriteText(txtBuf, nScreenWidth / 2 - tmTextMetrics.width / 2, 8, 24.0f);
 	}
 
 	swprintf_s(txtBuf, 64, L"Objective: Kill %d x %s using %s", pEventHandler->nAchievementCount, astrEntityName[(int)pEventHandler->nAchievementEntityType2], astrEntityName[(int)pEventHandler->nAchievementEntityType1]);
-	Graphics::TextMetrics(txtBuf, 16.0f, tmTextMetrics);
-	Graphics::WriteText(txtBuf, nScreenWidth / 2 - tmTextMetrics.width / 2, nScreenHeight - 2 - tmTextMetrics.height, 16.0f);
+	Graphics::TextMetrics(txtBuf, 24.0f, tmTextMetrics);
+	Graphics::WriteText(txtBuf, nScreenWidth / 2 - tmTextMetrics.width / 2, nScreenHeight - 2 - tmTextMetrics.height, 24.0f);
 
 }
 void SpaceGame::Update(double deltatime)
 {
 	fPhysicsUpdatesPerSeconds = 1.0 / deltatime;
 
-	for (int i = 0; i < vEntities.size(); i++) //Entity updates //TODO optimise
+	for (int i = 0; i < vEntities.size(); i++) //Entity updates
 	{
 		auto entity = vEntities[i];
 		bool bEntityExists = entity->Update(deltatime);
@@ -365,7 +365,7 @@ void SpaceGame::LoadFromFile()
 
 	f >> fDifficulty >> nWave >> fSecondsUntilNextWave >> nEnemies >> fLightingLoopTime;
 
-	vEntities.clear(); //TODO free
+	vEntities.clear();
 	int nEntities;
 	f >> nEntities;
 

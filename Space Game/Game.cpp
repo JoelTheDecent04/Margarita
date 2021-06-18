@@ -31,7 +31,7 @@ namespace Game {
 
 	double fSecondsSinceLastFrame = 0.0;
 
-	void GameMain(void*)
+	void GameMain()
 	{
 		CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 

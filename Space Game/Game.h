@@ -16,7 +16,7 @@ public:
 class SpaceGame;
 
 namespace Game {
-	void GameMain(void*);
+	void GameMain();
 	void LoadLevel(Level* lNewLevel, bool bUnloadPrevious = true, bool bLoadNext = true);
 	void LeftClick();
 	void KeyDown(int key);

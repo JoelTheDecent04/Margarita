@@ -11,8 +11,8 @@ void EventHandler::MakeNewAchievement()
 	int n = random() * 6;
 	n = n * 5 + 10;
 	nAchievementCount = n;
-	nAchievementEntityType1 = anWeapons[(int)(random() * 2)];
-	nAchievementEntityType2 = anEnemies[(int)(random() * 1)];
+	nAchievementEntityType1 = anWeapons[(int)roundf((random() * 2.0f))];
+	nAchievementEntityType2 = anEnemies[(int)roundf((random() * 1.0f))];
 	nAchievementType = Type::Kill;
 }
 
@@ -28,14 +28,11 @@ void EventHandler::Event(Type nType, int nCount, Entity* a, Entity* b)
 	{
 	case Type::None: break;
 	case Type::Damage:
-		DebugOut(L"Damaged %d enemies with weapon %d\n", nCount, a->nType);
 
 		break;
 	case Type::Hit:
-		DebugOut(L"Hit entity %d with weapon %d\n", b->nType, a->nType);
 		break;
 	case Type::Kill:
-		DebugOut(L"Killed entity %d with weapon %d\n", b->nType, a->nType);
 		break;
 	default:
 		abort();

@@ -1,6 +1,7 @@
 #include <Windows.h>
 #include <time.h>
 #include <cassert>
+#include <thread>
 #include "Game.h"
 #include "Space.h"
 #include "TitleScreen.h"
@@ -26,7 +27,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR lpCmdLine, int nCmdSh
 	RECT rect = { 0, 0, nScreenWidth, nScreenHeight };
 	AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false);
 
-	HWND hwnd = CreateWindow(ClassName, L"Margarita 0.1.5", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
+	HWND hwnd = CreateWindow(ClassName, L"Margarita 0.1.6", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
 		rect.right - rect.left, rect.bottom - rect.top, NULL, NULL, hInstance, NULL);
 
 	ShowWindow(hwnd, nCmdShow);
@@ -34,7 +35,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR lpCmdLine, int nCmdSh
 	MSG msg;
 
 	Graphics::Initialise(hwnd);
-	_beginthread(Game::GameMain, 0, nullptr);
+	auto tGameThread = std::thread(Game::GameMain);
+	//_beginthread(Game::GameMain, 0, nullptr);
 	//CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)Game::GameMain, nullptr, 0, nullptr);
 
 	while (1)
