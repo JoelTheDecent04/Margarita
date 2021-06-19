@@ -12,9 +12,9 @@ void DeathScreen::Render()
 		bRenderedFirstFrame = true;
 	}
 
-	TextSize textsize;
-	Graphics::TextMetrics(L"You Suck!", fScaleV * 36.0f, textsize);
-	Graphics::WriteText(L"You Suck!", fScaleH * 640 - (textsize.width / 2), 100, fScaleV * 36.0f);
+	DWRITE_TEXT_METRICS tmTextMetrics;
+	Graphics::TextMetrics(L"You Suck!", fScaleV * 36.0f, tmTextMetrics);
+	Graphics::WriteText(L"You Suck!", fScaleH * 640 - (tmTextMetrics.width / 2), 100, fScaleV * 36.0f);
 
 	for (int i = 0; i < vButtons.size(); i++)
 		vButtons[i].Draw(i == nButtonHover);
@@ -22,14 +22,17 @@ void DeathScreen::Render()
 
 void DeathScreen::Update(double deltatime)
 {
-	int nCursorX, nCursorY;
-	GetRelativeMousePos(&nCursorX, &nCursorY);
+	POINT pntCursorPosition;
+	GetCursorPos(&pntCursorPosition);
+	ScreenToClient(Graphics::hWindow, &pntCursorPosition);
+	pntCursorPosition.x /= fScaleH;
+	pntCursorPosition.y /= fScaleV;
 
 	bool bMouseOverButton = false;
 	int i = 0;
 	for (Button& button : vButtons)
 	{
-		if (PointInRect(button.rect, nCursorX, nCursorY))
+		if (PtInRect(&button.rect, pntCursorPosition))
 		{
 			nButtonHover = i;
 			bMouseOverButton = true;

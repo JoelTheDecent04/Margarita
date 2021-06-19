@@ -42,9 +42,9 @@ void ControlsScreen::Render()
 {
 	Graphics::Clear(clrBlack);
 
-	TextSize textsize;
-	Graphics::TextMetrics(L"Controls", fScaleV * 44.0f, textsize);
-	Graphics::WriteText(L"Controls", fScaleH * 640 - textsize.width / 2, fScaleV * 40.0f, fScaleV * 40.0f);
+	DWRITE_TEXT_METRICS tmTextMetrics;
+	Graphics::TextMetrics(L"Controls", fScaleV * 44.0f, tmTextMetrics);
+	Graphics::WriteText(L"Controls", fScaleH * 640 - tmTextMetrics.width / 2, fScaleV * 40.0f, fScaleV * 40.0f);
 
 	int nY = 100;
 	for (Control& control : vControls)
@@ -67,10 +67,10 @@ void ControlsScreen::Render()
 		Graphics::DrawRectangle(fScaleH * 450, fScaleV * nY, fScaleH * 100, fScaleV * 28, clrDarkGrey);
 		Graphics::DrawRectangle(fScaleH * 560, fScaleV * nY, fScaleH * 100, fScaleV * 28, clrDarkGrey);
 
-		Graphics::TextMetrics(strKey1.c_str(), fScaleV * 20.0f, textsize);
-		Graphics::WriteText(strKey1.c_str(), fScaleH * 500.0f - (textsize.width / 2), fScaleV * (nY + 14) - (textsize.height / 2), fScaleV * 20.0f);
-		Graphics::TextMetrics(strKey2.c_str(), fScaleV * 20.0f, textsize);
-		Graphics::WriteText(strKey2.c_str(), fScaleH * 610.0f - (textsize.width / 2), fScaleV * (nY + 14) - (textsize.height / 2), fScaleV * 20.0f);
+		Graphics::TextMetrics(strKey1.c_str(), fScaleV * 20.0f, tmTextMetrics);
+		Graphics::WriteText(strKey1.c_str(), fScaleH * 500.0f - (tmTextMetrics.width / 2), fScaleV * (nY + 14) - (tmTextMetrics.height / 2), fScaleV * 20.0f);
+		Graphics::TextMetrics(strKey2.c_str(), fScaleV * 20.0f, tmTextMetrics);
+		Graphics::WriteText(strKey2.c_str(), fScaleH * 610.0f - (tmTextMetrics.width / 2), fScaleV * (nY + 14) - (tmTextMetrics.height / 2), fScaleV * 20.0f);
 		nY += 35;
 	}
 
@@ -118,8 +118,8 @@ void ControlsScreen::LeftClick()
 	int nY = 100;
 	for (Control& control : vControls)
 	{
-		Rect rect1 = { 450, nY, 550, nY + 28 };
-		Rect rect2 = { 560, nY, 660, nY + 28 };
+		RECT rect1 = { 450, nY, 550, nY + 28 };
+		RECT rect2 = { 560, nY, 660, nY + 28 };
 		if (PointInRect(rect1, nCursorX, nCursorY))
 		{
 			keyToChange = control.nKey1;

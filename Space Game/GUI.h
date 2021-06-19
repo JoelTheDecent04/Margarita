@@ -1,11 +1,11 @@
 #pragma once
+#include <Windows.h>
 #include <d2d1.h>
-#include "Utilities.h"
 
 class Bar //TODO add horizontal / vertical
 {
 public:
-	Rect rect;
+	RECT rect;
 	D2D1::ColorF& clrColour;
 	float* fValue;
 	float* fMaxValue;
@@ -16,7 +16,7 @@ public:
 class Button
 {
 public:
-	Rect rect;
+	RECT rect;
 	void (*function)(void*);
 	const wchar_t* text;
 	float fSize;

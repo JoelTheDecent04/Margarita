@@ -42,7 +42,7 @@ void ShopScreen::Render()
 	Graphics::DrawRectangle(fScaleH * 70.0f, fScaleV * 380.0f, fScaleH * 350.0f, fScaleV * 180.0f, clrCustomDarkBlue, 1.0f, 3.0f);
 	tCharacterTexture->DrawDifferentSize(1, 900.0f + 8, 140.0f, 1.43f * 200.0f, 200.0f);
 
-	TextSize textsize;
+	DWRITE_TEXT_METRICS tmTextMetrics;
 	Graphics::WriteText(L"Upgrades", fScaleH * 130, fScaleV * 115, fScaleV * 20.0f);
 
 	for (int i = 0; i < vButtons.size(); i++)
@@ -53,24 +53,24 @@ void ShopScreen::Render()
 
 	wchar_t txtBuf[64];
 	swprintf_s(txtBuf, 64, L"%d / %d", (int)lGameLevel->plPlayer->fHealthRegeneration, (int)lGameLevel->plPlayer->fMaxHealthRegeneration); //Max health
-	Graphics::TextMetrics(txtBuf, fScaleV * 9.0f, textsize);
-	Graphics::WriteText(txtBuf, fScaleH * 310 - textsize.width / 2, fScaleV * 179.0f - textsize.height / 2, fScaleV * 9.0f);
+	Graphics::TextMetrics(txtBuf, fScaleV * 9.0f, tmTextMetrics);
+	Graphics::WriteText(txtBuf, fScaleH * 310 - tmTextMetrics.width / 2, fScaleV * 179.0f - tmTextMetrics.height / 2, fScaleV * 9.0f);
 
 	swprintf_s(txtBuf, 64, L"%d / %d", (int)lGameLevel->plPlayer->fMaxHealth, (int)lGameLevel->plPlayer->fMaxHealthUpgrade); //Max health
-	Graphics::TextMetrics(txtBuf, fScaleV * 9.0f, textsize);
-	Graphics::WriteText(txtBuf, fScaleH * 310 - textsize.width / 2, fScaleV * 229.0f - textsize.height / 2, fScaleV * 9.0f);
+	Graphics::TextMetrics(txtBuf, fScaleV * 9.0f, tmTextMetrics);
+	Graphics::WriteText(txtBuf, fScaleH * 310 - tmTextMetrics.width / 2, fScaleV * 229.0f - tmTextMetrics.height / 2, fScaleV * 9.0f);
 
 	swprintf_s(txtBuf, 64, L"%d / %d", (int)lGameLevel->plPlayer->fEnergyRechargeSpeed, (int)lGameLevel->plPlayer->fMaxEnergyRechargeSpeed); //Energy recharge
-	Graphics::TextMetrics(txtBuf, fScaleV * 9.0f, textsize);
-	Graphics::WriteText(txtBuf, fScaleH * 310 - textsize.width / 2, fScaleV * 279.0f - textsize.height / 2, fScaleV * 9.0f);
+	Graphics::TextMetrics(txtBuf, fScaleV * 9.0f, tmTextMetrics);
+	Graphics::WriteText(txtBuf, fScaleH * 310 - tmTextMetrics.width / 2, fScaleV * 279.0f - tmTextMetrics.height / 2, fScaleV * 9.0f);
 
 	swprintf_s(txtBuf, 64, L"%d / %d", (int)lGameLevel->plPlayer->fMovementSpeed, (int)lGameLevel->plPlayer->fMaxMovementSpeed); //Energy recharge
-	Graphics::TextMetrics(txtBuf, fScaleV * 9.0f, textsize);
-	Graphics::WriteText(txtBuf, fScaleH * 310 - textsize.width / 2, fScaleV * 329.0f - textsize.height / 2, fScaleV * 9.0f);
+	Graphics::TextMetrics(txtBuf, fScaleV * 9.0f, tmTextMetrics);
+	Graphics::WriteText(txtBuf, fScaleH * 310 - tmTextMetrics.width / 2, fScaleV * 329.0f - tmTextMetrics.height / 2, fScaleV * 9.0f);
 
 	swprintf_s(txtBuf, 64, L"$%d", (int)lGameLevel->plPlayer->fMoney); //Money (corner)
-	Graphics::TextMetrics(txtBuf, fScaleV * 16.0f, textsize);
-	Graphics::WriteText(txtBuf, fScaleH * (1280 - 5) - textsize.width, 5, fScaleV * 16.0f);
+	Graphics::TextMetrics(txtBuf, fScaleV * 16.0f, tmTextMetrics);
+	Graphics::WriteText(txtBuf, fScaleH * (1280 - 5) - tmTextMetrics.width, 5, fScaleV * 16.0f);
 
 	Graphics::WriteText(L"Powerups", fScaleH * 610, fScaleV * 115, fScaleV * 20.0f);
 

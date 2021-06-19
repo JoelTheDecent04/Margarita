@@ -8,12 +8,12 @@ EntityHealthChangeText::EntityHealthChangeText(Entity* entity, int nChange)
 	bool healing = nChange > 0 ? true : false;
 	wchar_t strTextBuffer[24];
 	swprintf_s(strTextBuffer, 24, healing ? L"+%d" : L"%d", nChange);
-	TextSize textsize;
-	Graphics::TextMetrics(strTextBuffer, 12.0f, textsize);
+	DWRITE_TEXT_METRICS tmTextMetrics;
+	Graphics::TextMetrics(strTextBuffer, 12.0f, tmTextMetrics);
 
 	fOpacity = 1.0f;
 	fOpacityChangePerSecond = -4.0f;
-	fX = entity->fX - (textsize.width / 2);
+	fX = entity->fX - (tmTextMetrics.width / 2);
 	fY = entity->fY - (entity->tTexture->fTextureDrawnHeight / 2) - 4 - 12;
 	fSpeedX = 0.0f;
 	fSpeedY = -100.0f;

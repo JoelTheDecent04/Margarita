@@ -1,8 +1,7 @@
 #include "Texture.h"
 #include "Game.h"
 #include <d2d1_1.h>
-#include <Windows.h>
-#include <wincodec.h>
+#include <d2d1svg.h>
 
 Texture::Texture(const wchar_t* filename)
 {

@@ -2,6 +2,7 @@
 #include "Space.h"
 #include "Player.h"
 #include <math.h>
+#include <Windows.h>
 #define PI 3.1415926f
 
 LaserBeam::LaserBeam(SpaceGame* game, LaserWeapon* weapon, float fX, float fY, float fSpeedX, float fSpeedY)

@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "Space.h"
 #include "GUI.h"
+#include <Windows.h>
 #include <vector>
 #include <d2d1.h>
 
