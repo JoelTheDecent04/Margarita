@@ -26,20 +26,19 @@ void PauseScreen::Render()
 		lPrevLevel->Render();
 	Graphics::FillRectangle(0.0f, 0.0f, fScaleH * 1280.0f, fScaleV * 720.0f, clrBlack, 0.7f);
 
-	DWRITE_TEXT_METRICS tmTextMetrics;
-	Graphics::TextMetrics(L"Game Paused", fScaleV * 44.0f, tmTextMetrics);
-	Graphics::WriteText(L"Game Paused", fScaleH * 640 - tmTextMetrics.width / 2, fScaleV * 70, fScaleV * 44.0f);
+	TextSize textsize;
+	Graphics::TextMetrics(L"Game Paused", fScaleV * 44.0f, textsize);
+	Graphics::WriteText(L"Game Paused", fScaleH * 640 - textsize.width / 2, fScaleV * 70, fScaleV * 44.0f);
 
 	for (int i = 0; i < vButtons.size(); i++)
 	{
 		Button& button = vButtons[i];
 		Graphics::FillRectangle(fScaleH * button.rect.left, fScaleV * button.rect.top, fScaleH * (button.rect.right - button.rect.left), fScaleV * (button.rect.bottom - button.rect.top), i == nButtonHover ? clrDarkGrey : clrBlack);
 		Graphics::DrawRectangle(fScaleH * button.rect.left, fScaleV * button.rect.top, fScaleH * (button.rect.right - button.rect.left), fScaleV * (button.rect.bottom - button.rect.top), clrDarkGrey);
-		DWRITE_TEXT_METRICS tmTextMetrics;
-		Graphics::TextMetrics(button.text, fScaleV * 24.0f, tmTextMetrics);
+		Graphics::TextMetrics(button.text, fScaleV * 24.0f, textsize);
 		Graphics::WriteText(button.text,
-			fScaleH * ((button.rect.right + button.rect.left) / 2) - tmTextMetrics.width / 2,
-			fScaleV * ((button.rect.bottom + button.rect.top) / 2) - tmTextMetrics.height / 2,
+			fScaleH * ((button.rect.right + button.rect.left) / 2) - textsize.width / 2,
+			fScaleV * ((button.rect.bottom + button.rect.top) / 2) - textsize.height / 2,
 			fScaleV * 24.0f);
 	}
 }

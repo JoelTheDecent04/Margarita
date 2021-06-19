@@ -6,6 +6,17 @@
 
 class TitleScreen : public Level
 {
+	class Button
+	{
+	public:
+		RECT rect;
+		void (*function)();
+		const wchar_t* text;
+		Button(int left, int top, int right, int bottom, void (*function)(), const wchar_t* text) 
+		{
+			this->rect = { left, top, right, bottom }; this->function = function; this->text = text; 
+		};
+	};
 	std::vector<Button> vButtons;
 	int nButtonHover;
 public:

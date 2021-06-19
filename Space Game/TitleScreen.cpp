@@ -29,9 +29,9 @@ void TitleScreen::Render()
 {
 	tTitlescreenBackground->Draw(0, 0.0f, 0.0f);
 
-	DWRITE_TEXT_METRICS tmTextMetrics;
-	Graphics::TextMetrics(L"Margarita", fScaleV * 125.0f, tmTextMetrics, L"Chiller");
-	Graphics::WriteText(L"Margarita", fScaleH * 640 - tmTextMetrics.width / 2, fScaleV * 30, fScaleV * 125.0f, clrRed, 1.0f, L"Chiller");
+	TextSize textsize;
+	Graphics::TextMetrics(L"Margarita", fScaleV * 125.0f, textsize, L"Chiller");
+	Graphics::WriteText(L"Margarita", fScaleH * 640 - textsize.width / 2, fScaleV * 30, fScaleV * 125.0f, clrRed, 1.0f, L"Chiller");
 
 	int nIndex = 0;
 	for (Button& button : vButtons)
