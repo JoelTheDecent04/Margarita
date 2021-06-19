@@ -1,7 +1,6 @@
 #pragma once
 #include "Game.h"
 #include <vector>
-#include <Windows.h>
 
 class PauseScreen : public Level
 {
@@ -10,7 +9,7 @@ public:
 	class Button
 	{
 	public:
-		RECT rect;
+		Rect rect;
 		void (*function)(PauseScreen*);
 		const wchar_t* text;
 		Button(int left, int top, int right, int bottom, void (*function)(PauseScreen*), const wchar_t* text)

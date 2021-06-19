@@ -36,7 +36,7 @@ void GetRelativeMousePos(int* x, int* y)
 	*y = pntCursorPosition.y / fScaleV;
 }
 
-bool PointInRect(RECT& rect, int x, int y)
+bool PointInRect(Rect& rect, int x, int y)
 {
 	return (x > rect.left && y > rect.top && x < rect.right && y < rect.bottom);
 }

@@ -1,6 +1,5 @@
 #pragma once
 #include "Game.h"
-#include <Windows.h>
 #include <vector>
 
 class TitleScreen : public Level
@@ -8,7 +7,7 @@ class TitleScreen : public Level
 	class Button
 	{
 	public:
-		RECT rect;
+		Rect rect;
 		void (*function)();
 		const wchar_t* text;
 		Button(int left, int top, int right, int bottom, void (*function)(), const wchar_t* text) 

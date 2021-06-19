@@ -251,8 +251,9 @@ namespace Graphics {
 		iTextFormat->Release();
 	}
 
-	void TextMetrics(const wchar_t* text, float size, DWRITE_TEXT_METRICS& textmetrics, const wchar_t* font)
+	void TextMetrics(const wchar_t* text, float size, TextSize& ts, const wchar_t* font)
 	{
+		DWRITE_TEXT_METRICS textmetrics;
 		if (size == 0.0f) return;
 		if (font == nullptr) font = L"Bahnschrift";
 		IDWriteTextFormat* iTextFormat;
@@ -273,6 +274,8 @@ namespace Graphics {
 
 		iTextLayout->Release();
 		iTextFormat->Release();
+		ts.width = textmetrics.width;
+		ts.height = textmetrics.height;
 	}
 	
 	void DrawRectangle(float fX, float fY, float fW, float fH, D2D1::ColorF& cColour, float fOpacity, float thickness)

@@ -1,7 +1,6 @@
 #pragma once
 #include "Game.h"
 #include "GUI.h"
-#include <Windows.h>
 #include <vector>
 
 class DeathScreen : public Level

@@ -12,9 +12,9 @@ void DeathScreen::Render()
 		bRenderedFirstFrame = true;
 	}
 
-	DWRITE_TEXT_METRICS tmTextMetrics;
-	Graphics::TextMetrics(L"You Suck!", fScaleV * 36.0f, tmTextMetrics);
-	Graphics::WriteText(L"You Suck!", fScaleH * 640 - (tmTextMetrics.width / 2), 100, fScaleV * 36.0f);
+	TextSize textsize;
+	Graphics::TextMetrics(L"You Suck!", fScaleV * 36.0f, textsize);
+	Graphics::WriteText(L"You Suck!", fScaleH * 640 - (textsize.width / 2), 100, fScaleV * 36.0f);
 
 	for (int i = 0; i < vButtons.size(); i++)
 		vButtons[i].Draw(i == nButtonHover);
