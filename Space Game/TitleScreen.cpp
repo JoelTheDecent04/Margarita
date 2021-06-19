@@ -13,14 +13,14 @@ TitleScreen::TitleScreen()
 	nButtonHover = -1;
 	tButtons = new Texture(L"buttons.png", 1908, 857, 280, 125);
 
-	vButtons.push_back(Button(500, 200, 780, 325, [] {
+	vButtons.push_back(Button(500, 200, 780, 325, [] (void*) {
 		if (Game::sgSpaceGame)
 			Game::LoadLevel(Game::sgSpaceGame, true, false);
 		else
 			Game::LoadLevel(new SpaceGame());
 	}, L"Play"));
-	vButtons.push_back(Button(500, 500, 780, 625, [] { Game::Quit(); }, L"Quit"));
-	vButtons.push_back(Button(500, 350, 780, 475, [] {  }, L"Info"));
+	vButtons.push_back(Button(500, 500, 780, 625, [](void*) { Game::Quit(); }, L"Quit"));
+	vButtons.push_back(Button(500, 350, 780, 475, [](void*) {  }, L"Info"));
 
 	tTitlescreenBackground = new Texture(L"titlescreen_background.png", 3022, 1700, 1280.0f, 720.0f);
 }
@@ -68,5 +68,5 @@ void TitleScreen::Update(double deltatime)
 void TitleScreen::LeftClick()
 {
 	if (nButtonHover != -1)
-		vButtons[nButtonHover].function();
+		vButtons[nButtonHover].function(this);
 }
