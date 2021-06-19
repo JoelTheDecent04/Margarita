@@ -146,9 +146,9 @@ void SpaceGame::Render()
 	Graphics::FillRectangle(5, 2 + 14 + 2 + 20 + 2 + 14 + 5, 100.0f * (plPlayer->nEnergy / plPlayer->nMaxEnergy), 20, clrBlue); //56
 	Graphics::DrawRectangle(5, 2 + 14 + 2 + 20 + 2 + 14 + 5, 100, 20, clrDarkGrey);
 
-	DWRITE_TEXT_METRICS tmTextMetrics;
-	Graphics::TextMetrics(vItems[nCurrentItem]->strName, 14.0f, tmTextMetrics);
-	Graphics::FillRectangle(0, nScreenHeight - 4 - 32 - 4 - 14, max(32 * vItems.size(), tmTextMetrics.width) + 10, 14 + 4 + 32 + 4, clrBlack);
+	TextSize textsize;
+	Graphics::TextMetrics(vItems[nCurrentItem]->strName, 14.0f, textsize);
+	Graphics::FillRectangle(0, nScreenHeight - 4 - 32 - 4 - 14, max(32 * vItems.size(), textsize.width) + 10, 14 + 4 + 32 + 4, clrBlack);
 	Graphics::WriteText(vItems[nCurrentItem]->strName, 5, nScreenHeight - 4 - 32 - 4 - 14, 14);
 
 	int nItem = 0;
@@ -165,24 +165,24 @@ void SpaceGame::Render()
 	}
 
 	swprintf_s(txtBuf, 64, L"$%d", (int)plPlayer->fMoney);
-	Graphics::TextMetrics(txtBuf, 16.0f, tmTextMetrics);
-	Graphics::WriteText(txtBuf, nScreenWidth - 5 - tmTextMetrics.width, 5, 16.0f);
+	Graphics::TextMetrics(txtBuf, 16.0f, textsize);
+	Graphics::WriteText(txtBuf, nScreenWidth - 5 - textsize.width, 5, 16.0f);
 
 	swprintf_s(txtBuf, 64, L"Wave %d (%d seconds left)", nWave, (int)fSecondsUntilNextWave);
-	Graphics::TextMetrics(txtBuf, 16.0f, tmTextMetrics);
-	Graphics::FillRectangle(nScreenWidth - 5 - tmTextMetrics.width - 5, nScreenHeight - 5 - tmTextMetrics.height - 5, 5 + tmTextMetrics.width + 3, 5 + 16 + 5, clrBlack);
-	Graphics::WriteText(txtBuf, nScreenWidth - 5 - tmTextMetrics.width, nScreenHeight - 5 - tmTextMetrics.height, 16.0f);
+	Graphics::TextMetrics(txtBuf, 16.0f, textsize);
+	Graphics::FillRectangle(nScreenWidth - 5 - textsize.width - 5, nScreenHeight - 5 - textsize.height - 5, 5 + textsize.width + 3, 5 + 16 + 5, clrBlack);
+	Graphics::WriteText(txtBuf, nScreenWidth - 5 - textsize.width, nScreenHeight - 5 - textsize.height, 16.0f);
 
 	if (bWaveFinished)
 	{
 		swprintf_s(txtBuf, 64, L"Wave Completed. Press '%s' To Continue.", ControlsScreen::KeyText(keyNextWave1).c_str());
-		Graphics::TextMetrics(txtBuf, 24.0f, tmTextMetrics);
-		Graphics::WriteText(txtBuf, nScreenWidth / 2 - tmTextMetrics.width / 2, 8, 24.0f);
+		Graphics::TextMetrics(txtBuf, 24.0f, textsize);
+		Graphics::WriteText(txtBuf, nScreenWidth / 2 - textsize.width / 2, 8, 24.0f);
 	}
 
 	swprintf_s(txtBuf, 64, L"Objective: Kill %d x %s using %s", pEventHandler->nAchievementCount, astrEntityName[(int)pEventHandler->nAchievementEntityType2], astrEntityName[(int)pEventHandler->nAchievementEntityType1]);
-	Graphics::TextMetrics(txtBuf, 24.0f, tmTextMetrics);
-	Graphics::WriteText(txtBuf, nScreenWidth / 2 - tmTextMetrics.width / 2, nScreenHeight - 2 - tmTextMetrics.height, 24.0f);
+	Graphics::TextMetrics(txtBuf, 24.0f, textsize);
+	Graphics::WriteText(txtBuf, nScreenWidth / 2 - textsize.width / 2, nScreenHeight - 2 - textsize.height, 24.0f);
 
 }
 void SpaceGame::Update(double deltatime)

@@ -13,14 +13,14 @@ TitleScreen::TitleScreen()
 	nButtonHover = -1;
 	tButtons = new Texture(L"buttons.png", 1908, 857, 280, 125);
 
-	vButtons.push_back(Button(500, 200, 780, 325, [] {
+	vButtons.push_back(Button(500, 200, 780, 325, [] (void*) {
 		if (Game::sgSpaceGame)
 			Game::LoadLevel(Game::sgSpaceGame, true, false);
 		else
 			Game::LoadLevel(new SpaceGame());
 	}, L"Play"));
-	vButtons.push_back(Button(500, 500, 780, 625, [] { Game::Quit(); }, L"Quit"));
-	vButtons.push_back(Button(500, 350, 780, 475, [] {  }, L"Info"));
+	vButtons.push_back(Button(500, 500, 780, 625, [] (void*) { Game::Quit(); }, L"Quit"));
+	vButtons.push_back(Button(500, 350, 780, 475, [] (void*) {  }, L"Info"));
 
 	tTitlescreenBackground = new Texture(L"titlescreen_background.png", 3022, 1700, 1280.0f, 720.0f);
 }
@@ -29,9 +29,9 @@ void TitleScreen::Render()
 {
 	tTitlescreenBackground->Draw(0, 0.0f, 0.0f);
 
-	DWRITE_TEXT_METRICS tmTextMetrics;
-	Graphics::TextMetrics(L"Margarita", fScaleV * 125.0f, tmTextMetrics, L"Chiller");
-	Graphics::WriteText(L"Margarita", fScaleH * 640 - tmTextMetrics.width / 2, fScaleV * 30, fScaleV * 125.0f, clrRed, 1.0f, L"Chiller");
+	TextSize textsize;
+	Graphics::TextMetrics(L"Margarita", fScaleV * 125.0f, textsize, L"Chiller");
+	Graphics::WriteText(L"Margarita", fScaleH * 640 - textsize.width / 2, fScaleV * 30, fScaleV * 125.0f, clrRed, 1.0f, L"Chiller");
 
 	int nIndex = 0;
 	for (Button& button : vButtons)
@@ -68,5 +68,5 @@ void TitleScreen::Update(double deltatime)
 void TitleScreen::LeftClick()
 {
 	if (nButtonHover != -1)
-		vButtons[nButtonHover].function();
+		vButtons[nButtonHover].function(this);
 }

@@ -8,6 +8,11 @@
 #include <wrl/client.h>
 #include <mutex>
 
+struct TextSize
+{
+	int width, height;
+};
+
 namespace Graphics {	
 	bool Initialise(HWND window);
 	void Close();
@@ -15,7 +20,7 @@ namespace Graphics {
 	void EndDraw();
 	void Clear(D2D1_COLOR_F& colour);
 	void WriteText(const wchar_t* text, int x, int y, float size, const D2D1::ColorF& = clrWhite, float fOpacity = 1.0f, const wchar_t* font = nullptr);
-	void TextMetrics(const wchar_t* text, float size, DWRITE_TEXT_METRICS& textmetrics, const wchar_t* font = nullptr);
+	void TextMetrics(const wchar_t* text, float size, TextSize& ts, const wchar_t* font = nullptr);
 	void DrawRectangle(float fX, float fY, float fW, float fH, D2D1::ColorF& cColour, float fOpacity = 1.0f, float fThickness = 1.0f);
 	void FillRectangle(float fX, float fY, float fW, float fH, D2D1::ColorF& cColour, float fOpacity = 1.0f);
 	void Resize();

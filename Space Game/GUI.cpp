@@ -33,10 +33,10 @@ void Button::Draw(bool bHover)
 {
 	Graphics::FillRectangle(fScaleH * rect.left, fScaleV * rect.top, fScaleH * (rect.right - rect.left), fScaleV * (rect.bottom - rect.top), bClickable ? (bHover ? clrDarkGrey : clrBlack) : clrDarkerGrey);
 	Graphics::DrawRectangle(fScaleH * rect.left, fScaleV * rect.top, fScaleH * (rect.right - rect.left), fScaleV * (rect.bottom - rect.top), clrDarkGrey);
-	DWRITE_TEXT_METRICS tmTextMetrics;
-	Graphics::TextMetrics(text, fScaleV * fSize, tmTextMetrics);
+	TextSize textsize;
+	Graphics::TextMetrics(text, fScaleV * fSize, textsize);
 	Graphics::WriteText(text,
-		fScaleH * ((rect.right + rect.left) / 2) - tmTextMetrics.width / 2,
-		fScaleV * ((rect.bottom + rect.top) / 2) - tmTextMetrics.height / 2,
+		fScaleH * ((rect.right + rect.left) / 2) - textsize.width / 2,
+		fScaleV * ((rect.bottom + rect.top) / 2) - textsize.height / 2,
 		fScaleV * fSize);
 }
