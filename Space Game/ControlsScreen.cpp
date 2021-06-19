@@ -2,9 +2,8 @@
 #include "PauseScreen.h"
 #include "Graphics.h"
 #include "Player.h"
-
-static D2D1::ColorF clrBlack = D2D1::ColorF::Black;
-static D2D1::ColorF clrDarkGrey = D2D1::ColorF::DarkGray;
+#include "Utilities.h"
+#include "Colours.h"
 
 ControlsScreen::ControlsScreen(PauseScreen* lPauseScreen)
 {
@@ -85,17 +84,14 @@ void ControlsScreen::Render()
 
 void ControlsScreen::Update(double deltatime)
 {
-	POINT pntCursorPosition;
-	GetCursorPos(&pntCursorPosition);
-	ScreenToClient(Graphics::hWindow, &pntCursorPosition);
-	pntCursorPosition.x /= fScaleH;
-	pntCursorPosition.y /= fScaleV;
+	int nCursorX, nCursorY;
+	GetRelativeMousePos(&nCursorX, &nCursorY);
 
 	bool bMouseOverButton = false;
 	int i = 0;
 	for (Button& button : vButtons)
 	{
-		if (PtInRect(&button.rect, pntCursorPosition))
+		if (PointInRect(button.rect, nCursorX, nCursorY))
 		{
 			nButtonHover = i;
 			bMouseOverButton = true;
@@ -113,11 +109,8 @@ void ControlsScreen::Resume()
 
 void ControlsScreen::LeftClick()
 {
-	POINT pntCursorPosition;
-	GetCursorPos(&pntCursorPosition);
-	ScreenToClient(Graphics::hWindow, &pntCursorPosition);
-	pntCursorPosition.x /= fScaleH;
-	pntCursorPosition.y /= fScaleV;
+	int nCursorX, nCursorY;
+	GetRelativeMousePos(&nCursorX, &nCursorY);
 
 	if (nButtonHover != -1)
 		vButtons[nButtonHover].function(this);
@@ -127,12 +120,12 @@ void ControlsScreen::LeftClick()
 	{
 		RECT rect1 = { 450, nY, 550, nY + 28 };
 		RECT rect2 = { 560, nY, 660, nY + 28 };
-		if (PtInRect(&rect1, pntCursorPosition))
+		if (PointInRect(rect1, nCursorX, nCursorY))
 		{
 			keyToChange = control.nKey1;
 			break;
 		}
-		if (PtInRect(&rect2, pntCursorPosition))
+		if (PointInRect(rect2, nCursorX, nCursorY))
 		{
 			keyToChange = control.nKey2;
 			break;

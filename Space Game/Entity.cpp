@@ -2,8 +2,8 @@
 #include "Space.h"
 #include "EntityHealthChangeText.h"
 #include "Utilities.h"
+#include "Colours.h"
 
-static D2D1::ColorF clrWhite = D2D1::ColorF(D2D1::ColorF::White);
 const wchar_t* astrEntityName[8] = { L"None", L"Player", L"Bomb", L"Crab", L"Alien", L"Laser", L"Orb", L"Light" };
 
 Entity::Entity(SpaceGame* sgGame, Texture* tTexture, float fX, float fY)

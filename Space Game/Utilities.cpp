@@ -1,4 +1,6 @@
 #include "Utilities.h"
+#include "Graphics.h"
+#include "Game.h"
 #include <random>
 #include <ctime>
 #include <varargs.h>
@@ -23,6 +25,20 @@ float random_off_screen()
 	float fRandomLocation = random() * (5120 - 1280);
 	if (fRandomLocation > fBackgroundPosition) fRandomLocation += 1280;
 	return fRandomLocation;
+}
+
+void GetRelativeMousePos(int* x, int* y)
+{
+	POINT pntCursorPosition;
+	GetCursorPos(&pntCursorPosition);
+	ScreenToClient(Graphics::hWindow, &pntCursorPosition);
+	*x = pntCursorPosition.x / fScaleH;
+	*y = pntCursorPosition.y / fScaleV;
+}
+
+bool PointInRect(RECT& rect, int x, int y)
+{
+	return (x > rect.left && y > rect.top && x < rect.right && y < rect.bottom);
 }
 
 void DebugOut(const wchar_t* fmt, ...) {

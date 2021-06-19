@@ -9,6 +9,7 @@
 #include <wincodec.h>
 #include "Game.h"
 #include "Graphics.h"
+#include "Colours.h"
 
 using namespace Microsoft::WRL;
 
@@ -45,8 +46,6 @@ namespace Graphics {
 	ID2D1DeviceContext* iLightingDeviceContext;
 
 	HWND hWindow;
-
-	D2D1::ColorF clrWhite = D2D1::ColorF(1.0f, 1.0f, 1.0f);
 
 	bool Initialise(HWND window)
 	{

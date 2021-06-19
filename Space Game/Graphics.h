@@ -1,4 +1,5 @@
 #pragma once
+#include "Colours.h"
 #include <Windows.h>
 #include <d2d1.h>
 #include <d2d1_1.h>
@@ -7,9 +8,7 @@
 #include <wrl/client.h>
 #include <mutex>
 
-namespace Graphics {
-	extern D2D1::ColorF clrWhite;
-	
+namespace Graphics {	
 	bool Initialise(HWND window);
 	void Close();
 	void BeginDraw();

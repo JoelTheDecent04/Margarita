@@ -1,11 +1,8 @@
 #include "DeathScreen.h"
 #include "Game.h"
 #include "Space.h"
+#include "Colours.h"
 #include <fstream>
-
-static D2D1::ColorF clrDarkGrey = D2D1::ColorF::DarkGray;
-static D2D1::ColorF clrWhite = D2D1::ColorF::White;
-static D2D1::ColorF clrBlack = D2D1::ColorF(0.0f, 0.0f, 0.0f);
 
 void DeathScreen::Render()
 {

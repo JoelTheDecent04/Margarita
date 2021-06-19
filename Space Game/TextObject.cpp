@@ -2,8 +2,7 @@
 #include "Graphics.h"
 #include "Game.h"
 #include "Space.h"
-
-static D2D1::ColorF clrBlack = D2D1::ColorF(0.0f, 0.0f, 0.0f);
+#include "Colours.h"
 
 TextObject::TextObject(float fX, float fY, const std::wstring& strText)
 {

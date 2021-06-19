@@ -1,8 +1,6 @@
 #include "EntityHealthChangeText.h"
+#include "Colours.h"
 #include <stdio.h>
-
-static D2D1::ColorF clrRed = { 1.0f, 0.0f, 0.0f };
-static D2D1::ColorF clrGreen = { 0.0f, 1.0f, 0.0f };
 
 EntityHealthChangeText::EntityHealthChangeText(Entity* entity, int nChange)
 	: TextObject()

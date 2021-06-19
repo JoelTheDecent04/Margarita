@@ -16,6 +16,7 @@
 #include "ControlsScreen.h"
 #include "Graphics.h"
 #include "Light.h"
+#include "Colours.h"
 #include <math.h>
 #include <random>
 #include <time.h>
@@ -38,12 +39,6 @@ int keyNextWave2 = 0;
 double fPhysicsUpdatesPerSeconds;
 
 bool bShowHitboxes = false;
-
-D2D1::ColorF clrBlack		= D2D1::ColorF(0.0f, 0.0f, 0.0f);
-D2D1::ColorF clrRed			= D2D1::ColorF(1.0f, 0.0f, 0.0f);
-D2D1::ColorF clrDarkGrey	= D2D1::ColorF(0.3f, 0.3f, 0.3f);
-D2D1::ColorF clrWhite		= D2D1::ColorF(1.0f, 1.0f, 1.0f);
-D2D1::ColorF clrBlue		= D2D1::ColorF(0.0f, 0.0f, 1.0f);
 
 int nCurrentVersion = 16;
 

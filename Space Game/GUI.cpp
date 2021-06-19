@@ -1,12 +1,7 @@
 #include "GUI.h"
 #include "Graphics.h"
 #include "Game.h"
-
-static D2D1::ColorF clrDarkGrey = D2D1::ColorF::DarkGray;
-static D2D1::ColorF clrDarkerGrey = D2D1::ColorF(0.15f, 0.15f, 0.15f);
-static D2D1::ColorF clrWhite = D2D1::ColorF::White;
-static D2D1::ColorF clrBlack = D2D1::ColorF(0.0f, 0.0f, 0.0f);
-static D2D1::ColorF clrRed = D2D1::ColorF::Red;
+#include "Colours.h"
 
 Bar::Bar(int left, int top, int right, int bottom, D2D1::ColorF& clrColour, float* fValue, float* fMaxValue)
 	: clrColour(clrColour)

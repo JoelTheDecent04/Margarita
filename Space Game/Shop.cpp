@@ -6,16 +6,8 @@
 #include "RegenerationPowerup.h"
 #include "Laser.h"
 #include "Bomb.h"
-
-static D2D1::ColorF clrDarkGrey = D2D1::ColorF::DarkGray;
-static D2D1::ColorF clrWhite = D2D1::ColorF::White;
-static D2D1::ColorF clrBlack = D2D1::ColorF(0.0f, 0.0f, 0.0f);
-static D2D1::ColorF clrRed = D2D1::ColorF::Red;
-static D2D1::ColorF clrGreen = D2D1::ColorF::ForestGreen;
-static D2D1::ColorF clrYellow = D2D1::ColorF::Yellow;
-static D2D1::ColorF clrDarkBlue = D2D1::ColorF::DarkBlue;
-static D2D1::ColorF clrDodgerBlue = D2D1::ColorF::DodgerBlue;
-static D2D1::ColorF clrCustomDarkBlue = D2D1::ColorF(0.055f, 0.067f, 0.337f);
+#include "Utilities.h"
+#include "Colours.h"
 
 ShopScreen::ShopScreen(SpaceGame* lGameLevel)
 {
@@ -87,17 +79,14 @@ void ShopScreen::Render()
 
 void ShopScreen::Update(double deltatime)
 {
-	POINT pntCursorPosition;
-	GetCursorPos(&pntCursorPosition);
-	ScreenToClient(Graphics::hWindow, &pntCursorPosition);
-	pntCursorPosition.x /= fScaleH;
-	pntCursorPosition.y /= fScaleV;
+	int nCursorX, nCursorY;
+	GetRelativeMousePos(&nCursorX, &nCursorY);
 
 	bool bMouseOverButton = false;
 	int i = 0;
 	for (Button& button : vButtons)
 	{
-		if (PtInRect(&button.rect, pntCursorPosition))
+		if (PointInRect(button.rect, nCursorX, nCursorY))
 		{
 			nButtonHover = i;
 			bMouseOverButton = true;

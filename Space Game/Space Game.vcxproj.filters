@@ -233,6 +233,9 @@
     <ClInclude Include="EventHandler.h">
       <Filter>Source Files\Space</Filter>
     </ClInclude>
+    <ClInclude Include="Colours.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Save Game Format.txt">
