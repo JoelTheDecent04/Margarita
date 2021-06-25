@@ -13,7 +13,7 @@ Orb::Orb(SpaceGame* game, float fX, float fY, float fSpeedX, float fSpeedY)
 	nType = Type::Orb;
 }
 
-bool Orb::Update(double deltatime)
+bool Orb::Update(float deltatime)
 {
 	fAge += deltatime;
 	if (fAge >= 5.0f)
@@ -37,7 +37,7 @@ OrbWeapon::OrbWeapon()
 	nCount = -1;
 	tTexture = tOrbTexture;
 	nType = Type::Orb;
-	strName = L"Orb";
+	strName = "Orb";
 }
 
 void OrbWeapon::Use(SpaceGame* game, float fX, float fY, float fAngle)

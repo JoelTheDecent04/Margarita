@@ -6,7 +6,7 @@ class EnergyPowerup : public Powerup
 {
 public:
 	EnergyPowerup(SpaceGame* sgGame);
-	void Update(double deltatime) override;
+	void Update(float deltatime) override;
 };
 
 class EnergyPowerupItem : public Item

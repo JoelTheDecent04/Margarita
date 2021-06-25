@@ -1,19 +1,20 @@
 #pragma once
-#include <d2d1.h>
+#include <SDL.h>
+#include <SDL_Image.h>
 #include "Graphics.h"
 
 class Texture
 {
-	ID2D1Bitmap* iBitmap;
+	SDL_Texture* pTexture;
 public:
-	int nTextureWidth, nTextureHeight;
-	float fTextureDrawnWidth, fTextureDrawnHeight;
-	int nTexturesAcross;
-	bool light;
+	int nTextureWidth = 0, nTextureHeight = 0;
+	float fTextureDrawnWidth = 0.0f, fTextureDrawnHeight = 0.0f;
+	int nTexturesAcross = 0;
+	bool light = false;
 
-	Texture(const wchar_t* filename);
-	Texture(const wchar_t* filename, int nTextureWidth, int nTextureHeight, float fTextureDrawnWidth, float fTextureDrawnHeight);
-	Texture() { iBitmap = nullptr; };
+	Texture(const char* filename);
+	Texture(const char* filename, int nTextureWidth, int nTextureHeight, float fTextureDrawnWidth, float fTextureDrawnHeight);
+	Texture() { pTexture = nullptr; };
 	~Texture();
 
 	void Draw();

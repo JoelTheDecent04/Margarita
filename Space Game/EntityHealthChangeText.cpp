@@ -6,10 +6,10 @@ EntityHealthChangeText::EntityHealthChangeText(Entity* entity, int nChange)
 	: TextObject()
 {
 	bool healing = nChange > 0 ? true : false;
-	wchar_t strTextBuffer[24];
-	swprintf_s(strTextBuffer, 24, healing ? L"+%d" : L"%d", nChange);
+	char strTextBuffer[64];
+	snprintf(strTextBuffer, sizeof(strTextBuffer), healing ? "+%d" : "%d", nChange);
 	TextSize textsize;
-	Graphics::TextMetrics(strTextBuffer, 12.0f, textsize);
+	Graphics::TextMetrics(strTextBuffer, Graphics::pFont12, textsize);
 
 	fOpacity = 1.0f;
 	fOpacityChangePerSecond = -4.0f;
@@ -17,7 +17,7 @@ EntityHealthChangeText::EntityHealthChangeText(Entity* entity, int nChange)
 	fY = entity->fY - (entity->tTexture->fTextureDrawnHeight / 2) - 4 - 12;
 	fSpeedX = 0.0f;
 	fSpeedY = -100.0f;
-	fSize = 12.0f;
-	clrColour = healing ? &clrGreen : &clrRed;
-	strText = std::wstring(strTextBuffer);
+	ppFont = &Graphics::pFont14Relative;//TODO should be 12
+	this->clrColour = healing ? &clrGreen : &clrRed;
+	strText = std::string(strTextBuffer);
 }

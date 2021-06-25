@@ -8,7 +8,7 @@ class LaserWeapon : public Weapon
 public:
 	enum LaserLevel {
 		Normal = 1,
-		DoubleShot
+		floatShot
 	};
 	LaserLevel nLaserLevel;
 	LaserWeapon(LaserLevel nLaserLevel);
@@ -26,7 +26,7 @@ class LaserBeam : public Entity
 public:
 	LaserBeam(SpaceGame* game, LaserWeapon* weapon, float fX, float fY, float fSpeedX, float fSpeedY);
 	bool Collide(Entity* entity) override;
-	bool Update(double deltatime) override;
+	bool Update(float deltatime) override;
 	void Draw() override;
 	void Save(std::fstream& f) override;
 	void Load(std::fstream& f) override;

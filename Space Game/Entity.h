@@ -29,7 +29,7 @@ public:
 	Type nType;
 
 	Entity(SpaceGame* sgGame, Texture* tTexture, float fX, float fY);
-	virtual bool Update(double deltatime);
+	virtual bool Update(float deltatime);
 	virtual void ChangeHealth(float fChange, Entity* e);
 	virtual bool Collide(Entity* entity) { return true; };
 	virtual void Draw();
@@ -41,4 +41,4 @@ public:
 	virtual void Load(std::fstream& f);
 };
 
-extern const wchar_t* astrEntityName[8];
+extern const char* astrEntityName[8];

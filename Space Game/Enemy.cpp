@@ -27,7 +27,7 @@ Enemy::Enemy(SpaceGame* game, float fX, float fY)
 	nType = Type::Enemy;
 }
 
-bool Enemy::Update(double deltatime)
+bool Enemy::Update(float deltatime)
 {
 	if (fHealth == 0.0f)
 	{

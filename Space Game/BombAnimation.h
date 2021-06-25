@@ -13,5 +13,5 @@ public:
 	Texture* tTexture;
 	BombAnimation(Bomb* bomb);
 	void Draw() override;
-	bool Update(double deltatime) override;
+	bool Update(float deltatime) override;
 };

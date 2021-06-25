@@ -8,7 +8,7 @@ RegenerationPowerup::RegenerationPowerup(SpaceGame* sgGame)
 	fTimeLeft = 10.0f;
 }
 
-void RegenerationPowerup::Update(double deltatime)
+void RegenerationPowerup::Update(float deltatime)
 {
 	fTimeLeft -= deltatime;
 	if (fTimeLeft <= 0.0f)
@@ -27,7 +27,7 @@ RegenerationPowerupItem::RegenerationPowerupItem()
 	tTexture = tRegenerationPowerupTexture;
 	nCount = 1;
 	nType = Type::RegenerationPowerup;
-	strName = L"Regeneration Powerup";
+	strName = "Regeneration Powerup";
 }
 
 void RegenerationPowerupItem::Use(SpaceGame* game, float fX, float fY, float fAngle)

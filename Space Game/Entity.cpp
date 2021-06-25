@@ -4,7 +4,7 @@
 #include "Utilities.h"
 #include "Colours.h"
 
-const wchar_t* astrEntityName[8] = { L"None", L"Player", L"Bomb", L"Crab", L"Alien", L"Laser", L"Orb", L"Light" };
+const char* astrEntityName[8] = { "None", "Player", "Bomb", "Crab", "Alien", "Laser", "Orb", "Light" };
 
 Entity::Entity(SpaceGame* sgGame, Texture* tTexture, float fX, float fY)
 {
@@ -33,7 +33,7 @@ void Entity::Draw()
 	tTexture->Draw(nFrame, (fX - fBackgroundPosition - (tTexture->fTextureDrawnWidth / 2)), fY - tTexture->fTextureDrawnHeight / 2);
 }
 
-bool Entity::Update(double deltatime)
+bool Entity::Update(float deltatime)
 {
 	if (fHealth == 0.0f)
 	{

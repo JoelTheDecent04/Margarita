@@ -15,34 +15,34 @@ class SpaceGame : public Level
 public:
 	std::vector<std::shared_ptr<Entity>> vEntities;
 
-	int nCurrentItem;
+	int nCurrentItem{ 0 };
 	std::vector<std::shared_ptr<Item>> vItems;
 
 	std::shared_ptr<Player> plPlayer;
 
 	std::vector<std::shared_ptr<BackgroundObject>> vBackgroundObjects;
 	
-	float fFps;
-	bool bGameRunning;
+	float fFps{ 0.0f };
+	bool bGameRunning { false };
 
-	double fNextEnemySpawn;
-	float fDifficulty;
+	float fNextEnemySpawn{ 0.0 };
+	float fDifficulty{ 0.0f };
 
-	int nWave;
-	float fSecondsUntilNextWave;
-	int nEnemies;
-	bool bWaveFinished;
+	int nWave{ 0 };
+	float fSecondsUntilNextWave{ 0.0f };
+	int nEnemies{ 0 };
+	bool bWaveFinished{ false };
 
-	float fSecondsUntilNextComet;
-	float fLightingLoopTime;
-	float fBrightness;
+	float fSecondsUntilNextComet{ 0.0f };
+	float fLightingLoopTime{ 0.0f };
+	float fBrightness{ 0.0f };
 
 	std::shared_ptr<EventHandler> pEventHandler;
 
 	void Load() override;
 	void Unload() override;
 	void Render() override;
-	void Update(double deltatime) override;
+	void Update(float deltatime) override;
 	void LeftClick() override;
 	void KeyDown(int key) override;
 	void Save();

@@ -21,6 +21,7 @@
 #include <random>
 #include <time.h>
 #include <fstream>
+#include <algorithm>
 
 float fBackgroundPosition = 0.0f;
 Texture* tCharacterTexture, * tOrbTexture, * tBackground, * tLaserTexture, * tLaserBeamTexture, * tEnemyTexture, * tBombTexture, * tCrabTexture;
@@ -28,15 +29,16 @@ Texture* tForegroundTexture, * tCometTexture, * tNoTexture, * tBombAnimationText
 
 Texture* tLight;
 
-int keyOpenShop1 = 'E';
+int keyOpenShop1 = SDL_SCANCODE_E;
 int keyOpenShop2 = 0;
-int keyChangeWeapon1[9] = { '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+int keyChangeWeapon1[9] = { SDL_SCANCODE_1, SDL_SCANCODE_2, SDL_SCANCODE_3, SDL_SCANCODE_4, SDL_SCANCODE_5, 
+SDL_SCANCODE_6, SDL_SCANCODE_7, SDL_SCANCODE_8, SDL_SCANCODE_9 };
 int keyChangeWeapon2[9];
 
-int keyNextWave1 = 'R';
+int keyNextWave1 = SDL_SCANCODE_R;
 int keyNextWave2 = 0;
 
-double fPhysicsUpdatesPerSeconds;
+float fPhysicsUpdatesPerSeconds;
 
 bool bShowHitboxes = false;
 
@@ -46,27 +48,27 @@ void SpaceGame::Load()
 {
 	bGameRunning = true;
 
-	tCharacterTexture = new Texture(L"player.png", 3375, 2098, 83, 58);
-	tOrbTexture = new Texture(L"orb.png", 2497, 2497, 32, 32);
-	tBackground = new Texture(L"background.png", 15360, 2160, 5120, 720);
-	tLaserTexture = new Texture(L"Laser.png");
-	tLaserBeamTexture = new Texture(L"LaserBeam.png", 2569, 765, 32, 10);
-	tEnemyTexture = new Texture(L"enemy.png", 1856, 2646, 38, 55);
-	tCrabTexture = new Texture(L"crab.png", 700, 350, 96, 48);
-	tBombTexture = new Texture(L"bomb.png", 2218, 2223, 32.0f, 32.0f);
-	tForegroundTexture = new Texture(L"foreground.png", 15360, 382, 5120, 127.33f);
-	tCometTexture = new Texture(L"comet.png", 640, 360, 100, 50);
-	tNoTexture = new Texture(L"notexture.png");
-	tBombAnimationTexture = new Texture(L"bomb_animation.png", 1280, 720, 100.0f, 100.0f);
-	tEnergyPowerupTexture = new Texture(L"energy_powerup.png", 2600, 2600, 32.0f, 32.0f);
-	tRegenerationPowerupTexture = new Texture(L"regen_powerup.png", 2415, 2415, 32.0f, 32.0f);
-	tLight = new Texture(L"inverted_light.png", 512, 512, 384, 384);
+	tCharacterTexture = new Texture("player.png", 186, 116, 83, 58);
+	tOrbTexture = new Texture("orb.png", 2497, 2497, 32, 32);
+	tBackground = new Texture("background.png", 8192, 1152, 5120, 720);
+	tLaserTexture = new Texture("Laser.png", 32, 32, 32.0f, 32.0f);
+	tLaserBeamTexture = new Texture("LaserBeam.png", 2569, 765, 32, 10);
+	tEnemyTexture = new Texture("enemy.png", 77, 110, 38, 55);
+	tCrabTexture = new Texture("crab.png", 700, 350, 96, 48);
+	tBombTexture = new Texture("bomb.png", 2218, 2223, 32.0f, 32.0f);
+	tForegroundTexture = new Texture("foreground.png", 8192, 204, 5120, 127.33f);
+	tCometTexture = new Texture("comet.png", 640, 360, 100, 50);
+	tNoTexture = new Texture("notexture.png");
+	tBombAnimationTexture = new Texture("bomb_animation.png", 1280, 720, 100.0f, 100.0f);
+	tEnergyPowerupTexture = new Texture("energy_powerup.png", 2600, 2600, 32.0f, 32.0f);
+	tRegenerationPowerupTexture = new Texture("regen_powerup.png", 2415, 2415, 32.0f, 32.0f);
+	tLight = new Texture("inverted_light.png", 512, 512, 384, 384);
 	tLight->light = true;
 
 
 	plPlayer = std::make_shared<Player>(this, 384.0f, 380.f);
 	vEntities.push_back(plPlayer);
-	vEntities.push_back(std::make_shared<Light>(plPlayer));
+	//vEntities.push_back(std::make_shared<Light>(plPlayer));
 	
 
 	vItems.push_back(std::make_shared<LaserWeapon>(LaserWeapon::Normal));
@@ -80,7 +82,7 @@ void SpaceGame::Load()
 	nWave = 0;
 	fSecondsUntilNextWave = 0.0f;
 	nEnemies = 0;
-	fSecondsUntilNextComet = 40 + random() * 40;
+	fSecondsUntilNextComet = 40 + randomf() * 40;
 	NextWave();
 
 	LoadFromFile(); //Load save game if it exists
@@ -119,10 +121,10 @@ void SpaceGame::Render()
 
 	tBackground->DrawPanorama(fBackgroundPosition);
 
-	Graphics::iLightingDeviceContext->BeginDraw();
+	//Graphics::iLightingDeviceContext->BeginDraw();
 
-	D2D1_COLOR_F col = { 1.0f, 1.0f, 1.0f, fBrightness };
-	Graphics::iLightingDeviceContext->Clear(col);
+	//D2D1_COLOR_F col = { 1.0f, 1.0f, 1.0f, fBrightness };
+	//Graphics::iLightingDeviceContext->Clear(col);
 
 	for (auto& entity : vEntities)
 		entity->Draw();
@@ -134,22 +136,22 @@ void SpaceGame::Render()
 	for (auto& backgroundobject : vBackgroundObjects)
 		backgroundobject->Draw();
 
-	wchar_t txtBuf[64];
+	char txtBuf[64];
 
-	swprintf_s(txtBuf, 64, L"HP %u / %u", (int)plPlayer->fHealth, (int)plPlayer->fMaxHealth);
-	Graphics::WriteText(txtBuf, 5, 2, 14); //2
+	snprintf(txtBuf, sizeof(txtBuf), "HP %u / %u", (int)plPlayer->fHealth, (int)plPlayer->fMaxHealth);
+	Graphics::WriteText(txtBuf, 5, 2, Graphics::pFont14); //2
 	Graphics::FillRectangle(5, 2 + 14 + 4, 100.0f * (plPlayer->fHealth / plPlayer->fMaxHealth), 20, clrRed); //18
 	Graphics::DrawRectangle(5, 2 + 14 + 4, 100, 20, clrDarkGrey);
 
-	swprintf_s(txtBuf, 64, L"Energy %u / %u", (int)plPlayer->nEnergy, (int)plPlayer->nMaxEnergy);
-	Graphics::WriteText(txtBuf, 5, 2 + 14 + 2 + 20 + 2, 14); //40
+	snprintf(txtBuf, sizeof(txtBuf), "Energy %u / %u", (int)plPlayer->nEnergy, (int)plPlayer->nMaxEnergy);
+	Graphics::WriteText(txtBuf, 5, 2 + 14 + 2 + 20 + 2, Graphics::pFont14); //40
 	Graphics::FillRectangle(5, 2 + 14 + 2 + 20 + 2 + 14 + 5, 100.0f * (plPlayer->nEnergy / plPlayer->nMaxEnergy), 20, clrBlue); //56
 	Graphics::DrawRectangle(5, 2 + 14 + 2 + 20 + 2 + 14 + 5, 100, 20, clrDarkGrey);
 
 	TextSize textsize;
-	Graphics::TextMetrics(vItems[nCurrentItem]->strName, 14.0f, textsize);
-	Graphics::FillRectangle(0, nScreenHeight - 4 - 32 - 4 - 14, max(32 * vItems.size(), textsize.width) + 10, 14 + 4 + 32 + 4, clrBlack);
-	Graphics::WriteText(vItems[nCurrentItem]->strName, 5, nScreenHeight - 4 - 32 - 4 - 14, 14);
+	Graphics::TextMetrics(vItems[nCurrentItem]->strName, Graphics::pFont14, textsize);
+	Graphics::FillRectangle(0, nScreenHeight - 4 - 32 - 4 - 14, std::max((int)(32 * vItems.size()), textsize.width) + 10, 14 + 4 + 32 + 4, clrBlack);
+	Graphics::WriteText(vItems[nCurrentItem]->strName, 5, nScreenHeight - 4 - 32 - 4 - 14, Graphics::pFont14);
 
 	int nItem = 0;
 	for (auto& item : vItems)
@@ -158,34 +160,34 @@ void SpaceGame::Render()
 		Graphics::DrawRectangle(4 + nItem * 32, nScreenHeight - 4 - 32, 32, 32, nItem == nCurrentItem ? clrWhite : clrDarkGrey);
 		if (item->nCount > 1)
 		{
-			swprintf_s(txtBuf, 64, L"%d", item->nCount);
-			Graphics::WriteText(txtBuf, 6 + nItem * 32, nScreenHeight - 4 - 16, 14.0f);
+			snprintf(txtBuf, sizeof(txtBuf), "%d", item->nCount);
+			Graphics::WriteText(txtBuf, 6 + nItem * 32, nScreenHeight - 4 - 16, Graphics::pFont14);
 		}
 		nItem++;
 	}
 
-	swprintf_s(txtBuf, 64, L"$%d", (int)plPlayer->fMoney);
-	Graphics::TextMetrics(txtBuf, 16.0f, textsize);
-	Graphics::WriteText(txtBuf, nScreenWidth - 5 - textsize.width, 5, 16.0f);
+	snprintf(txtBuf, 64, "$%d", (int)plPlayer->fMoney);
+	Graphics::TextMetrics(txtBuf, Graphics::pFont16, textsize);
+	Graphics::WriteText(txtBuf, nScreenWidth - 5 - textsize.width, 5, Graphics::pFont16);
 
-	swprintf_s(txtBuf, 64, L"Wave %d (%d seconds left)", nWave, (int)fSecondsUntilNextWave);
-	Graphics::TextMetrics(txtBuf, 16.0f, textsize);
-	Graphics::FillRectangle(nScreenWidth - 5 - textsize.width - 5, nScreenHeight - 5 - textsize.height - 5, 5 + textsize.width + 3, 5 + 16 + 5, clrBlack);
-	Graphics::WriteText(txtBuf, nScreenWidth - 5 - textsize.width, nScreenHeight - 5 - textsize.height, 16.0f);
+	snprintf(txtBuf, 64, "Wave %d (%d seconds left)", nWave, (int)fSecondsUntilNextWave);
+	Graphics::TextMetrics(txtBuf, Graphics::pFont16, textsize);
+	Graphics::FillRectangle(nScreenWidth - 5 - textsize.width - 5, nScreenHeight  - textsize.height, 5 + textsize.width + 3, textsize.height, clrBlack);
+	Graphics::WriteText(txtBuf, nScreenWidth - 5 - textsize.width, nScreenHeight - textsize.height, Graphics::pFont16);
 
 	if (bWaveFinished)
 	{
-		swprintf_s(txtBuf, 64, L"Wave Completed. Press '%s' To Continue.", ControlsScreen::KeyText(keyNextWave1).c_str());
-		Graphics::TextMetrics(txtBuf, 24.0f, textsize);
-		Graphics::WriteText(txtBuf, nScreenWidth / 2 - textsize.width / 2, 8, 24.0f);
+		snprintf(txtBuf, 64, "Wave Completed. Press '%s' To Continue.", ControlsScreen::KeyText(keyNextWave1));
+		Graphics::TextMetrics(txtBuf, Graphics::pFont24, textsize);
+		Graphics::WriteText(txtBuf, nScreenWidth / 2 - textsize.width / 2, 8, Graphics::pFont24);
 	}
 
-	swprintf_s(txtBuf, 64, L"Objective: Kill %d x %s using %s", pEventHandler->nAchievementCount, astrEntityName[(int)pEventHandler->nAchievementEntityType2], astrEntityName[(int)pEventHandler->nAchievementEntityType1]);
-	Graphics::TextMetrics(txtBuf, 24.0f, textsize);
-	Graphics::WriteText(txtBuf, nScreenWidth / 2 - textsize.width / 2, nScreenHeight - 2 - textsize.height, 24.0f);
+	snprintf(txtBuf, 64, "Objective: Kill %d x %s using %s", pEventHandler->nAchievementCount, astrEntityName[(int)pEventHandler->nAchievementEntityType2], astrEntityName[(int)pEventHandler->nAchievementEntityType1]);
+	Graphics::TextMetrics(txtBuf, Graphics::pFont24, textsize);
+	Graphics::WriteText(txtBuf, nScreenWidth / 2 - textsize.width / 2, nScreenHeight - 2 - textsize.height, Graphics::pFont24);
 
 }
-void SpaceGame::Update(double deltatime)
+void SpaceGame::Update(float deltatime)
 {
 	fPhysicsUpdatesPerSeconds = 1.0 / deltatime;
 
@@ -200,7 +202,7 @@ void SpaceGame::Update(double deltatime)
 		}
 		if (!bGameRunning) //Game could end after any entity update
 		{
-			Game::LoadLevel(new DeathScreen());
+			Game::LoadLevel(new DeathScreen(this), false, true);
 			return;
 		}
 	}
@@ -218,9 +220,9 @@ void SpaceGame::Update(double deltatime)
 	fNextEnemySpawn -= deltatime; //Enemy spawning
 	if (fNextEnemySpawn <= 0 && fSecondsUntilNextWave > 0.0f)
 	{
-		if (random() >= 0.15f)
+		if (randomf() >= 0.15f)
 		{
-			auto enemy = std::make_shared<Enemy>(this, random_off_screen(), random() * 500);
+			auto enemy = std::make_shared<Enemy>(this, random_off_screen(), randomf() * 500);
 			if (enemy->bLegalPosition)
 			{
 				vEntities.push_back(enemy);
@@ -237,7 +239,7 @@ void SpaceGame::Update(double deltatime)
 			}
 		}
 
-		fNextEnemySpawn = (random() * 10.0f) / (fDifficulty / 60.0f);
+		fNextEnemySpawn = (randomf() * 10.0f) / (fDifficulty / 60.0f);
 	}
 
 	fSecondsUntilNextWave -= deltatime; //Waves
@@ -249,7 +251,7 @@ void SpaceGame::Update(double deltatime)
 	if (fSecondsUntilNextComet < 0.0f)
 	{
 		vBackgroundObjects.push_back(std::make_shared<Comet>());
-		fSecondsUntilNextComet = 40 + random() * 40;
+		fSecondsUntilNextComet = 40 + randomf() * 40;
 	}
 
 	fLightingLoopTime += deltatime; //Lighting
@@ -267,18 +269,14 @@ void SpaceGame::Update(double deltatime)
 }
 void SpaceGame::LeftClick()
 {
-	POINT pntCursorPosition;
-	GetCursorPos(&pntCursorPosition);
-	ScreenToClient(Graphics::hWindow, &pntCursorPosition); //Adjust cursor position so it is relative to the window
+	int nCursorX, nCursorY;
+	GetRelativeMousePos(&nCursorX, &nCursorY);
+	
+	nCursorX += fBackgroundPosition;
 
-	pntCursorPosition.x /= fScaleH;
-	pntCursorPosition.y /= fScaleV;
-
-	pntCursorPosition.x += fBackgroundPosition;	
-
-	float fGradient = (pntCursorPosition.y - plPlayer->fY) / (pntCursorPosition.x - plPlayer->fX);
+	float fGradient = (nCursorY - plPlayer->fY) / (nCursorX - plPlayer->fX);
 	float fAngle = atan(fGradient);
-	if (pntCursorPosition.x < plPlayer->fX) fAngle += 3.1415926f;
+	if (nCursorX < plPlayer->fX) fAngle += 3.1415926f;
 	
 	vItems[nCurrentItem]->Use(this, plPlayer->fX, plPlayer->fY, fAngle);
 	if (vItems[nCurrentItem]->nCount == 0)
@@ -292,23 +290,23 @@ void SpaceGame::LeftClick()
 
 void SpaceGame::KeyDown(int key)
 {
-	if (key == VK_ESCAPE)
+	if (key == SDL_SCANCODE_ESCAPE)
 		Game::LoadLevel(new PauseScreen(this), false, true);
 	if (key == keyOpenShop1 || key == keyOpenShop2)
 		Game::LoadLevel(new ShopScreen(this), false, true);
-	if (key == 'K')
+	if (key == SDL_SCANCODE_K)
 		plPlayer->ChangeHealth(-20.0f, nullptr);
-	if (key == 'J')
+	if (key == SDL_SCANCODE_J)
 		plPlayer->ChangeHealth(20.0f, nullptr);
-	if (key == 'M')
+	if (key == SDL_SCANCODE_M)
 		plPlayer->fMoney += 200.0f;
-	if (key == 'H')
+	if (key == SDL_SCANCODE_H)
 		bShowHitboxes = !bShowHitboxes;
 	if (key == keyNextWave1 || key == keyNextWave2)
 		if (bWaveFinished) NextWave();
-	if (key == 'O')
+	if (key == SDL_SCANCODE_O)
 		Save();
-	if (key == 'L')
+	if (key == SDL_SCANCODE_L)
 		LoadFromFile();
 	for (int i = 0; i < 9; i++)
 	{
@@ -317,7 +315,7 @@ void SpaceGame::KeyDown(int key)
 				nCurrentItem = i;
 	}
 
-	if (key == VK_OEM_6) //[
+	/*if (key == ) //[
 	{
 		nCurrentItem++;
 		if (nCurrentItem >= vItems.size()) nCurrentItem = 0;
@@ -326,7 +324,7 @@ void SpaceGame::KeyDown(int key)
 	{
 		nCurrentItem--;
 		if (nCurrentItem < 0) nCurrentItem = vItems.size() - 1;
-	}
+	}*/
 }
 
 void SpaceGame::Save()
@@ -380,7 +378,7 @@ void SpaceGame::LoadFromFile()
 			auto e = std::make_shared<Player>(this, 0.0f, 0.0f);
 			e->Load(f);
 			vEntities.push_back(e);
-			vEntities.push_back(std::make_shared<Light>(e));
+			//vEntities.push_back(std::make_shared<Light>(e));
 			plPlayer = e;
 			break;
 		}

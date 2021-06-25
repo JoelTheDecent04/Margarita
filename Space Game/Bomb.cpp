@@ -36,7 +36,8 @@ void Bomb::Explode()
 	fHealth = 0.0f;
 }
 
-bool Bomb::Update(double deltatime)
+
+bool Bomb::Update(float deltatime)
 {
 	if (Entity::Update(deltatime) == false) return false;
 	fAge += deltatime;
@@ -66,7 +67,7 @@ BombWeapon::BombWeapon(int nLevel)
 	nCount = nLevel;
 	tTexture = tBombTexture;
 	nType = Type::Bomb;
-	strName = L"Bomb";
+	strName = "Bomb";
 }
 
 void BombWeapon::Use(SpaceGame* game, float fX, float fY, float fAngle)

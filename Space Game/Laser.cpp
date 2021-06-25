@@ -16,7 +16,7 @@ LaserBeam::LaserBeam(SpaceGame* game, LaserWeapon* weapon, float fX, float fY, f
 	fWidth = 0.0f;
 	fHeight = 0.0f;
 
-	if (weapon && weapon->nLaserLevel == LaserWeapon::DoubleShot)
+	if (weapon && weapon->nLaserLevel == LaserWeapon::floatShot)
 	{
 		bFireSecond = true;
 		fSecondsUntilSecondFire = 0.1f;
@@ -57,7 +57,7 @@ void LaserBeam::Load(std::fstream& f)
 	f >> fAngle;
 }
 
-bool LaserBeam::Update(double deltatime)
+bool LaserBeam::Update(float deltatime)
 {
 	float fBulletX = fX + cos(PI * fAngle / 180.0f) * 16.0f; //Get new position
 	float fBulletY = fY + sin(PI * fAngle / 180.0f) * 16.0f;
@@ -125,7 +125,7 @@ LaserWeapon::LaserWeapon(LaserLevel nLaserLevel)
 	this->nLaserLevel = nLaserLevel;
 	nCount = nLaserLevel;
 	nType = Type::Laser;
-	strName = L"Laser";
+	strName = "Laser";
 }
 
 void LaserWeapon::Use(SpaceGame* game, float fX, float fY, float fAngle)
@@ -140,7 +140,7 @@ void LaserWeapon::Use(SpaceGame* game, float fX, float fY, float fAngle)
 			game->plPlayer->nEnergy -= 4;
 		}
 		break;
-	case DoubleShot:
+	case floatShot:
 		if (game->plPlayer->nEnergy >= 6)
 		{
 			game->vEntities.push_back(std::make_shared<LaserBeam>(game, this, fX, fY, 1000.0f * cos(fAngle), 1000.0f * sin(fAngle)));

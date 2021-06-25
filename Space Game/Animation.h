@@ -11,7 +11,7 @@ public:
 	float fFrameRate;
 	bool bAnimationRunning;
 	Animation(Texture* tTexture, int nFrames, float fFrameRate, int* pnFrame);
-	void Update(double deltatime);
+	void Update(float deltatime);
 	void Start() { bAnimationRunning = true; };
 	void Stop() { bAnimationRunning = false; };
 };

@@ -10,7 +10,7 @@ Animation::Animation(Texture* tTexture, int nNumFrames, float fFrameRate, int* p
 	bAnimationRunning = true;
 }
 
-void Animation::Update(double deltatime)
+void Animation::Update(float deltatime)
 {
 	if (bAnimationRunning)
 	{

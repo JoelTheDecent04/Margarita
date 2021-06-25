@@ -8,7 +8,7 @@ EnergyPowerup::EnergyPowerup(SpaceGame* game)
 	fTimeLeft = 10.0f;
 }
 
-void EnergyPowerup::Update(double deltatime)
+void EnergyPowerup::Update(float deltatime)
 {
 	fTimeLeft -= deltatime;
 	if (fTimeLeft <= 0.0f)
@@ -26,7 +26,7 @@ EnergyPowerupItem::EnergyPowerupItem()
 	tTexture = tEnergyPowerupTexture;
 	nCount = 1;
 	nType = Type::EnergyPowerup;
-	strName = L"Energy Powerup";
+	strName = "Energy Powerup";
 }
 
 void EnergyPowerupItem::Use(SpaceGame* game, float fX, float fY, float fAngle)

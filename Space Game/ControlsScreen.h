@@ -12,8 +12,8 @@ class ControlsScreen : public Level
 	struct Control
 	{
 		int* nKey1, * nKey2;
-		const wchar_t* strDescription;
-		Control(int* nKey1, int* nKey2, const wchar_t* strDescription) { this->nKey1 = nKey1; this->nKey2 = nKey2; this->strDescription = strDescription; };
+		const char* strDescription;
+		Control(int* nKey1, int* nKey2, const char* strDescription) { this->nKey1 = nKey1; this->nKey2 = nKey2; this->strDescription = strDescription; };
 	};
 	std::vector<Control> vControls;
 	std::vector<Button> vButtons;
@@ -26,9 +26,9 @@ public:
 	void Load() override;
 	void Unload() override;
 	void Render() override;
-	void Update(double deltatime) override;
+	void Update(float deltatime) override;
 	void Resume();
 	void KeyDown(int key) override;
 	void LeftClick() override;
-	static std::wstring KeyText(int nKey);
+	static const char* KeyText(int nKey);
 };

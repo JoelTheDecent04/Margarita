@@ -9,7 +9,7 @@ Light::Light(std::shared_ptr<Entity> parent)
 	nType = Type::Light;
 }
 
-bool Light::Update(double deltatime)
+bool Light::Update(float deltatime)
 {
 	fX = parent->fX;
 	fY = parent->fY;

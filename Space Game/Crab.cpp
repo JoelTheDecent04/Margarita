@@ -26,7 +26,7 @@ Crab::Crab(SpaceGame* game, float fX)
 
 	nType = Type::Crab;
 }
-bool Crab::Update(double deltatime)
+bool Crab::Update(float deltatime)
 {
 
 

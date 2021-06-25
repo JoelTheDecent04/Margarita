@@ -1,5 +1,5 @@
 #pragma once
-#include <Windows.h>
+#include <SDL.h>
 
 struct Rect
 {
@@ -7,8 +7,11 @@ struct Rect
 };
 
 float distance(float ax, float ay, float bx, float by);
-float random();
+float randomf();
 float random_off_screen();
 void GetRelativeMousePos(int* x, int* y);
-void DebugOut(const wchar_t* fmt, ...);
+void DebugOut(const char* fmt, ...);
 bool PointInRect(Rect& rect, int x, int y);
+bool GetKeyState(int key);
+
+#define ErrorAndQuit(n, ...) { SDL_Log(n, ##__VA_ARGS__); SDL_Quit(); }

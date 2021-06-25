@@ -3,7 +3,6 @@
 #include "Space.h"
 #include "Powerup.h"
 #include <string>
-#include <concurrent_vector.h>
 
 class Player : public Entity
 {
@@ -21,7 +20,7 @@ public:
 	float fHealthRegeneration;
 	float fMaxHealthRegeneration;
 	Player(SpaceGame* game, float fX, float fY);
-	bool Update(double deltatime) override;
+	bool Update(float deltatime) override;
 	void Save(std::fstream& f) override;
 	void Load(std::fstream& f) override;
 };

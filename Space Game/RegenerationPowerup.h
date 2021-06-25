@@ -6,7 +6,7 @@ class RegenerationPowerup : public Powerup
 {
 public:
 	RegenerationPowerup(SpaceGame* sgGame);
-	void Update(double deltatime) override;
+	void Update(float deltatime) override;
 };
 
 

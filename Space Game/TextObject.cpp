@@ -4,7 +4,7 @@
 #include "Space.h"
 #include "Colours.h"
 
-TextObject::TextObject(float fX, float fY, const std::wstring& strText)
+TextObject::TextObject(float fX, float fY, const std::string& strText)
 {
 	fOpacity = 1.0f;
 	fOpacityChangePerSecond = 0.0f;
@@ -14,12 +14,12 @@ TextObject::TextObject(float fX, float fY, const std::wstring& strText)
 	fSpeedY = 0.0f;
 	this->strText = strText;
 	clrColour = &clrBlack;
-	fSize = 14.0f;
+	ppFont = &Graphics::pFont14Relative;
 }
 
 TextObject::TextObject() {}
 
-bool TextObject::Update(double deltatime)
+bool TextObject::Update(float deltatime)
 {
 	fX += fSpeedX * deltatime;
 	fY += fSpeedY * deltatime;
@@ -30,5 +30,5 @@ bool TextObject::Update(double deltatime)
 
 void TextObject::Draw()
 {
-	Graphics::WriteText(strText.c_str(), fScaleH * (fX - fBackgroundPosition), fScaleV * (fY), fScaleV * fSize, *clrColour, fOpacity);
+	Graphics::WriteText(strText.c_str(), fScaleH * (fX - fBackgroundPosition), fScaleV * (fY), *ppFont, *clrColour, fOpacity);
 }

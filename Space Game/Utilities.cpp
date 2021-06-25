@@ -3,8 +3,7 @@
 #include "Game.h"
 #include <random>
 #include <ctime>
-#include <varargs.h>
-#include <Windows.h>
+#include <stdarg.h>
 extern float fBackgroundPosition;
 
 float distance(float ax, float ay, float bx, float by)
@@ -14,38 +13,42 @@ float distance(float ax, float ay, float bx, float by)
 	return sqrt(x * x + y * y);
 }
 
-float random()
+float randomf()
 {
 	static std::mt19937 r = std::mt19937(time(0));
-	return (float)r() / r._Max;
+	return (float)r() / r.max();
 }
 
 float random_off_screen()
 {
-	float fRandomLocation = random() * (5120 - 1280);
-	if (fRandomLocation > fBackgroundPosition) fRandomLocation += 1280;
-	return fRandomLocation;
+	float frandomfLocation = randomf() * (5120 - 1280);
+	if (frandomfLocation > fBackgroundPosition) frandomfLocation += 1280;
+	return frandomfLocation;
 }
 
 void GetRelativeMousePos(int* x, int* y)
 {
-	POINT pntCursorPosition;
-	GetCursorPos(&pntCursorPosition);
-	ScreenToClient(Graphics::hWindow, &pntCursorPosition);
-	*x = pntCursorPosition.x / fScaleH;
-	*y = pntCursorPosition.y / fScaleV;
+	int nCursorX, nCursorY;
+	SDL_GetMouseState(&nCursorX, &nCursorY);
+	*x = nCursorX /= fScaleH;
+	*y = nCursorY /= fScaleV;
 }
 
-bool PointInRect(Rect& rect, int x, int y)
+bool PointInRect(Rect& rect, int x, int y) //TODO make SDL_PointInRect
 {
 	return (x > rect.left && y > rect.top && x < rect.right && y < rect.bottom);
 }
 
-void DebugOut(const wchar_t* fmt, ...) {
-	wchar_t s[1025];
+void DebugOut(const char* fmt, ...) {
+	/*char s[1025];
 	va_list args;
 	va_start(args, fmt);
-	wvsprintf(s, fmt, args);
+	wvsnprintf(s, fmt, args);
 	va_end(args);
-	OutputDebugString(s);
+	OutputDebugString(s);*/
+}
+
+bool GetKeyState(int key)
+{
+	return (/*key < Game::pKeyStatesLength&&*/ Game::pKeyStates[key]);
 }

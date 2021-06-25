@@ -8,11 +8,11 @@ Entity::Type anEnemies[2] = { Entity::Type::Enemy, Entity::Type::Crab };
 
 void EventHandler::MakeNewAchievement()
 {
-	int n = random() * 6;
+	int n = randomf() * 6;
 	n = n * 5 + 10;
 	nAchievementCount = n;
-	nAchievementEntityType1 = anWeapons[(int)roundf((random() * 2.0f))];
-	nAchievementEntityType2 = anEnemies[(int)roundf((random() * 1.0f))];
+	nAchievementEntityType1 = anWeapons[(int)roundf((randomf() * 2.0f))];
+	nAchievementEntityType2 = anEnemies[(int)roundf((randomf() * 1.0f))];
 	nAchievementType = Type::Kill;
 }
 

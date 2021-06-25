@@ -1,7 +1,8 @@
 #pragma once
 #include "BackgroundObject.h"
 #include <string>
-#include <d2d1.h>
+#include <SDL.h>
+#include <SDL_ttf.h>
 
 class TextObject : public BackgroundObject
 {
@@ -10,11 +11,11 @@ public:
 	float fOpacityChangePerSecond;
 	float fX, fY;
 	float fSpeedX, fSpeedY;
-	float fSize;
-	D2D1::ColorF* clrColour;
-	std::wstring strText;
-	TextObject(float fX, float fY, const std::wstring& strText);
+	TTF_Font** ppFont;
+	SDL_Color* clrColour;
+	std::string strText;
+	TextObject(float fX, float fY, const std::string& strText);
 	TextObject();
-	bool Update(double deltatime) override;
+	bool Update(float deltatime) override;
 	void Draw() override;
 };

@@ -5,13 +5,13 @@
 
 static uint32_t nLastCharacterId = 0;
 
-int keyJump1 = 'W';
-int keyJump2 = VK_SPACE;
-int keyMoveLeft1 = 'A';
+int keyJump1 = SDL_SCANCODE_W;
+int keyJump2 = SDL_SCANCODE_SPACE;
+int keyMoveLeft1 = SDL_SCANCODE_A;
 int keyMoveLeft2 = 0;
-int keyMoveRight1 = 'D';
+int keyMoveRight1 = SDL_SCANCODE_D;
 int keyMoveRight2 = 0;
-int keyMoveDown1 = 'S';
+int keyMoveDown1 = SDL_SCANCODE_S;
 int keyMoveDown2 = 0;
 
 Player::Player(SpaceGame* game, float fX, float fY)
@@ -36,7 +36,7 @@ Player::Player(SpaceGame* game, float fX, float fY)
 	nType = Type::Player;
 }
 
-bool Player::Update(double deltatime)
+bool Player::Update(float deltatime)
 {
 	if (fHealth == 0.0f)
 	{
@@ -44,27 +44,24 @@ bool Player::Update(double deltatime)
 		return true; //So the player object is not deleted immediately
 	}
 
-	if (GetForegroundWindow() == Graphics::hWindow) //Controls
+	if (GetKeyState(keyMoveRight1) || GetKeyState(keyMoveRight2))
 	{
-		if (GetAsyncKeyState(keyMoveRight1) || GetAsyncKeyState(keyMoveRight2))
-		{
-			fSpeedX += fPlayerAcceleration * deltatime;
-			if (fSpeedX > fMovementSpeed)
-				fSpeedX = fMovementSpeed;
-		}
-		if (GetAsyncKeyState(keyMoveLeft1) || GetAsyncKeyState(keyMoveLeft2))
-		{
-			fSpeedX -= fPlayerAcceleration * deltatime;
-			if (fSpeedX < -fMovementSpeed)
-				fSpeedX = -fMovementSpeed;
-		}
-		if (GetAsyncKeyState(keyMoveDown1) || GetAsyncKeyState(keyMoveDown2))
-			fSpeedY += fPlayerMoveDownSpeed * deltatime;
-		if (GetAsyncKeyState(keyJump1) || GetAsyncKeyState(keyJump2))
-		{
-			fSpeedY = -180.0f;
-			bOnGround = false;
-		}
+		fSpeedX += fPlayerAcceleration * deltatime;
+		if (fSpeedX > fMovementSpeed)
+			fSpeedX = fMovementSpeed;
+	}
+	if (GetKeyState(keyMoveLeft1) || GetKeyState(keyMoveLeft2))
+	{
+		fSpeedX -= fPlayerAcceleration * deltatime;
+		if (fSpeedX < -fMovementSpeed)
+			fSpeedX = -fMovementSpeed;
+	}
+	if (GetKeyState(keyMoveDown1) || GetKeyState(keyMoveDown2))
+		fSpeedY += fPlayerMoveDownSpeed * deltatime;
+	if (GetKeyState(keyJump1) || GetKeyState(keyJump2))
+	{
+		fSpeedY = -180.0f;
+		bOnGround = false;
 	}
 
 	if (fSpeedX > 0)

@@ -1,4 +1,3 @@
-#include <Windows.h>
 #include <time.h>
 #include <cassert>
 #include <thread>
@@ -6,100 +5,72 @@
 #include "Space.h"
 #include "TitleScreen.h"
 #include "Utilities.h"
+#include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
 
-const wchar_t* ClassName = L"WindowClass";
-
-LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
-
-int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR lpCmdLine, int nCmdShow)
+extern "C" int main(int argc, char** argv)
 {
 	srand(time(0));
 
-	WNDCLASS wc = { 0 };
-	wc.hInstance = hInstance;
-	wc.lpfnWndProc = WndProc;
-	wc.lpszClassName = ClassName;
-	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+	int ret = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
+	if (ret < 0) ErrorAndQuit("Couldn't initialise SDL\n");
+	ret = IMG_Init(IMG_INIT_PNG);
+	if (ret < 0) ErrorAndQuit("Couldn't initialise SDL Image\n");
+	ret = TTF_Init();
+	if (ret < 0) ErrorAndQuit("Couldn't initialise SDL TTF\n");
 
-	ATOM ret = RegisterClass(&wc);
-	assert(ret);
+	
 
-	RECT rect = { 0, 0, nScreenWidth, nScreenHeight };
-	AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false);
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "best");
 
-	HWND hwnd = CreateWindow(ClassName, L"Margarita 0.1.6", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
-		rect.right - rect.left, rect.bottom - rect.top, NULL, NULL, hInstance, NULL);
+	SDL_Window* pWindow = SDL_CreateWindow("Margarita 0.1.7", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, nScreenWidth, nScreenHeight, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+	if (pWindow == nullptr)
+		ErrorAndQuit("Couldn't create window: %s", SDL_GetError());
 
-	ShowWindow(hwnd, nCmdShow);
+	if (Graphics::Initialise(pWindow) == false)
+		ErrorAndQuit("Failed to initialise graphics: %s", SDL_GetError());
 
-	MSG msg;
+	Game::GameMain();
 
-	Graphics::Initialise(hwnd);
-	auto tGameThread = std::thread(Game::GameMain);
-	//_beginthread(Game::GameMain, 0, nullptr);
-	//CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)Game::GameMain, nullptr, 0, nullptr);
-
-	while (1)
-	{
-		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-		{
-			if (msg.message == WM_QUIT)
-				return msg.wParam;
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-	}
-
+	return 0;
 }
 
-LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+bool DoEvents()
 {
-	switch (message)
-	{
-	case WM_CREATE:
-	{
-		/*int nMonitorWidth = GetSystemMetrics(0);
-		int nMonitorHeight = GetSystemMetrics(1);
-		RECT rect = { 0, 0, nMonitorWidth, nMonitorHeight };
-		bool b = InvalidateRect(Graphics::hWindow, &rect, false);*/
-		return 0;
-	}
-	case WM_DESTROY:
-		Game::Quit();
-		while (1);
-	case WM_LBUTTONDOWN:
-		Game::LeftClick();
-		return 0;
-	case WM_KEYDOWN:
-		if (GetForegroundWindow() == hwnd)
-			Game::KeyDown(wParam);
-		return 0;
-	case WM_SIZE:
-	{
-			//Game::Resize();
-			Graphics::mGraphics.lock();
-			Graphics::Resize();
-			Graphics::mGraphics.unlock();
-			nScreenWidth = LOWORD(lParam);
-			nScreenHeight = HIWORD(lParam);
-			bool b = InvalidateRect(Graphics::hWindow, NULL, true);
-		return 0;
-	}
-	case WM_MOUSEWHEEL:
-		static int nDeltaMouseWheel = 0;
-		nDeltaMouseWheel += GET_WHEEL_DELTA_WPARAM(wParam);
-		while (nDeltaMouseWheel >= 120)
-		{
-			Game::KeyDown(VK_OEM_4);
-			nDeltaMouseWheel -= 120;
-		}
-		while (nDeltaMouseWheel <= -120)
-		{
-			Game::KeyDown(VK_OEM_6);
-			nDeltaMouseWheel += 120;
-		}
-		return 0;
+	SDL_Event event = { 0 };
 
+	while (SDL_PollEvent(&event))
+	{
+		switch (event.type)
+		{
+		case SDL_QUIT:
+			Game::Quit();
+			SDL_Quit();
+			return false;
+			break;
+		case SDL_MOUSEBUTTONDOWN:
+			if (event.button.button == SDL_BUTTON_LEFT)
+				Game::LeftClick();
+			break;
+		case SDL_KEYDOWN:
+			if (event.key.keysym.scancode == SDL_SCANCODE_F11)
+			{
+			}
+			else
+				Game::KeyDown(event.key.keysym.scancode);
+			break;
+		case SDL_WINDOWEVENT:
+			if (event.window.event == SDL_WINDOWEVENT_RESIZED)
+			{
+				nScreenWidth = event.window.data1;
+				nScreenHeight = event.window.data2;
+				fScaleH = (int)nScreenWidth / 1280.0f;
+				fScaleV = (int)nScreenHeight / 720.0f;
+				Graphics::Resize();
+			}
+			break;
+		}
 	}
-	return DefWindowProc(hwnd, message, wParam, lParam);
+	return true;
 }

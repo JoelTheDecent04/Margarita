@@ -3,7 +3,6 @@
 #include "Space.h"
 #include "Utilities.h"
 #include "Colours.h"
-#include <d2d1.h>
 
 static Texture* tButtons;
 static Texture* tTitlescreenBackground;
@@ -11,18 +10,18 @@ static Texture* tTitlescreenBackground;
 TitleScreen::TitleScreen()
 {
 	nButtonHover = -1;
-	tButtons = new Texture(L"buttons.png", 1908, 857, 280, 125);
+	tButtons = new Texture("buttons.png", 1908, 857, 280, 125);
 
 	vButtons.push_back(Button(500, 200, 780, 325, [] (void*) {
 		if (Game::sgSpaceGame)
 			Game::LoadLevel(Game::sgSpaceGame, true, false);
 		else
 			Game::LoadLevel(new SpaceGame());
-	}, L"Play"));
-	vButtons.push_back(Button(500, 500, 780, 625, [](void*) { Game::Quit(); }, L"Quit"));
-	vButtons.push_back(Button(500, 350, 780, 475, [](void*) {  }, L"Info"));
+	}, "Play"));
+	vButtons.push_back(Button(500, 500, 780, 625, [](void*) { Game::Quit(); }, "Quit"));
+	vButtons.push_back(Button(500, 350, 780, 475, [](void*) {  }, "Info"));
 
-	tTitlescreenBackground = new Texture(L"titlescreen_background.png", 3022, 1700, 1280.0f, 720.0f);
+	tTitlescreenBackground = new Texture("titlescreen_background.png", 3022, 1700, 1280.0f, 720.0f);
 }
 
 void TitleScreen::Render()
@@ -30,8 +29,8 @@ void TitleScreen::Render()
 	tTitlescreenBackground->Draw(0, 0.0f, 0.0f);
 
 	TextSize textsize;
-	Graphics::TextMetrics(L"Margarita", fScaleV * 125.0f, textsize, L"Chiller");
-	Graphics::WriteText(L"Margarita", fScaleH * 640 - textsize.width / 2, fScaleV * 30, fScaleV * 125.0f, clrRed, 1.0f, L"Chiller");
+	Graphics::TextMetrics("Margarita", Graphics::pFont125Relative, textsize); //TODO change font to chiller
+	Graphics::WriteText("Margarita", fScaleH * 640 - textsize.width / 2, fScaleV * 15, Graphics::pFont125Relative, clrRed, 1.0f);
 
 	int nIndex = 0;
 	for (Button& button : vButtons)
@@ -45,7 +44,7 @@ void TitleScreen::Render()
 	}
 }
 
-void TitleScreen::Update(double deltatime)
+void TitleScreen::Update(float deltatime)
 {
 	int nCursorX, nCursorY;
 	GetRelativeMousePos(&nCursorX, &nCursorY);

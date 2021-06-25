@@ -3,7 +3,6 @@
 #include "Space.h"
 #include "GUI.h"
 #include <vector>
-#include <d2d1.h>
 
 class ShopScreen : public Level
 {
@@ -17,7 +16,7 @@ public:
 	void Load() override {};
 	void Unload() override {};
 	void Render() override;
-	void Update(double deltatime) override;
+	void Update(float deltatime) override;
 	void LeftClick() override;
 	void KeyDown(int key) override;
 	void Resume();

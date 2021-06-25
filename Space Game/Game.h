@@ -8,7 +8,7 @@ public:
 	virtual void Load() = 0;
 	virtual void Unload() = 0;
 	virtual void Render() = 0;
-	virtual void Update(double deltatime) = 0;
+	virtual void Update(float deltatime) = 0;
 	virtual void LeftClick() {};
 	virtual void KeyDown(int key) {};
 };
@@ -25,6 +25,9 @@ namespace Game {
 
 	
 	extern SpaceGame* sgSpaceGame;
+
+	extern const uint8_t* pKeyStates;
+	extern int pKeyStatesLength;
 }
 
 

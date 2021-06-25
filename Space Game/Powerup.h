@@ -8,6 +8,6 @@ public:
 	float fTimeLeft;
 	Powerup(SpaceGame* game) { sgGame = game; }
 
-	virtual void Update(double deltatime) = 0;
+	virtual void Update(float deltatime) = 0;
 	void Remove();
 };

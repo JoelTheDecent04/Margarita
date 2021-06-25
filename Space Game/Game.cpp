@@ -6,9 +6,12 @@
 #include <string.h>
 #include <queue>
 #include <mutex>
+#include <atomic>
+#include <thread>
+#include <memory>
 
-int32_t nScreenWidth = 1600;
-int32_t nScreenHeight = 900;
+int32_t nScreenWidth = 1280;
+int32_t nScreenHeight = 720;
 
 int32_t nRenderTargetWidth;
 int32_t nRenderTargetHeight;
@@ -16,66 +19,50 @@ int32_t nRenderTargetHeight;
 float fScaleH = (float)nScreenWidth / 1280;
 float fScaleV = (float)nScreenHeight / 720;
 
-namespace Game {
+bool DoEvents();
 
+namespace Game {
 	Level* lCurrentLevel = nullptr;
 	SpaceGame* sgSpaceGame = nullptr;
-	static bool loading = false;
+	static std::atomic<bool> loading = false;
 	static bool resize = false;
 
 	bool bHighDetail = true;
 
 	int nClicks;
-	std::queue<int> qKeys;
-	std::mutex m_qKeys;
 
-	double fSecondsSinceLastFrame = 0.0;
+	float fSecondsSinceLastFrame = 0.0;
+
+	const uint8_t* pKeyStates;
+	int pKeyStatesLength;
 
 	void GameMain()
 	{
-		CoInitializeEx(nullptr, COINIT_MULTITHREADED);
-
+		loading = true;
 		LoadLevel(new TitleScreen());
+		loading = false;
 
-		uint64_t nPerformanceFrequency;
-		QueryPerformanceFrequency((LARGE_INTEGER*)&nPerformanceFrequency);
-		double dSecondsPerCount = 1.0 / (double)nPerformanceFrequency;
+		uint64_t nPerformanceFrequency = SDL_GetPerformanceFrequency();
+		float dSecondsPerCount = 1.0f / nPerformanceFrequency;
 
-		uint64_t nStartTime;
-		QueryPerformanceCounter((LARGE_INTEGER*)&nStartTime);
+		uint64_t nStartTime = SDL_GetPerformanceCounter();
 
 		while (1)
 		{
+			if (DoEvents() == false) 
+				Quit();
 			if (!loading)
 			{
-				while (nClicks > 0)
-				{
-					lCurrentLevel->LeftClick();
-					nClicks--;
-				}
-				m_qKeys.lock();
-				while (!qKeys.empty())
-				{
-					int key = qKeys.front();
-					qKeys.pop();
-					lCurrentLevel->KeyDown(key);
-				}
-				m_qKeys.unlock();
-				if (resize)
-				{
-					resize = false;
-					Graphics::Resize();
-				}
-				
-				uint64_t nCurrentTime;
-				QueryPerformanceCounter((LARGE_INTEGER*)&nCurrentTime);
-				double dDeltaTime = (nCurrentTime - nStartTime) * dSecondsPerCount;
+				uint64_t nCurrentTime = SDL_GetPerformanceCounter();
+				float dDeltaTime = (nCurrentTime - nStartTime) * dSecondsPerCount;
 				nStartTime = nCurrentTime;
 
-				dDeltaTime /= 4.0;
+				pKeyStates = SDL_GetKeyboardState(&pKeyStatesLength);
 
-				for (int i = 0; i < 4; i++)
-					lCurrentLevel->Update(dDeltaTime);
+				dDeltaTime /= 4.0;
+				if (dDeltaTime < 0.25) //Avoid large time delta
+					for (int i = 0; i < 4; i++)
+						lCurrentLevel->Update(dDeltaTime);
 
 				Graphics::BeginDraw();
 				lCurrentLevel->Render();
@@ -90,15 +77,7 @@ namespace Game {
 			lCurrentLevel->Render();
 
 		loading = true;
-		wchar_t txtWindowTitle[100];
-		wchar_t txtNewWindowTitle[128];
-		
-		GetWindowText(Graphics::hWindow, txtWindowTitle, 100);
-		wcscpy_s(txtNewWindowTitle, 128, txtWindowTitle);
-		wcscat_s(txtNewWindowTitle, 128, L" - Loading");
-		SetWindowText(Graphics::hWindow, txtNewWindowTitle);
-		SetCursor(LoadCursor(nullptr, IDC_WAIT));
-
+	
 		if (lCurrentLevel && bUnloadPrevious)
 		{
 			Level* lLastLevel = lCurrentLevel;
@@ -111,30 +90,28 @@ namespace Game {
 		lCurrentLevel = lNewLevel;
 
 		loading = false;
-		SetCursor(LoadCursor(nullptr, IDC_ARROW));
-		SetWindowText(Graphics::hWindow, txtWindowTitle);
 	}
 
 	void LeftClick()
 	{
-		nClicks++;
+		if (lCurrentLevel && !loading)
+			lCurrentLevel->LeftClick();
 	}
 
 	void KeyDown(int key)
 	{
-		m_qKeys.lock();
-		qKeys.push(key);
-		m_qKeys.unlock();
+		if (lCurrentLevel && !loading)
+			lCurrentLevel->KeyDown(key);
 	}
 
 	void Resize()
 	{
-		resize = true;
+		
 	}
 	void Quit()
 	{
 		if (sgSpaceGame)
 			sgSpaceGame->Save();
-		ExitProcess(0);
+		exit(EXIT_SUCCESS);
 	}
 }

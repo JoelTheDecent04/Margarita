@@ -10,7 +10,7 @@ public:
 	Bomb(SpaceGame* game, float fX, float fY, float fSpeedX, float fSpeedY, int nLevel);
 	bool Collide(Entity* entity) override;
 	void Explode();
-	bool Update(double deltatime) override;
+	bool Update(float deltatime) override;
 	void Save(std::fstream& f) override;
 	void Load(std::fstream& f) override;
 };
