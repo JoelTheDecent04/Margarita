@@ -11,10 +11,8 @@ public:
 	std::vector<Button> vButtons;
 	std::vector<Bar> vBars;
 	int nButtonHover;
-	SpaceGame* lGameLevel;
-	ShopScreen(SpaceGame* lGameLevel);
-	void Load() override {};
-	void Unload() override {};
+	std::shared_ptr<SpaceGame> lGameLevel;
+	ShopScreen();
 	void Render() override;
 	void Update(float deltatime) override;
 	void LeftClick() override;

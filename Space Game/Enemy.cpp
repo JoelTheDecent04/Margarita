@@ -3,8 +3,8 @@
 #include "Player.h"
 #include "Utilities.h"
 
-Enemy::Enemy(SpaceGame* game, float fX, float fY)
-	: Entity(game, tEnemyTexture, fX, fY)
+Enemy::Enemy(float fX, float fY)
+	: Entity(tEnemyTexture, fX, fY)
 {
 	fHealth = 100.0f;
 	fMaxHealth = 100.0f;
@@ -14,7 +14,7 @@ Enemy::Enemy(SpaceGame* game, float fX, float fY)
 	fSecondsUntilNextAttack = 0.0f;
 	bLegalPosition = true;
 
-	for (auto entity : game->vEntities)
+	for (auto entity : Game::sgSpaceGame->vEntities)
 	{
 		if (entity)
 			if (Overlapping(entity.get()))
@@ -35,14 +35,14 @@ bool Enemy::Update(float deltatime)
 		return false;
 	}
 
-	if (Distance(sgGame->plPlayer.get()) > 55.0f)
+	if (Distance(Game::sgSpaceGame->plPlayer.get()) > 55.0f)
 	{
-		float fGradient = (sgGame->plPlayer->fY - fY) / (sgGame->plPlayer->fX - fX);
+		float fGradient = (Game::sgSpaceGame->plPlayer->fY - fY) / (Game::sgSpaceGame->plPlayer->fX - fX);
 		float fAngle = atan(fGradient);
-		if (sgGame->plPlayer->fX < fX) fAngle += 3.1415926;
+		if (Game::sgSpaceGame->plPlayer->fX < fX) fAngle += 3.1415926;
 
-		fSpeedX = cos(fAngle) * (100.0f + sgGame->fDifficulty / 60.0f);
-		fSpeedY = sin(fAngle) * (100.0f + sgGame->fDifficulty / 60.0f);
+		fSpeedX = cos(fAngle) * (100.0f + Game::sgSpaceGame->fDifficulty / 60.0f);
+		fSpeedY = sin(fAngle) * (100.0f + Game::sgSpaceGame->fDifficulty / 60.0f);
 	}
 	else
 	{
@@ -53,7 +53,7 @@ bool Enemy::Update(float deltatime)
 			fSecondsUntilNextAttack -= deltatime;
 		else
 		{
-			sgGame->plPlayer->ChangeHealth(-10.0f, this);
+			Game::sgSpaceGame->plPlayer->ChangeHealth(-10.0f, this);
 			fSecondsUntilNextAttack = 1.0f;
 		}
 	}
@@ -63,6 +63,6 @@ bool Enemy::Update(float deltatime)
 
 void Enemy::Destroy()
 {
-	sgGame->plPlayer->fMoney += 10.0f;
-	sgGame->nEnemies--;
+	Game::sgSpaceGame->plPlayer->fMoney += 10.0f;
+	Game::sgSpaceGame->nEnemies--;
 }

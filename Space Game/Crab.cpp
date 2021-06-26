@@ -2,8 +2,8 @@
 #include "Space.h"
 #include "Player.h"
 
-Crab::Crab(SpaceGame* game, float fX)
-	: Entity(game, tCrabTexture, fX, 594 - (48 / 2)),
+Crab::Crab(float fX)
+	: Entity(tCrabTexture, fX, 594 - (48 / 2)),
 	animation(tCharacterTexture, 14, 60.0f, &nFrame)
 {
 	fHealth = 200.0f;
@@ -14,7 +14,7 @@ Crab::Crab(SpaceGame* game, float fX)
 	fSecondsUntilNextAttack = 0.0f;
 	bLegalPosition = true;
 
-	for (auto entity : game->vEntities)
+	for (auto entity : Game::sgSpaceGame->vEntities)
 	{
 		if (entity)
 			if (Overlapping(entity.get()))
@@ -30,16 +30,16 @@ bool Crab::Update(float deltatime)
 {
 
 
-	if (abs(sgGame->plPlayer->fX - fX) > 80.0f)
-		fSpeedX = sgGame->plPlayer->fX > fX ? 100.0f + sgGame->fDifficulty / 60.0f : -100.0f - sgGame->fDifficulty / 60.0f;
+	if (abs(Game::sgSpaceGame->plPlayer->fX - fX) > 80.0f)
+		fSpeedX = Game::sgSpaceGame->plPlayer->fX > fX ? 100.0f + Game::sgSpaceGame->fDifficulty / 60.0f : -100.0f - Game::sgSpaceGame->fDifficulty / 60.0f;
 	else
 	{
 		fSpeedX = 0.0f;
 		if (fSecondsUntilNextAttack > 0.0f)
 			fSecondsUntilNextAttack -= deltatime;
-		else if (Distance(sgGame->plPlayer.get()) <= 90.0f)
+		else if (Distance(Game::sgSpaceGame->plPlayer.get()) <= 90.0f)
 		{
-			sgGame->plPlayer->ChangeHealth(-15.0f, this);
+			Game::sgSpaceGame->plPlayer->ChangeHealth(-15.0f, this);
 			fSecondsUntilNextAttack = 1.0f;
 		}
 	}
@@ -59,6 +59,6 @@ bool Crab::Update(float deltatime)
 
 void Crab::Destroy()
 {
-	sgGame->plPlayer->fMoney += 15.0f;
-	sgGame->nEnemies--;
+	Game::sgSpaceGame->plPlayer->fMoney += 15.0f;
+	Game::sgSpaceGame->nEnemies--;
 }

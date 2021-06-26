@@ -8,7 +8,7 @@ class PauseScreen;
 
 class ControlsScreen : public Level
 {
-	PauseScreen* lPauseScreen;
+	std::shared_ptr<Level> lPreviousLevel;
 	struct Control
 	{
 		int* nKey1, * nKey2;
@@ -22,9 +22,8 @@ class ControlsScreen : public Level
 	int* keyToChange;
 
 public:
-	ControlsScreen(PauseScreen* lPauseScreen);
-	void Load() override;
-	void Unload() override;
+	ControlsScreen();
+	~ControlsScreen();
 	void Render() override;
 	void Update(float deltatime) override;
 	void Resume();

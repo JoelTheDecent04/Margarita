@@ -9,9 +9,8 @@
 #include "Utilities.h"
 #include "Colours.h"
 
-ShopScreen::ShopScreen(SpaceGame* lGameLevel)
+ShopScreen::ShopScreen()
 {
-	this->lGameLevel = lGameLevel;
 	nButtonHover = -1;
 	vButtons.push_back(Button(520, 600, 760, 680, [](void* s) { ((ShopScreen*)s)->Resume(); }, "Back", &Graphics::pFont24Relative));
 
@@ -113,7 +112,7 @@ void ShopScreen::LeftClick()
 
 void ShopScreen::Resume()
 {
-	Game::LoadLevel(lGameLevel, true, false);
+	Game::LoadLevel(Game::sgSpaceGame);
 }
 
 void ShopScreen::UpgradeHealth()

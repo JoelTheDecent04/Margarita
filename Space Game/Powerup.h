@@ -4,9 +4,9 @@
 class Powerup
 {
 public:
-	SpaceGame* sgGame;
 	float fTimeLeft;
-	Powerup(SpaceGame* game) { sgGame = game; }
+
+	Powerup() { fTimeLeft = 15.0f; };
 
 	virtual void Update(float deltatime) = 0;
 	void Remove();

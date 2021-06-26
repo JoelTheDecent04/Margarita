@@ -14,8 +14,8 @@ int keyMoveRight2 = 0;
 int keyMoveDown1 = SDL_SCANCODE_S;
 int keyMoveDown2 = 0;
 
-Player::Player(SpaceGame* game, float fX, float fY)
-	: Entity(game, tCharacterTexture, fX, fY)
+Player::Player(float fX, float fY)
+	: Entity(tCharacterTexture, fX, fY)
 {
 	fHealth = 200.0f;
 	fMaxHealth = 200.0f;
@@ -40,7 +40,7 @@ bool Player::Update(float deltatime)
 {
 	if (fHealth == 0.0f)
 	{
-		sgGame->bGameRunning = false;
+		Game::sgSpaceGame->bGameRunning = false;
 		return true; //So the player object is not deleted immediately
 	}
 
@@ -103,7 +103,7 @@ bool Player::Update(float deltatime)
 	fHealth += fHealthRegeneration * deltatime;
 	if (fHealth > fMaxHealth) fHealth = fMaxHealth;
 
-	if (fMoney >= 150.0f && sgGame->vItems.size() <= 2) sgGame->vItems.push_back(std::make_shared<BombWeapon>(1)); //TODO improve
+	if (fMoney >= 150.0f && Game::sgSpaceGame->vItems.size() <= 2) Game::sgSpaceGame->vItems.push_back(std::make_shared<BombWeapon>(1)); //TODO improve
 
 	if (puCurrentPowerup)
 	{

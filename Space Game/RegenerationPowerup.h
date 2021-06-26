@@ -5,7 +5,7 @@
 class RegenerationPowerup : public Powerup
 {
 public:
-	RegenerationPowerup(SpaceGame* sgGame);
+	RegenerationPowerup();
 	void Update(float deltatime) override;
 };
 
@@ -14,5 +14,5 @@ class RegenerationPowerupItem : public Item
 {
 public:
 	RegenerationPowerupItem();
-	void Use(SpaceGame* game, float fX, float fY, float fAngle) override;
+	void Use(float fX, float fY, float fAngle) override;
 };

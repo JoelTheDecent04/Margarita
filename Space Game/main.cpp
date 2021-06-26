@@ -20,7 +20,7 @@ extern "C" int main(int argc, char** argv)
 	ret = TTF_Init();
 	if (ret < 0) ErrorAndQuit("Couldn't initialise SDL TTF\n");
 
-	
+	SDL_Log("Test message\n");
 
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "best");
 

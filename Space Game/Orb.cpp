@@ -2,8 +2,8 @@
 #include "Space.h"
 #include "Player.h"
 
-Orb::Orb(SpaceGame* game, float fX, float fY, float fSpeedX, float fSpeedY)
-	: Entity(game, tOrbTexture, fX, fY)
+Orb::Orb(float fX, float fY, float fSpeedX, float fSpeedY)
+	: Entity(tOrbTexture, fX, fY)
 {
 	this->fSpeedX = fSpeedX;
 	this->fSpeedY = fSpeedY;
@@ -40,11 +40,11 @@ OrbWeapon::OrbWeapon()
 	strName = "Orb";
 }
 
-void OrbWeapon::Use(SpaceGame* game, float fX, float fY, float fAngle)
+void OrbWeapon::Use(float fX, float fY, float fAngle)
 {
-	if (game->plPlayer->nEnergy >= 5.0f)
+	if (Game::sgSpaceGame->plPlayer->nEnergy >= 5.0f)
 	{
-		game->vEntities.push_back(std::make_shared<Orb>(game, fX, fY, 300.0f * cos(fAngle), 300.0f * sin(fAngle)));
-		game->plPlayer->nEnergy -= 5.0f;
+		Game::sgSpaceGame->vEntities.push_back(std::make_shared<Orb>(fX, fY, 300.0f * cos(fAngle), 300.0f * sin(fAngle)));
+		Game::sgSpaceGame->plPlayer->nEnergy -= 5.0f;
 	}
 }

@@ -13,7 +13,6 @@ public:
 		None, Player, Bomb, Crab, Enemy, Laser, Orb, Light
 	};
 
-	SpaceGame* sgGame;
 	Texture* tTexture;
 	int nFrame;
 	float fX, fY;
@@ -28,7 +27,7 @@ public:
 
 	Type nType;
 
-	Entity(SpaceGame* sgGame, Texture* tTexture, float fX, float fY);
+	Entity(Texture* tTexture, float fX, float fY);
 	virtual bool Update(float deltatime);
 	virtual void ChangeHealth(float fChange, Entity* e);
 	virtual bool Collide(Entity* entity) { return true; };

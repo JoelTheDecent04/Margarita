@@ -6,9 +6,8 @@
 
 const char* astrEntityName[8] = { "None", "Player", "Bomb", "Crab", "Alien", "Laser", "Orb", "Light" };
 
-Entity::Entity(SpaceGame* sgGame, Texture* tTexture, float fX, float fY)
+Entity::Entity(Texture* tTexture, float fX, float fY)
 {
-	this->sgGame = sgGame;
 	this->tTexture = tTexture;
 	this->fX = fX;
 	this->fY = fY;
@@ -49,11 +48,11 @@ bool Entity::Update(float deltatime)
 	if (bCanCollide) //If this entity can collide
 	{
 		bool bCollided = false;
-		for (auto entity : sgGame->vEntities) //Check for collisions
+		for (auto entity : Game::sgSpaceGame->vEntities) //Check for collisions
 		{ //TODO fix
 			if (!entity) continue;
 			if (entity.get() == this || !entity->bCanCollide) continue;
-			if (entity.get() == (Entity*)sgGame->plPlayer.get() && !bCanCollideWithPlayer) continue; //TODO check if will work
+			if (entity.get() == (Entity*)Game::sgSpaceGame->plPlayer.get() && !bCanCollideWithPlayer) continue; //TODO check if will work
 			if (entity->WillOverlap(this, fNewX, fNewY))
 			{
 				bCollided = true;
@@ -68,11 +67,11 @@ bool Entity::Update(float deltatime)
 		if (bCollided)
 		{
  			bool bCollidedVertically = false;
-			for (auto entity : sgGame->vEntities) //Check if it can move vertically
+			for (auto entity : Game::sgSpaceGame->vEntities) //Check if it can move vertically
 			{
 				if (!entity) continue;
 				if (entity.get() == this || !entity->bCanCollide) continue;
-				if (entity.get() == (Entity*)sgGame->plPlayer.get() && !bCanCollideWithPlayer) continue;
+				if (entity.get() == (Entity*)Game::sgSpaceGame->plPlayer.get() && !bCanCollideWithPlayer) continue;
 				if (entity->WillOverlap(this, fX, fNewY))
 				{
 					bCollidedVertically = true;
@@ -83,11 +82,11 @@ bool Entity::Update(float deltatime)
 			if (bCollidedVertically)
 			{
 				bool bCollidedHorizontally = false;
-				for (auto entity : sgGame->vEntities) //Check if it can move horizontally
+				for (auto entity : Game::sgSpaceGame->vEntities) //Check if it can move horizontally
 				{
 					if (!entity) continue;
 					if (entity.get() == this || !entity->bCanCollide) continue;
-					if (entity.get() == (Entity*)sgGame->plPlayer.get() && !bCanCollideWithPlayer) continue; //TODO check if works
+					if (entity.get() == (Entity*)Game::sgSpaceGame->plPlayer.get() && !bCanCollideWithPlayer) continue; //TODO check if works
 					if (entity->WillOverlap(this, fNewX, fY))
 					{
 						bCollidedHorizontally = true;
@@ -161,16 +160,16 @@ bool Entity::Update(float deltatime)
 
 void Entity::ChangeHealth(float fChange, Entity* e)
 {
-	sgGame->vBackgroundObjects.push_back(std::make_shared<EntityHealthChangeText>(this, fChange));
+	Game::sgSpaceGame->vBackgroundObjects.push_back(std::make_shared<EntityHealthChangeText>(this, fChange));
 	fHealth += fChange;
 	if (fHealth <= 0.0f)
 	{
-		sgGame->pEventHandler->Event(EventHandler::Type::Kill, 0, e, this);
+		Game::sgSpaceGame->pEventHandler->Event(EventHandler::Type::Kill, 0, e, this);
 		fHealth = 0.0f; //When Destroy() is called on the player, it won't get deleted straight away
 	}
 	else if (fChange < 0.0f)
 	{
-		sgGame->pEventHandler->Event(EventHandler::Type::Hit, 0, e, this);
+		Game::sgSpaceGame->pEventHandler->Event(EventHandler::Type::Hit, 0, e, this);
 
 	}
 }

@@ -44,7 +44,7 @@ void EventHandler::Event(Type nType, int nCount, Entity* a, Entity* b)
 		{
 		case Type::Kill:
 		{
-			if (a->nType == nAchievementEntityType1 && b->nType == nAchievementEntityType2)
+			if (a && b && a->nType == nAchievementEntityType1 && b->nType == nAchievementEntityType2)
 			{
 				nAchievementCount--;
  				if (nAchievementCount == 0)

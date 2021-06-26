@@ -5,13 +5,10 @@
 #include "Utilities.h"
 #include "Colours.h"
 
-ControlsScreen::ControlsScreen(PauseScreen* lPauseScreen)
+ControlsScreen::ControlsScreen()
 {
-	this->lPauseScreen = lPauseScreen;
-}
+	this->lPreviousLevel = Game::lCurrentLevel;
 
-void ControlsScreen::Load()
-{
 	vControls.push_back(Control(&keyJump1, &keyJump2, "Jump"));
 	vControls.push_back(Control(&keyMoveLeft1, &keyMoveLeft2, "Move Left"));
 	vControls.push_back(Control(&keyMoveRight1, &keyMoveRight2, "Move Right"));
@@ -33,9 +30,8 @@ void ControlsScreen::Load()
 	keyToChange = nullptr;
 }
 
-void ControlsScreen::Unload()
+ControlsScreen::~ControlsScreen()
 {
-	delete this;
 }
 
 void ControlsScreen::Render()
@@ -44,7 +40,7 @@ void ControlsScreen::Render()
 
 	TextSize textsize;
 	Graphics::TextMetrics("Controls", Graphics::pFont44Relative, textsize);
-	Graphics::WriteText("Controls", fScaleH * 640 - textsize.width / 2, fScaleV * 40.0f, Graphics::pFont44Relative); //TODO should be size 40 font
+	Graphics::WriteText("Controls", fScaleH * 640 - textsize.width / 2, fScaleV * 20.0f, Graphics::pFont44Relative);
 
 	int nY = 100;
 	for (Control& control : vControls)
@@ -104,7 +100,7 @@ void ControlsScreen::Update(float deltatime)
 
 void ControlsScreen::Resume()
 {
-	Game::LoadLevel(lPauseScreen, true, false);
+	Game::LoadLevel(lPreviousLevel);
 }
 
 void ControlsScreen::LeftClick()

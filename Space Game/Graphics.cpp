@@ -67,7 +67,7 @@ namespace Graphics {
 			SDL_FreeSurface(pWindowIconSurface);
 		}
 
-		if (SDL_SetRenderDrawBlendMode(pRenderer, SDL_BLENDMODE_BLEND) == -1)
+		if (SDL_SetRenderDrawBlendMode(pRenderer, SDL_BLENDMODE_BLEND) != 0)
 			SDL_Log("Failed to set render draw blend mode: %s", SDL_GetError());
 		
 		pFont12 = TTF_OpenFont(strFontFile, 12);

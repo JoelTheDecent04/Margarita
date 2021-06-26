@@ -12,7 +12,7 @@ public:
 	};
 	LaserLevel nLaserLevel;
 	LaserWeapon(LaserLevel nLaserLevel);
-	void Use(SpaceGame* game, float fX, float fY, float fAngle) override;
+	void Use(float fX, float fY, float fAngle) override;
 	void Save(std::fstream& f) override;
 	void Load(std::fstream& f) override;
 };
@@ -24,7 +24,7 @@ class LaserBeam : public Entity
 	std::shared_ptr<LaserBeam> lbNextShot;
 	float fAngle;
 public:
-	LaserBeam(SpaceGame* game, LaserWeapon* weapon, float fX, float fY, float fSpeedX, float fSpeedY);
+	LaserBeam(LaserWeapon* weapon, float fX, float fY, float fSpeedX, float fSpeedY);
 	bool Collide(Entity* entity) override;
 	bool Update(float deltatime) override;
 	void Draw() override;

@@ -4,8 +4,8 @@
 #include <math.h>
 #define PI 3.1415926f
 
-LaserBeam::LaserBeam(SpaceGame* game, LaserWeapon* weapon, float fX, float fY, float fSpeedX, float fSpeedY)
-	: Entity(game, tLaserBeamTexture, fX, fY)
+LaserBeam::LaserBeam(LaserWeapon* weapon, float fX, float fY, float fSpeedX, float fSpeedY)
+	: Entity(tLaserBeamTexture, fX, fY)
 {
 	bAffectedByGravity = false;
 	this->fSpeedX = fSpeedX;
@@ -20,7 +20,7 @@ LaserBeam::LaserBeam(SpaceGame* game, LaserWeapon* weapon, float fX, float fY, f
 	{
 		bFireSecond = true;
 		fSecondsUntilSecondFire = 0.1f;
-		lbNextShot = std::make_shared<LaserBeam>(game, nullptr, 0.0f, 0.0f, fSpeedX, fSpeedY);
+		lbNextShot = std::make_shared<LaserBeam>(nullptr, 0.0f, 0.0f, fSpeedX, fSpeedY);
 	}
 	else
 		bFireSecond = false;
@@ -66,11 +66,11 @@ bool LaserBeam::Update(float deltatime)
 	float fNewY = fY + fSpeedY * deltatime;
 
 	bool bCollided = false;
-	for (auto entity : sgGame->vEntities) //Check for collisions
+	for (auto entity : Game::sgSpaceGame->vEntities) //Check for collisions
 	{
 		if (!entity) continue;
 		if (entity.get() == this || !entity->bCanCollide) continue;
-		if (entity == sgGame->plPlayer && !bCanCollideWithPlayer) continue;
+		if (entity == Game::sgSpaceGame->plPlayer && !bCanCollideWithPlayer) continue;
 		if (entity->WillOverlap(this, fBulletX, fBulletY))
 		{
 			bCollided = true;
@@ -108,10 +108,10 @@ bool LaserBeam::Update(float deltatime)
 		fSecondsUntilSecondFire -= deltatime;
 		if (fSecondsUntilSecondFire <= 0.0f)
 		{
-			lbNextShot->fX = sgGame->plPlayer->fX;
-			lbNextShot->fY = sgGame->plPlayer->fY;
+			lbNextShot->fX = Game::sgSpaceGame->plPlayer->fX;
+			lbNextShot->fY = Game::sgSpaceGame->plPlayer->fY;
 
-			sgGame->vEntities.push_back(lbNextShot);
+			Game::sgSpaceGame->vEntities.push_back(lbNextShot);
 			bFireSecond = false;
 		}
 	}
@@ -128,23 +128,23 @@ LaserWeapon::LaserWeapon(LaserLevel nLaserLevel)
 	strName = "Laser";
 }
 
-void LaserWeapon::Use(SpaceGame* game, float fX, float fY, float fAngle)
+void LaserWeapon::Use(float fX, float fY, float fAngle)
 {
 	switch (nLaserLevel)
 	{
 	case Normal:
-		if (game->plPlayer->nEnergy >= 4)
+		if (Game::sgSpaceGame->plPlayer->nEnergy >= 4)
 		{
-			game->vEntities.push_back(std::make_shared<LaserBeam>(game, this, fX, fY, 1000.0f * cos(fAngle), 1000.0f * sin(fAngle)));
+			Game::sgSpaceGame->vEntities.push_back(std::make_shared<LaserBeam>(this, fX, fY, 1000.0f * cos(fAngle), 1000.0f * sin(fAngle)));
 
-			game->plPlayer->nEnergy -= 4;
+			Game::sgSpaceGame->plPlayer->nEnergy -= 4;
 		}
 		break;
 	case floatShot:
-		if (game->plPlayer->nEnergy >= 6)
+		if (Game::sgSpaceGame->plPlayer->nEnergy >= 6)
 		{
-			game->vEntities.push_back(std::make_shared<LaserBeam>(game, this, fX, fY, 1000.0f * cos(fAngle), 1000.0f * sin(fAngle)));
-			game->plPlayer->nEnergy -= 6;
+			Game::sgSpaceGame->vEntities.push_back(std::make_shared<LaserBeam>(this, fX, fY, 1000.0f * cos(fAngle), 1000.0f * sin(fAngle)));
+			Game::sgSpaceGame->plPlayer->nEnergy -= 6;
 		}
 		break;
 	}

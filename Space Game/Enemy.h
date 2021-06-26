@@ -6,7 +6,7 @@ class Enemy : public Entity
 	float fSecondsUntilNextAttack;
 public:
 	bool bLegalPosition;
-	Enemy(SpaceGame* game, float fX, float fY);
+	Enemy(float fX, float fY);
 	bool Update(float deltatime) override;
 	void Destroy() override;
 };

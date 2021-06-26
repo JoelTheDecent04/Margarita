@@ -44,7 +44,8 @@ bool bShowHitboxes = false;
 
 int nCurrentVersion = 16;
 
-void SpaceGame::Load()
+SpaceGame::SpaceGame() 
+	: pEventHandler(std::make_shared<EventHandler>(this))
 {
 	bGameRunning = true;
 
@@ -66,10 +67,10 @@ void SpaceGame::Load()
 	tLight->light = true;
 
 
-	plPlayer = std::make_shared<Player>(this, 384.0f, 380.f);
+	plPlayer = std::make_shared<Player>(384.0f, 380.f);
 	vEntities.push_back(plPlayer);
 	//vEntities.push_back(std::make_shared<Light>(plPlayer));
-	
+
 
 	vItems.push_back(std::make_shared<LaserWeapon>(LaserWeapon::Normal));
 	vItems.push_back(std::make_shared<OrbWeapon>());
@@ -85,14 +86,15 @@ void SpaceGame::Load()
 	fSecondsUntilNextComet = 40 + randomf() * 40;
 	NextWave();
 
-	LoadFromFile(); //Load save game if it exists
+	//LoadFromFile(); //Load save game if it exists
 
-	Game::sgSpaceGame = this;
+	//Game::sgSpaceGame = this;
 
 	fLightingLoopTime = 0.0f;
 	fBrightness = 1.0f;
-}
-void SpaceGame::Unload()
+};
+
+SpaceGame::~SpaceGame()
 {
 	delete tCharacterTexture;
 	delete tOrbTexture;
@@ -106,8 +108,9 @@ void SpaceGame::Unload()
 	delete tCometTexture;
 	delete tNoTexture;
 	delete tBombAnimationTexture;
-
-	//TODO finish
+	delete tEnergyPowerupTexture;
+	delete tRegenerationPowerupTexture;
+	delete tLight;
 
 	Game::sgSpaceGame = nullptr;
 }
@@ -202,7 +205,8 @@ void SpaceGame::Update(float deltatime)
 		}
 		if (!bGameRunning) //Game could end after any entity update
 		{
-			Game::LoadLevel(new DeathScreen(this), false, true);
+			int ret = remove("savegame.txt");
+			Game::LoadLevel(std::make_shared<DeathScreen>());
 			return;
 		}
 	}
@@ -222,7 +226,7 @@ void SpaceGame::Update(float deltatime)
 	{
 		if (randomf() >= 0.15f)
 		{
-			auto enemy = std::make_shared<Enemy>(this, random_off_screen(), randomf() * 500);
+			auto enemy = std::make_shared<Enemy>(random_off_screen(), randomf() * 500);
 			if (enemy->bLegalPosition)
 			{
 				vEntities.push_back(enemy);
@@ -231,7 +235,7 @@ void SpaceGame::Update(float deltatime)
 		}
 		else
 		{
-			auto crab = std::make_shared<Crab>(this, random_off_screen());
+			auto crab = std::make_shared<Crab>(random_off_screen());
 			if (crab->bLegalPosition)
 			{
 				vEntities.push_back(crab);
@@ -278,7 +282,7 @@ void SpaceGame::LeftClick()
 	float fAngle = atan(fGradient);
 	if (nCursorX < plPlayer->fX) fAngle += 3.1415926f;
 	
-	vItems[nCurrentItem]->Use(this, plPlayer->fX, plPlayer->fY, fAngle);
+	vItems[nCurrentItem]->Use(plPlayer->fX, plPlayer->fY, fAngle);
 	if (vItems[nCurrentItem]->nCount == 0)
 	{
 		vItems.erase(vItems.begin() + nCurrentItem);
@@ -291,9 +295,9 @@ void SpaceGame::LeftClick()
 void SpaceGame::KeyDown(int key)
 {
 	if (key == SDL_SCANCODE_ESCAPE)
-		Game::LoadLevel(new PauseScreen(this), false, true);
+		Game::LoadLevel(std::static_pointer_cast<Level>(std::make_shared<PauseScreen>()));
 	if (key == keyOpenShop1 || key == keyOpenShop2)
-		Game::LoadLevel(new ShopScreen(this), false, true);
+		Game::LoadLevel(std::static_pointer_cast<Level>(std::make_shared<ShopScreen>()));
 	if (key == SDL_SCANCODE_K)
 		plPlayer->ChangeHealth(-20.0f, nullptr);
 	if (key == SDL_SCANCODE_J)
@@ -329,20 +333,23 @@ void SpaceGame::KeyDown(int key)
 
 void SpaceGame::Save()
 {
-	std::fstream f;
-	f.open("savegame.txt", std::fstream::out);
+	if (bGameRunning)
+	{
+		std::fstream f;
+		f.open("savegame.txt", std::fstream::out);
 
-	f << nCurrentVersion << " " << fDifficulty << " " << nWave << " " << fSecondsUntilNextWave << " " << nEnemies << " " << fLightingLoopTime << " ";
+		f << nCurrentVersion << " " << fDifficulty << " " << nWave << " " << fSecondsUntilNextWave << " " << nEnemies << " " << fLightingLoopTime << " ";
 
-	f << vEntities.size() << " ";
-	for (auto& entity : vEntities)
-		entity->Save(f);
+		f << vEntities.size() << " ";
+		for (auto& entity : vEntities)
+			entity->Save(f);
 
-	f << vItems.size() << " ";
-	for (auto& item : vItems)
-		item->Save(f);
+		f << vItems.size() << " ";
+		for (auto& item : vItems)
+			item->Save(f);
 
-	f.close();
+		f.close();
+	}
 }
 
 void SpaceGame::LoadFromFile()
@@ -375,7 +382,7 @@ void SpaceGame::LoadFromFile()
 			break;
 		case Entity::Type::Player:
 		{
-			auto e = std::make_shared<Player>(this, 0.0f, 0.0f);
+			auto e = std::make_shared<Player>(0.0f, 0.0f);
 			e->Load(f);
 			vEntities.push_back(e);
 			//vEntities.push_back(std::make_shared<Light>(e));
@@ -384,35 +391,35 @@ void SpaceGame::LoadFromFile()
 		}
 		case Entity::Type::Bomb:
 		{
-			auto e = std::make_shared<Bomb>(this, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+			auto e = std::make_shared<Bomb>(0.0f, 0.0f, 0.0f, 0.0f, 0);
 			e->Load(f);
 			vEntities.push_back(e);
 			break;
 		}
 		case Entity::Type::Crab:
 		{
-			auto e = std::make_shared<Crab>(this, 0.0f);
+			auto e = std::make_shared<Crab>(0.0f);
 			e->Load(f);
 			vEntities.push_back(e);
 			break;
 		}
 		case Entity::Type::Enemy:
 		{
-			auto e = std::make_shared<Enemy>(this, 0.0f, 0.0f);
+			auto e = std::make_shared<Enemy>(0.0f, 0.0f);
 			e->Load(f);
 			vEntities.push_back(e);
 			break;
 		}
 		case Entity::Type::Laser:
 		{
-			auto e = std::make_shared<LaserBeam>(this, nullptr, 0.0f, 0.0f, 0.0f, 0.0f);
+			auto e = std::make_shared<LaserBeam>(nullptr, 0.0f, 0.0f, 0.0f, 0.0f);
 			e->Load(f);
 			vEntities.push_back(e);
 			break;
 		}
 		case Entity::Type::Orb:
 		{
-			auto e = std::make_shared<Orb>(this, 0.0f, 0.0f, 0.0f, 0.0f);
+			auto e = std::make_shared<Orb>(0.0f, 0.0f, 0.0f, 0.0f);
 			e->Load(f);
 			vEntities.push_back(e);
 			break;

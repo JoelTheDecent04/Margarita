@@ -10,9 +10,8 @@ class DeathScreen : public Level
 	std::vector<Button> vButtons;
 	int nButtonHover;
 public:
-	DeathScreen(SpaceGame* sgSpaceGame) { this->sgSpaceGame = sgSpaceGame; };
-	void Load();
-	void Unload() override;
+	DeathScreen();
+	~DeathScreen();
 	void Render() override;
 	void Update(float deltatime) override;
 	void LeftClick() override;

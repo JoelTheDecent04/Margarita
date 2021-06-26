@@ -5,7 +5,7 @@
 class EnergyPowerup : public Powerup
 {
 public:
-	EnergyPowerup(SpaceGame* sgGame);
+	EnergyPowerup();
 	void Update(float deltatime) override;
 };
 
@@ -13,5 +13,5 @@ class EnergyPowerupItem : public Item
 {
 public:
 	EnergyPowerupItem();
-	void Use(SpaceGame* game, float fX, float fY, float fAngle) override;
+	void Use(float fX, float fY, float fAngle) override;
 };

@@ -3,8 +3,8 @@
 #include "Player.h"
 #include "BombAnimation.h"
 
-Bomb::Bomb(SpaceGame* game, float fX, float fY, float fSpeedX, float fSpeedY, int nLevel)
-	: Entity(game, tBombTexture, fX, fY)
+Bomb::Bomb(float fX, float fY, float fSpeedX, float fSpeedY, int nLevel)
+	: Entity(tBombTexture, fX, fY)
 {
 	this->fSpeedX = fSpeedX;
 	this->fSpeedY = fSpeedY;
@@ -23,8 +23,8 @@ bool Bomb::Collide(Entity* entity)
 
 void Bomb::Explode()
 {
-	sgGame->vBackgroundObjects.push_back(std::make_shared<BombAnimation>(this));
-	for (auto entity : sgGame->vEntities)
+	Game::sgSpaceGame->vBackgroundObjects.push_back(std::make_shared<BombAnimation>(this));
+	for (auto entity : Game::sgSpaceGame->vEntities)
 	{
 		if (entity.get() == this) continue;
 		float fDistance = Distance(entity.get());
@@ -70,12 +70,12 @@ BombWeapon::BombWeapon(int nLevel)
 	strName = "Bomb";
 }
 
-void BombWeapon::Use(SpaceGame* game, float fX, float fY, float fAngle)
+void BombWeapon::Use(float fX, float fY, float fAngle)
 {
-	if (game->plPlayer->nEnergy >= 8.0f + 3.0f * nLevel)
+	if (Game::sgSpaceGame->plPlayer->nEnergy >= 8.0f + 3.0f * nLevel)
 	{
-		game->vEntities.push_back(std::make_shared<Bomb>(game, fX, fY, 300.0f * cos(fAngle), 300.0f * sin(fAngle), nLevel));
-		game->plPlayer->nEnergy -= 8.0f + 3.0f * nLevel;
+		Game::sgSpaceGame->vEntities.push_back(std::make_shared<Bomb>(fX, fY, 300.0f * cos(fAngle), 300.0f * sin(fAngle), nLevel));
+		Game::sgSpaceGame->plPlayer->nEnergy -= 8.0f + 3.0f * nLevel;
 	}
 }
 

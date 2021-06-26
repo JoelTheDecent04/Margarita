@@ -4,5 +4,5 @@
 
 void Powerup::Remove()
 {
-	sgGame->plPlayer->puCurrentPowerup = nullptr;
+	Game::sgSpaceGame->plPlayer->puCurrentPowerup = nullptr;
 }

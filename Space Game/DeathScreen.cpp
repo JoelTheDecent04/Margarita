@@ -44,16 +44,14 @@ void DeathScreen::LeftClick()
 		vButtons[nButtonHover].function(this);
 }
 
-void DeathScreen::Load()
+DeathScreen::DeathScreen()
 {
 	nButtonHover = -1;
-	vButtons.push_back(Button(500, 200, 780, 300, [](void*) { Game::LoadLevel(new SpaceGame()); }, "New Game"));
+	vButtons.push_back(Button(500, 200, 780, 300, [](void*) { Game::LoadLevel(std::make_shared<SpaceGame>()); }, "New Game"));
 	vButtons.push_back(Button(500, 320, 780, 420, [](void*) { Game::Quit(); }, "Quit"));
-
-	remove("savegame.txt");
 }
 
-void DeathScreen::Unload()
+DeathScreen::~DeathScreen()
 {
-	sgSpaceGame->Unload(); //TODO definitely make smart pointer
+	
 }

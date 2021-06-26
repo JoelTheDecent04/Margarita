@@ -11,7 +11,7 @@ public:
 	int nCount;
 	Texture* tTexture;
 	const char* strName;
-	virtual void Use(SpaceGame* game, float fX, float fY, float fAngle) = 0;
+	virtual void Use(float fX, float fY, float fAngle) = 0;
 	Item();
 	virtual void Save(std::fstream& f);
 	virtual void Load(std::fstream& f);

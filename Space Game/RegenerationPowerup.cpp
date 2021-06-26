@@ -2,8 +2,8 @@
 #include "Space.h"
 #include "Player.h"
 
-RegenerationPowerup::RegenerationPowerup(SpaceGame* sgGame)
-	: Powerup(sgGame)
+RegenerationPowerup::RegenerationPowerup()
+	: Powerup()
 {
 	fTimeLeft = 10.0f;
 }
@@ -17,9 +17,9 @@ void RegenerationPowerup::Update(float deltatime)
 		return;
 	}
 
-	sgGame->plPlayer->fHealth += 25 * deltatime;
-	if (sgGame->plPlayer->fHealth > sgGame->plPlayer->fMaxHealth)
-		sgGame->plPlayer->fHealth = sgGame->plPlayer->fMaxHealth;
+	Game::sgSpaceGame->plPlayer->fHealth += 25 * deltatime;
+	if (Game::sgSpaceGame->plPlayer->fHealth > Game::sgSpaceGame->plPlayer->fMaxHealth)
+		Game::sgSpaceGame->plPlayer->fHealth = Game::sgSpaceGame->plPlayer->fMaxHealth;
 }
 
 RegenerationPowerupItem::RegenerationPowerupItem()
@@ -30,11 +30,11 @@ RegenerationPowerupItem::RegenerationPowerupItem()
 	strName = "Regeneration Powerup";
 }
 
-void RegenerationPowerupItem::Use(SpaceGame* game, float fX, float fY, float fAngle)
+void RegenerationPowerupItem::Use(float fX, float fY, float fAngle)
 {
-	if (game->plPlayer->puCurrentPowerup == nullptr)
+	if (Game::sgSpaceGame->plPlayer->puCurrentPowerup == nullptr)
 	{
 		nCount--;
-		game->plPlayer->puCurrentPowerup = std::make_shared<RegenerationPowerup>(game);
+		Game::sgSpaceGame->plPlayer->puCurrentPowerup = std::make_shared<RegenerationPowerup>();
 	}
 }

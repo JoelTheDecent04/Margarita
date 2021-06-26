@@ -5,8 +5,6 @@
 class Level
 {
 public:
-	virtual void Load() = 0;
-	virtual void Unload() = 0;
 	virtual void Render() = 0;
 	virtual void Update(float deltatime) = 0;
 	virtual void LeftClick() {};
@@ -17,14 +15,15 @@ class SpaceGame;
 
 namespace Game {
 	void GameMain();
-	void LoadLevel(Level* lNewLevel, bool bUnloadPrevious = true, bool bLoadNext = true);
+	void LoadLevel(const std::shared_ptr<Level>& lNewLevel);
 	void LeftClick();
 	void KeyDown(int key);
 	void Resize();
 	void Quit();
 
 	
-	extern SpaceGame* sgSpaceGame;
+	extern std::shared_ptr<SpaceGame> sgSpaceGame;
+	extern std::shared_ptr<Level> lCurrentLevel;
 
 	extern const uint8_t* pKeyStates;
 	extern int pKeyStatesLength;

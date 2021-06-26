@@ -15,32 +15,30 @@ class SpaceGame : public Level
 public:
 	std::vector<std::shared_ptr<Entity>> vEntities;
 
-	int nCurrentItem{ 0 };
+	int nCurrentItem;
 	std::vector<std::shared_ptr<Item>> vItems;
 
 	std::shared_ptr<Player> plPlayer;
 
 	std::vector<std::shared_ptr<BackgroundObject>> vBackgroundObjects;
 	
-	float fFps{ 0.0f };
-	bool bGameRunning { false };
+	float fFps;
+	bool bGameRunning;
 
-	float fNextEnemySpawn{ 0.0 };
-	float fDifficulty{ 0.0f };
+	float fNextEnemySpawn;
+	float fDifficulty;
 
-	int nWave{ 0 };
-	float fSecondsUntilNextWave{ 0.0f };
-	int nEnemies{ 0 };
-	bool bWaveFinished{ false };
+	int nWave;
+	float fSecondsUntilNextWave;
+	int nEnemies;
+	bool bWaveFinished;
 
-	float fSecondsUntilNextComet{ 0.0f };
-	float fLightingLoopTime{ 0.0f };
-	float fBrightness{ 0.0f };
+	float fSecondsUntilNextComet;
+	float fLightingLoopTime;
+	float fBrightness;
 
 	std::shared_ptr<EventHandler> pEventHandler;
 
-	void Load() override;
-	void Unload() override;
 	void Render() override;
 	void Update(float deltatime) override;
 	void LeftClick() override;
@@ -48,7 +46,8 @@ public:
 	void Save();
 	void LoadFromFile();
 	void NextWave();
-	SpaceGame() : pEventHandler(std::make_shared<EventHandler>(this)) {};
+	SpaceGame();
+	~SpaceGame();
 };
 
 extern float fBackgroundPosition;

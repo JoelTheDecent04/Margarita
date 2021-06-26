@@ -9,7 +9,7 @@ class Crab : public Entity
 	
 public:
 	bool bLegalPosition;
-	Crab(SpaceGame* game, float fX);
+	Crab(float fX);
 	bool Update(float deltatime) override;
 	void Destroy() override;
 };

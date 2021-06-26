@@ -2,8 +2,8 @@
 #include "Space.h"
 #include "Player.h"
 
-EnergyPowerup::EnergyPowerup(SpaceGame* game)
-	: Powerup(game)
+EnergyPowerup::EnergyPowerup()
+	: Powerup()
 {
 	fTimeLeft = 10.0f;
 }
@@ -16,9 +16,9 @@ void EnergyPowerup::Update(float deltatime)
 		Remove();
 		return;
 	}
-	sgGame->plPlayer->nEnergy += 15 * deltatime;
-	if (sgGame->plPlayer->nEnergy > sgGame->plPlayer->nMaxEnergy)
-		sgGame->plPlayer->nEnergy = sgGame->plPlayer->nMaxEnergy;
+	Game::sgSpaceGame->plPlayer->nEnergy += 15 * deltatime;
+	if (Game::sgSpaceGame->plPlayer->nEnergy > Game::sgSpaceGame->plPlayer->nMaxEnergy)
+		Game::sgSpaceGame->plPlayer->nEnergy = Game::sgSpaceGame->plPlayer->nMaxEnergy;
 }
 
 EnergyPowerupItem::EnergyPowerupItem()
@@ -29,11 +29,11 @@ EnergyPowerupItem::EnergyPowerupItem()
 	strName = "Energy Powerup";
 }
 
-void EnergyPowerupItem::Use(SpaceGame* game, float fX, float fY, float fAngle)
+void EnergyPowerupItem::Use(float fX, float fY, float fAngle)
 {
-	if (game->plPlayer->puCurrentPowerup == nullptr)
+	if (Game::sgSpaceGame->plPlayer->puCurrentPowerup == nullptr)
 	{
 		nCount--;
-		game->plPlayer->puCurrentPowerup = std::make_shared<EnergyPowerup>(game);
+		Game::sgSpaceGame->plPlayer->puCurrentPowerup = std::make_shared<EnergyPowerup>();
 	}
 }

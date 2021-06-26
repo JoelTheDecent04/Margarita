@@ -22,9 +22,8 @@ float fScaleV = (float)nScreenHeight / 720;
 bool DoEvents();
 
 namespace Game {
-	Level* lCurrentLevel = nullptr;
-	SpaceGame* sgSpaceGame = nullptr;
-	static std::atomic<bool> loading = false;
+	std::shared_ptr<Level> lCurrentLevel;
+	std::shared_ptr<SpaceGame> sgSpaceGame;
 	static bool resize = false;
 
 	bool bHighDetail = true;
@@ -38,9 +37,7 @@ namespace Game {
 
 	void GameMain()
 	{
-		loading = true;
-		LoadLevel(new TitleScreen());
-		loading = false;
+		LoadLevel(std::make_shared<TitleScreen>());
 
 		uint64_t nPerformanceFrequency = SDL_GetPerformanceFrequency();
 		float dSecondsPerCount = 1.0f / nPerformanceFrequency;
@@ -51,57 +48,37 @@ namespace Game {
 		{
 			if (DoEvents() == false) 
 				Quit();
-			if (!loading)
-			{
-				uint64_t nCurrentTime = SDL_GetPerformanceCounter();
-				float dDeltaTime = (nCurrentTime - nStartTime) * dSecondsPerCount;
-				nStartTime = nCurrentTime;
 
-				pKeyStates = SDL_GetKeyboardState(&pKeyStatesLength);
+			uint64_t nCurrentTime = SDL_GetPerformanceCounter();
+			float dDeltaTime = (nCurrentTime - nStartTime) * dSecondsPerCount;
+			nStartTime = nCurrentTime;
 
-				dDeltaTime /= 4.0;
-				if (dDeltaTime < 0.25) //Avoid large time delta
-					for (int i = 0; i < 4; i++)
-						lCurrentLevel->Update(dDeltaTime);
+			pKeyStates = SDL_GetKeyboardState(&pKeyStatesLength);
 
-				Graphics::BeginDraw();
-				lCurrentLevel->Render();
-				Graphics::EndDraw();
-			}
+			dDeltaTime /= 4.0;
+			if (dDeltaTime < 0.25) //Avoid large time delta
+				for (int i = 0; i < 4; i++)
+					lCurrentLevel->Update(dDeltaTime);
+
+			Graphics::BeginDraw();
+			lCurrentLevel->Render();
+			Graphics::EndDraw();
 		}
 	}
 
-	void LoadLevel(Level* lNewLevel, bool bUnloadPrevious, bool bLoadNext)
+	void LoadLevel(const std::shared_ptr<Level>& lNewLevel)
 	{
-		if (lCurrentLevel) //Render last frame of previous level
-			lCurrentLevel->Render();
-
-		loading = true;
-	
-		if (lCurrentLevel && bUnloadPrevious)
-		{
-			Level* lLastLevel = lCurrentLevel;
-			lCurrentLevel = nullptr;
-			lLastLevel->Unload();
-		}
-		
-		
-		if (bLoadNext) lNewLevel->Load();
 		lCurrentLevel = lNewLevel;
-
-		loading = false;
 	}
 
 	void LeftClick()
 	{
-		if (lCurrentLevel && !loading)
-			lCurrentLevel->LeftClick();
+		lCurrentLevel->LeftClick();
 	}
 
 	void KeyDown(int key)
 	{
-		if (lCurrentLevel && !loading)
-			lCurrentLevel->KeyDown(key);
+		lCurrentLevel->KeyDown(key);
 	}
 
 	void Resize()

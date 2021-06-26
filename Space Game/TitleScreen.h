@@ -9,8 +9,7 @@ class TitleScreen : public Level
 	int nButtonHover;
 public:
 	TitleScreen();
-	void Load() override {};
-	void Unload() override {};
+	~TitleScreen();
 	void Render() override;
 	void Update(float deltatime) override;
 	void LeftClick() override;
