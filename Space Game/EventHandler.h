@@ -3,10 +3,9 @@
 
 class EventHandler
 {
-	SpaceGame* game;
 	void MakeNewAchievement();
 public:
-	EventHandler(SpaceGame* game);
+	EventHandler();
 	enum class Type
 	{
 		None,

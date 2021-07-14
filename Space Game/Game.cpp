@@ -23,7 +23,7 @@ bool DoEvents();
 
 namespace Game {
 	std::shared_ptr<Level> lCurrentLevel;
-	std::shared_ptr<SpaceGame> sgSpaceGame;
+	std::shared_ptr<SpaceGame> Game::sgSpaceGame;
 	static bool resize = false;
 
 	bool bHighDetail = true;
@@ -87,8 +87,8 @@ namespace Game {
 	}
 	void Quit()
 	{
-		if (sgSpaceGame)
-			sgSpaceGame->Save();
+		if (Game::sgSpaceGame)
+			Game::sgSpaceGame->Save();
 		exit(EXIT_SUCCESS);
 	}
 }

@@ -17,7 +17,7 @@ EntityHealthChangeText::EntityHealthChangeText(Entity* entity, int nChange)
 	fY = entity->fY - (entity->tTexture->fTextureDrawnHeight / 2) - 4 - 12;
 	fSpeedX = 0.0f;
 	fSpeedY = -100.0f;
-	ppFont = &Graphics::pFont14Relative;//TODO should be 12
+	ppFont = &Graphics::pFont14Relative;
 	this->clrColour = healing ? &clrGreen : &clrRed;
 	strText = std::string(strTextBuffer);
 }

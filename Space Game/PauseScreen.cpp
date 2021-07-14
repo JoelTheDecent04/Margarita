@@ -6,17 +6,19 @@
 #include "Utilities.h"
 #include "Colours.h"
 
+using namespace Game;
+
 PauseScreen::PauseScreen()
 {
-	lPrevLevel = Game::lCurrentLevel;
+	lPrevLevel = lCurrentLevel;
 	nButtonHover = -1;
-	vButtons.push_back(Button(500, 150, 780, 250, [](void* p) { Game::LoadLevel(((PauseScreen*)p)->lPrevLevel); }, "Resume"));
+	vButtons.push_back(Button(500, 150, 780, 250, [](void* p) { LoadLevel(((PauseScreen*)p)->lPrevLevel); }, "Resume"));
 	vButtons.push_back(Button(500, 275, 780, 375, [](void* p) { 
 		//std::shared_ptr<ControlsScreen> pControlsScreen = std::make_shared<ControlsScreen>();
-		Game::LoadLevel(std::make_shared<ControlsScreen>());
+		LoadLevel(std::make_shared<ControlsScreen>());
 	}, "Controls")); //TODO fix
-	vButtons.push_back(Button(500, 400, 780, 500, [](void* p) { Game::LoadLevel(std::static_pointer_cast<Level>(std::make_shared<TitleScreen>()));}, "Title Screen"));
-	vButtons.push_back(Button(500, 525, 780, 625, [](void* p) { Game::Quit(); }, "Quit"));
+	vButtons.push_back(Button(500, 400, 780, 500, [](void* p) { LoadLevel(std::static_pointer_cast<Level>(std::make_shared<TitleScreen>()));}, "Title Screen"));
+	vButtons.push_back(Button(500, 525, 780, 625, [](void* p) { Quit(); }, "Quit"));
 }
 
 void PauseScreen::Render()
@@ -72,6 +74,6 @@ void PauseScreen::KeyDown(int key)
 {
 	if (key == SDL_SCANCODE_ESCAPE)
 	{
-		Game::LoadLevel(lPrevLevel);
+		LoadLevel(lPrevLevel);
 	}
 }

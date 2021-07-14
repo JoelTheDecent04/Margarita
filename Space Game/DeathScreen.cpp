@@ -4,9 +4,11 @@
 #include "Colours.h"
 #include <fstream>
 
+using namespace Game;
+
 void DeathScreen::Render()
 {
-	sgSpaceGame->Render();
+	Game::sgSpaceGame->Render();
 
 	Graphics::FillRectangle(0.0f, 0.0f,nScreenWidth, nScreenHeight, clrBlack, 0.7f);
 
@@ -47,8 +49,8 @@ void DeathScreen::LeftClick()
 DeathScreen::DeathScreen()
 {
 	nButtonHover = -1;
-	vButtons.push_back(Button(500, 200, 780, 300, [](void*) { Game::LoadLevel(std::make_shared<SpaceGame>()); }, "New Game"));
-	vButtons.push_back(Button(500, 320, 780, 420, [](void*) { Game::Quit(); }, "Quit"));
+	vButtons.push_back(Button(500, 200, 780, 300, [](void*) { LoadLevel(std::make_shared<SpaceGame>()); }, "New Game"));
+	vButtons.push_back(Button(500, 320, 780, 420, [](void*) { Quit(); }, "Quit"));
 }
 
 DeathScreen::~DeathScreen()

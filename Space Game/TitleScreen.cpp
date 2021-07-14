@@ -7,24 +7,26 @@
 static Texture* tButtons;
 static Texture* tTitlescreenBackground;
 
+using namespace Game;
+
 TitleScreen::TitleScreen()
 {
 	nButtonHover = -1;
 	tButtons = new Texture("buttons.png", 764, 343, 280, 125);
 
 	vButtons.push_back(Button(500, 200, 780, 325, [](void*) {
-		if (Game::sgSpaceGame.get()) //TODO check if Game::sgSpaceGame is sufficient
-			Game::LoadLevel(Game::sgSpaceGame);
+		if (sgSpaceGame.get())
+			LoadLevel(sgSpaceGame);
 		else
 		{
 			auto pSpaceGame = std::make_shared<SpaceGame>();
-			Game::sgSpaceGame = pSpaceGame;
+			sgSpaceGame = pSpaceGame;
 			pSpaceGame->LoadFromFile();
-			Game::LoadLevel(pSpaceGame);
+			LoadLevel(pSpaceGame);
 			
 		}
 	}, "Play"));
-	vButtons.push_back(Button(500, 500, 780, 625, [](void*) { Game::Quit(); }, "Quit"));
+	vButtons.push_back(Button(500, 500, 780, 625, [](void*) { Quit(); }, "Quit"));
 	vButtons.push_back(Button(500, 350, 780, 475, [](void*) {  }, "Info"));
 
 	tTitlescreenBackground = new Texture("titlescreen_background.png", 3022, 1700, 1280.0f, 720.0f);

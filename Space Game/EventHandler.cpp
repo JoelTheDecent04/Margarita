@@ -16,9 +16,8 @@ void EventHandler::MakeNewAchievement()
 	nAchievementType = Type::Kill;
 }
 
-EventHandler::EventHandler(SpaceGame* game)
+EventHandler::EventHandler()
 {
-	this->game = game;
 	MakeNewAchievement();
 }
 
@@ -50,8 +49,8 @@ void EventHandler::Event(Type nType, int nCount, Entity* a, Entity* b)
  				if (nAchievementCount == 0)
 				{
  					MakeNewAchievement();
-					game->plPlayer->fMoney += 120.0f;
-					game->plPlayer->ChangeHealth(100.0f, nullptr);
+					Game::sgSpaceGame->plPlayer->fMoney += 120.0f;
+					Game::sgSpaceGame->plPlayer->ChangeHealth(100.0f, nullptr);
 				}
 			}
 		}

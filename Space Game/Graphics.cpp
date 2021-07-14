@@ -92,7 +92,14 @@ namespace Graphics {
 
 	void Close()
 	{
-		//TODO cleanup
+		TTF_CloseFont(pFont9Relative);
+		TTF_CloseFont(pFont14Relative);
+		TTF_CloseFont(pFont16Relative);
+		TTF_CloseFont(pFont20Relative);
+		TTF_CloseFont(pFont24Relative);
+		TTF_CloseFont(pFont36Relative);
+		TTF_CloseFont(pFont44Relative);
+		TTF_CloseFont(pFont125Relative);
 	}
 
 	void BeginDraw()
@@ -112,6 +119,9 @@ namespace Graphics {
 
 	void WriteText(const char* text, int x, int y, TTF_Font* pFont, SDL_Color clrColour, float fOpacity)
 	{
+		if (text[0] == '\n')
+			text++;
+
 		if (pFont == nullptr) return;
 		SDL_Surface* pTextSurface = TTF_RenderText_Blended_Wrapped(pFont, text, clrColour, nScreenWidth);
 		if (pTextSurface == nullptr) return;
@@ -128,6 +138,13 @@ namespace Graphics {
 
 	void TextMetrics(const char* text, TTF_Font* pFont, TextSize& ts)
 	{
+		bool bDoubleHeight = false;
+		if (text[0] == '\n')
+		{
+			text++;
+			bDoubleHeight = true;
+		}
+
 		if (pFont == nullptr)
 		{
 			ts.height = 0;
@@ -136,13 +153,15 @@ namespace Graphics {
 		}
 
 		TTF_SizeText(pFont, text, &ts.width, &ts.height);
+		if (bDoubleHeight)
+			ts.height *= 2;
 	}
 	
 	void DrawRectangle(float fX, float fY, float fW, float fH, SDL_Color cColour, float fOpacity, float thickness)
 	{
 		uint8_t nOpacity = fOpacity * 255.0f;
 		SDL_SetRenderDrawColor(pRenderer, cColour.r, cColour.g, cColour.b, nOpacity);
-		SDL_FRect rRect = { fX, fY, fW, fH }; //TODO float to int conversion, thickness
+		SDL_FRect rRect = { fX, fY, fW, fH }; //thickness
 		SDL_RenderDrawRectF(pRenderer, &rRect);
 	}
 
@@ -150,7 +169,7 @@ namespace Graphics {
 	{
 		uint8_t nOpacity = fOpacity * 255.0f;
 		SDL_SetRenderDrawColor(pRenderer, cColour.r, cColour.g, cColour.b, nOpacity);
-		SDL_FRect rRect = { fX, fY, fW, fH }; //TODO float to int conversion, opacity
+		SDL_FRect rRect = { fX, fY, fW, fH };
 		SDL_RenderFillRectF(pRenderer, &rRect);
 	}
 

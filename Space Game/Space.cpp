@@ -23,6 +23,8 @@
 #include <fstream>
 #include <algorithm>
 
+using namespace Game;
+
 float fBackgroundPosition = 0.0f;
 Texture* tCharacterTexture, * tOrbTexture, * tBackground, * tLaserTexture, * tLaserBeamTexture, * tEnemyTexture, * tBombTexture, * tCrabTexture;
 Texture* tForegroundTexture, * tCometTexture, * tNoTexture, * tBombAnimationTexture, * tEnergyPowerupTexture, * tRegenerationPowerupTexture;
@@ -45,7 +47,7 @@ bool bShowHitboxes = false;
 int nCurrentVersion = 16;
 
 SpaceGame::SpaceGame() 
-	: pEventHandler(std::make_shared<EventHandler>(this))
+	: pEventHandler(std::make_shared<EventHandler>())
 {
 	bGameRunning = true;
 
@@ -206,7 +208,7 @@ void SpaceGame::Update(float deltatime)
 		if (!bGameRunning) //Game could end after any entity update
 		{
 			int ret = remove("savegame.txt");
-			Game::LoadLevel(std::make_shared<DeathScreen>());
+			LoadLevel(std::make_shared<DeathScreen>());
 			return;
 		}
 	}
@@ -295,9 +297,9 @@ void SpaceGame::LeftClick()
 void SpaceGame::KeyDown(int key)
 {
 	if (key == SDL_SCANCODE_ESCAPE)
-		Game::LoadLevel(std::static_pointer_cast<Level>(std::make_shared<PauseScreen>()));
+		LoadLevel(std::static_pointer_cast<Level>(std::make_shared<PauseScreen>()));
 	if (key == keyOpenShop1 || key == keyOpenShop2)
-		Game::LoadLevel(std::static_pointer_cast<Level>(std::make_shared<ShopScreen>()));
+		LoadLevel(std::static_pointer_cast<Level>(std::make_shared<ShopScreen>()));
 	if (key == SDL_SCANCODE_K)
 		plPlayer->ChangeHealth(-20.0f, nullptr);
 	if (key == SDL_SCANCODE_J)

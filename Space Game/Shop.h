@@ -11,7 +11,6 @@ public:
 	std::vector<Button> vButtons;
 	std::vector<Bar> vBars;
 	int nButtonHover;
-	std::shared_ptr<SpaceGame> lGameLevel;
 	ShopScreen();
 	void Render() override;
 	void Update(float deltatime) override;

@@ -6,7 +6,6 @@
 
 class DeathScreen : public Level
 {
-	SpaceGame* sgSpaceGame;
 	std::vector<Button> vButtons;
 	int nButtonHover;
 public:

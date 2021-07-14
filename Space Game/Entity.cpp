@@ -49,10 +49,9 @@ bool Entity::Update(float deltatime)
 	{
 		bool bCollided = false;
 		for (auto entity : Game::sgSpaceGame->vEntities) //Check for collisions
-		{ //TODO fix
-			if (!entity) continue;
+		{
 			if (entity.get() == this || !entity->bCanCollide) continue;
-			if (entity.get() == (Entity*)Game::sgSpaceGame->plPlayer.get() && !bCanCollideWithPlayer) continue; //TODO check if will work
+			if (entity->nType == Type::Player && !bCanCollideWithPlayer) continue;
 			if (entity->WillOverlap(this, fNewX, fNewY))
 			{
 				bCollided = true;
@@ -86,7 +85,7 @@ bool Entity::Update(float deltatime)
 				{
 					if (!entity) continue;
 					if (entity.get() == this || !entity->bCanCollide) continue;
-					if (entity.get() == (Entity*)Game::sgSpaceGame->plPlayer.get() && !bCanCollideWithPlayer) continue; //TODO check if works
+					if (entity->nType == Type::Player && !bCanCollideWithPlayer) continue;
 					if (entity->WillOverlap(this, fNewX, fY))
 					{
 						bCollidedHorizontally = true;

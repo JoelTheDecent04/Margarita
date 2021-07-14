@@ -9,6 +9,8 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 
+using namespace Game;
+
 extern "C" int main(int argc, char** argv)
 {
 	srand(time(0));
@@ -31,7 +33,7 @@ extern "C" int main(int argc, char** argv)
 	if (Graphics::Initialise(pWindow) == false)
 		ErrorAndQuit("Failed to initialise graphics: %s", SDL_GetError());
 
-	Game::GameMain();
+	GameMain();
 
 	return 0;
 }
@@ -45,20 +47,20 @@ bool DoEvents()
 		switch (event.type)
 		{
 		case SDL_QUIT:
-			Game::Quit();
+			Quit();
 			SDL_Quit();
 			return false;
 			break;
 		case SDL_MOUSEBUTTONDOWN:
 			if (event.button.button == SDL_BUTTON_LEFT)
-				Game::LeftClick();
+				LeftClick();
 			break;
 		case SDL_KEYDOWN:
 			if (event.key.keysym.scancode == SDL_SCANCODE_F11)
 			{
 			}
 			else
-				Game::KeyDown(event.key.keysym.scancode);
+				KeyDown(event.key.keysym.scancode);
 			break;
 		case SDL_WINDOWEVENT:
 			if (event.window.event == SDL_WINDOWEVENT_RESIZED)

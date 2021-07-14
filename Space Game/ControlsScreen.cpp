@@ -5,6 +5,8 @@
 #include "Utilities.h"
 #include "Colours.h"
 
+using namespace Game;
+
 ControlsScreen::ControlsScreen()
 {
 	this->lPreviousLevel = Game::lCurrentLevel;
@@ -100,7 +102,7 @@ void ControlsScreen::Update(float deltatime)
 
 void ControlsScreen::Resume()
 {
-	Game::LoadLevel(lPreviousLevel);
+	LoadLevel(lPreviousLevel);
 }
 
 void ControlsScreen::LeftClick()
