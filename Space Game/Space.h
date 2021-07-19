@@ -35,7 +35,6 @@ public:
 
 	float fSecondsUntilNextComet;
 	float fLightingLoopTime;
-	float fBrightness;
 
 	std::shared_ptr<EventHandler> pEventHandler;
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "Texture.h"
+#include "nlohmann/json.hpp"
 #include <fstream>
 #include <memory>
 
@@ -36,8 +37,8 @@ public:
 	bool WillOverlap(Entity* e, float fNewX, float fNewY);
 	float Distance(Entity* entity);
 	virtual void Destroy() {};
-	virtual void Save(std::fstream& f);
-	virtual void Load(std::fstream& f);
+	virtual nlohmann::json Save();
+	virtual void Load(nlohmann::json& j);
 };
 
 extern const char* astrEntityName[8];

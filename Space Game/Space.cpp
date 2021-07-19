@@ -17,6 +17,7 @@
 #include "Graphics.h"
 #include "Light.h"
 #include "Colours.h"
+#include "nlohmann/json.hpp"
 #include <math.h>
 #include <random>
 #include <time.h>
@@ -91,9 +92,6 @@ SpaceGame::SpaceGame()
 	//LoadFromFile(); //Load save game if it exists
 
 	//Game::sgSpaceGame = this;
-
-	fLightingLoopTime = 0.0f;
-	fBrightness = 1.0f;
 };
 
 SpaceGame::~SpaceGame()
@@ -128,7 +126,6 @@ void SpaceGame::Render()
 
 	//Graphics::iLightingDeviceContext->BeginDraw();
 
-	//D2D1_COLOR_F col = { 1.0f, 1.0f, 1.0f, fBrightness };
 	//Graphics::iLightingDeviceContext->Clear(col);
 
 	for (auto& entity : vEntities)
@@ -260,18 +257,6 @@ void SpaceGame::Update(float deltatime)
 		fSecondsUntilNextComet = 40 + randomf() * 40;
 	}
 
-	fLightingLoopTime += deltatime; //Lighting
-	if (fLightingLoopTime > 90.0f)
-		fLightingLoopTime = fLightingLoopTime - 90.0f;
-
-	if (fLightingLoopTime >= 40.0f && fLightingLoopTime < 50.0f)
-		fBrightness = cosf((fLightingLoopTime - 40.0f) / 10 * 3.141592f) / 2.0f + 0.5f;
-	else if (fLightingLoopTime >= 50.0f && fLightingLoopTime < 80.0f)
-		fBrightness = 0.0f;
-	else if (fLightingLoopTime >= 80.0f && fLightingLoopTime < 90.0f)
-		fBrightness = cosf((90.0f - fLightingLoopTime) / 10 * 3.141592f) / 2.0f + 0.5f;
-	else
-		fBrightness = 1.0f;
 }
 void SpaceGame::LeftClick()
 {
@@ -337,45 +322,58 @@ void SpaceGame::Save()
 {
 	if (bGameRunning)
 	{
-		std::fstream f;
-		f.open("savegame.txt", std::fstream::out);
+		nlohmann::json j = 
+		{
+			{"version", nCurrentVersion},
+			{"difficulty", fDifficulty},
+			{"wave", nWave},
+			{"seconds_until_next_wave", fSecondsUntilNextWave},
+			{"enemies", nEnemies}
+		};
 
-		f << nCurrentVersion << " " << fDifficulty << " " << nWave << " " << fSecondsUntilNextWave << " " << nEnemies << " " << fLightingLoopTime << " ";
-
-		f << vEntities.size() << " ";
+		nlohmann::json entities;
 		for (auto& entity : vEntities)
-			entity->Save(f);
+			entities.push_back(entity->Save());
 
-		f << vItems.size() << " ";
+		nlohmann::json items;
 		for (auto& item : vItems)
-			item->Save(f);
+			items.push_back(item->Save());
 
-		f.close();
+		j["entities"] = entities;
+		j["items"] = items;
+
+		std::fstream json_file;
+		json_file.open("save.json", std::fstream::out);
+		json_file << j;
+		json_file.close();
 	}
 }
 
 void SpaceGame::LoadFromFile()
 {
 	std::fstream f;
-	f.open("savegame.txt", std::fstream::in);
+	f.open("save.json", std::fstream::in);
 
-	if (!f.good()) return;
+	if (f.good() == false) return;
 
-	int nVersion;
-	f >> nVersion;
-	if (nVersion != nCurrentVersion) return;
+	nlohmann::json j;
+	f >> j;
 
-	f >> fDifficulty >> nWave >> fSecondsUntilNextWave >> nEnemies >> fLightingLoopTime;
+	if (j["version"].get<int>() != nCurrentVersion)
+		SDL_Log("Warn: Save version does not match current version\n");
+
+	fDifficulty = j["difficulty"].get<float>(); //TODO macro
+	nWave = j["wave"].get<int>();
+	fSecondsUntilNextWave = j["seconds_until_next_wave"].get<float>();
+	nEnemies = j["enemies"].get<int>();
 
 	vEntities.clear();
-	int nEntities;
-	f >> nEntities;
 
-	for (int i = 0; i < nEntities; i++)
+	nlohmann::json entities = j["entities"];
+
+	for (auto& entity : entities)
 	{
-		int t;
-		f >> t;
-		Entity::Type type = (Entity::Type)t;
+		Entity::Type type = entity["type"].get<Entity::Type>();
 
 		switch (type)
 		{
@@ -385,62 +383,59 @@ void SpaceGame::LoadFromFile()
 		case Entity::Type::Player:
 		{
 			auto e = std::make_shared<Player>(0.0f, 0.0f);
-			e->Load(f);
+			e->Load(entity);
 			vEntities.push_back(e);
-			//vEntities.push_back(std::make_shared<Light>(e));
 			plPlayer = e;
 			break;
 		}
 		case Entity::Type::Bomb:
 		{
 			auto e = std::make_shared<Bomb>(0.0f, 0.0f, 0.0f, 0.0f, 0);
-			e->Load(f);
+			e->Load(entity);
 			vEntities.push_back(e);
 			break;
 		}
 		case Entity::Type::Crab:
 		{
 			auto e = std::make_shared<Crab>(0.0f);
-			e->Load(f);
+			e->Load(entity);
 			vEntities.push_back(e);
 			break;
 		}
 		case Entity::Type::Enemy:
 		{
 			auto e = std::make_shared<Enemy>(0.0f, 0.0f);
-			e->Load(f);
+			e->Load(entity);
 			vEntities.push_back(e);
 			break;
 		}
 		case Entity::Type::Laser:
 		{
 			auto e = std::make_shared<LaserBeam>(nullptr, 0.0f, 0.0f, 0.0f, 0.0f);
-			e->Load(f);
+			e->Load(entity);
 			vEntities.push_back(e);
 			break;
 		}
 		case Entity::Type::Orb:
 		{
 			auto e = std::make_shared<Orb>(0.0f, 0.0f, 0.0f, 0.0f);
-			e->Load(f);
+			e->Load(entity);
 			vEntities.push_back(e);
 			break;
 		}
-		case Entity::Type::Light:
-			break;
+
 		default:
 			abort();
 		}
 	}
 	
 	vItems.clear();
-	int nItems;
-	f >> nItems;
-	for (int i = 0; i < nItems; i++)
+	nlohmann::json items = j["items"];
+
+
+	for (auto& item : items)
 	{
-		int t;
-		f >> t;
-		Item::Type type = (Item::Type)t;
+		Item::Type type = item["type"].get<Item::Type>();
 
 		switch (type)
 		{
@@ -450,35 +445,35 @@ void SpaceGame::LoadFromFile()
 		case Item::Type::Bomb:
 		{
 			auto i = std::make_shared<BombWeapon>(0);
-			i->Load(f);
+			i->Load(item);
 			vItems.push_back(i);
 			break;
 		}
 		case Item::Type::Laser:
 		{
 			auto i = std::make_shared<LaserWeapon>(LaserWeapon::LaserLevel::Normal);
-			i->Load(f);
+			i->Load(item);
 			vItems.push_back(i);
 			break;
 		}
 		case Item::Type::Orb:
 		{
 			auto i = std::make_shared<OrbWeapon>();
-			i->Load(f);
+			i->Load(item);
 			vItems.push_back(i);
 			break;
 		}
 		case Item::Type::EnergyPowerup:
 		{
 			auto i = std::make_shared<EnergyPowerupItem>();
-			i->Load(f);
+			i->Load(item);
 			vItems.push_back(i);
 			break;
 		}
 		case Item::Type::RegenerationPowerup:
 		{
 			auto i = std::make_shared<RegenerationPowerupItem>();
-			i->Load(f);
+			i->Load(item);
 			vItems.push_back(i);
 			break;
 		}

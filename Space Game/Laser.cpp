@@ -45,16 +45,17 @@ void LaserBeam::Draw()
 	tTexture->Draw(nFrame, (fX - fBackgroundPosition - (tTexture->fTextureDrawnWidth / 2)), fY - tTexture->fTextureDrawnHeight / 2, false, fAngle);
 }
 
-void LaserBeam::Save(std::fstream& f)
+nlohmann::json LaserBeam::Save()
 {
-	Entity::Save(f);
-	f << fAngle << " ";
+	nlohmann::json j = Entity::Save();
+	j["angle"] = fAngle;
+	return j;
 }
 
-void LaserBeam::Load(std::fstream& f)
+void LaserBeam::Load(nlohmann::json& j)
 {
-	Entity::Load(f);
-	f >> fAngle;
+	Entity::Load(j);
+	fAngle = j["angle"].get<float>();
 }
 
 bool LaserBeam::Update(float deltatime)
@@ -150,17 +151,16 @@ void LaserWeapon::Use(float fX, float fY, float fAngle)
 	}
 }
 
-void LaserWeapon::Save(std::fstream& f)
+nlohmann::json LaserWeapon::Save()
 {
-	Item::Save(f);
-	f << (int)nLaserLevel << " ";
+	nlohmann::json j = Item::Save();
+	j["laser_level"] = nLaserLevel;
+	return j;
 }
 
-void LaserWeapon::Load(std::fstream& f)
+void LaserWeapon::Load(nlohmann::json& j)
 {
-	Item::Load(f);
-	int level;
-	f >> level;
-	nLaserLevel = (LaserLevel)level;
+	Item::Load(j);
+	nLaserLevel = j["laser_level"].get<LaserLevel>();
 	nCount = nLaserLevel;
 }

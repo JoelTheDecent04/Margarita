@@ -21,8 +21,8 @@ public:
 	float fMaxHealthRegeneration;
 	Player(float fX, float fY);
 	bool Update(float deltatime) override;
-	void Save(std::fstream& f) override;
-	void Load(std::fstream& f) override;
+	nlohmann::json Save() override;
+	void Load(nlohmann::json& f) override;
 };
 
 extern int keyJump1, keyJump2, keyMoveLeft1, keyMoveLeft2, keyMoveRight1, keyMoveRight2, keyMoveDown1, keyMoveDown2;

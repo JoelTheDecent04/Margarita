@@ -13,6 +13,6 @@ public:
 	const char* strName;
 	virtual void Use(float fX, float fY, float fAngle) = 0;
 	Item();
-	virtual void Save(std::fstream& f);
-	virtual void Load(std::fstream& f);
+	virtual nlohmann::json Save();
+	virtual void Load(nlohmann::json& f);
 };

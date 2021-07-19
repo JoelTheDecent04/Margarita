@@ -4,6 +4,7 @@
 #include "Utilities.h"
 #include "Colours.h"
 
+
 const char* astrEntityName[8] = { "None", "Player", "Bomb", "Crab", "Alien", "Laser", "Orb", "Light" };
 
 Entity::Entity(Texture* tTexture, float fX, float fY)
@@ -147,7 +148,7 @@ bool Entity::Update(float deltatime)
 		fSpeedY = -fSpeedY;
 	}
 
-	if (fX < 0.0f || fX > 5120.0f)
+	if (fX < 0.0f || fX > 5120.0f || fY < -250.0f)
 	{ 
 		return false; 
 	}
@@ -194,12 +195,27 @@ float Entity::Distance(Entity* entity)
 	return distance(fX, fY, entity->fX, entity->fY);
 }
 
-void Entity::Save(std::fstream& f)
+nlohmann::json Entity::Save()
 {
-	f << (int)nType << " " << fX << " " << fY << " " << fSpeedX << " " << fSpeedY << " " << fHealth << " " << fMaxHealth << " ";
+	nlohmann::json j =
+	{
+		{"type", nType},
+		{"x", fX},
+		{"y", fY},
+		{"speed_x", fSpeedX},
+		{"speed_y", fSpeedY},
+		{"health", fHealth},
+		{"max_health", fMaxHealth}
+	};
+	return j;
 }
 
-void Entity::Load(std::fstream& f)
+void Entity::Load(nlohmann::json& j)
 {
-	f >> fX >> fY >> fSpeedX >> fSpeedY >> fHealth >> fMaxHealth;
+	fX = j["x"].get<float>();
+	fY = j["y"].get<float>();
+	fSpeedX = j["speed_x"].get<float>();
+	fSpeedY = j["speed_y"].get<float>();
+	fHealth = j["health"].get<float>();
+	fMaxHealth = j["max_health"].get<float>();
 }

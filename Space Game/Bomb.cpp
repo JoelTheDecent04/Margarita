@@ -49,16 +49,18 @@ bool Bomb::Update(float deltatime)
 	return true;
 }
 
-void Bomb::Save(std::fstream& f)
+nlohmann::json Bomb::Save()
 {
-	Entity::Save(f);
-	f << fAge << " " << nLevel << " ";
+	nlohmann::json j = Entity::Save();
+	j["age"] = fAge;
+	j["level"] = nLevel;
+	return j;
 }
 
-void Bomb::Load(std::fstream& f)
+void Bomb::Load(nlohmann::json& j)
 {
-	Entity::Save(f);
-	f >> fAge >> nLevel;
+	fAge = j["age"].get<float>();
+	nLevel = j["level"].get<int>();
 }
 
 BombWeapon::BombWeapon(int nLevel)
@@ -79,15 +81,16 @@ void BombWeapon::Use(float fX, float fY, float fAngle)
 	}
 }
 
-void BombWeapon::Load(std::fstream& f)
+void BombWeapon::Load(nlohmann::json& j)
 {
-	Item::Load(f);
-	f >> nLevel;
+	Item::Load(j);
+	nLevel = j["level"].get<int>();
 	nCount = nLevel;
 }
 
-void BombWeapon::Save(std::fstream& f)
+nlohmann::json BombWeapon::Save()
 {
-	Item::Save(f);
-	f << nLevel << " ";
+	nlohmann::json j = Item::Save();
+	j["level"] = nLevel;
+	return j;
 }

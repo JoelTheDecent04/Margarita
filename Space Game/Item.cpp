@@ -7,10 +7,12 @@ Item::Item()
 	nType = Type::None; 
 	strName = "Unknown";
 }
-void Item::Save(std::fstream& f)
+nlohmann::json Item::Save()
 {
-	f << (int)nType << " ";
+	nlohmann::json j = { {"type", nType} };
+	return j;
 }
-void Item::Load(std::fstream& f)
+void Item::Load(nlohmann::json& j)
 {
+	nType = j["type"].get<Item::Type>();
 }
