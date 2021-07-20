@@ -15,3 +15,5 @@ bool PointInRect(Rect& rect, int x, int y);
 bool GetKeyState(int key);
 
 #define ErrorAndQuit(n, ...) { SDL_Log(n, ##__VA_ARGS__); SDL_Quit(); }
+
+#define SAFE_DELETE(n) if (n) { delete n; n = nullptr; }

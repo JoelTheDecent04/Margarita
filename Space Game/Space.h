@@ -23,7 +23,6 @@ public:
 	std::vector<std::shared_ptr<BackgroundObject>> vBackgroundObjects;
 	
 	float fFps;
-	bool bGameRunning;
 
 	float fNextEnemySpawn;
 	float fDifficulty;
@@ -31,12 +30,16 @@ public:
 	int nWave;
 	float fSecondsUntilNextWave;
 	int nEnemies;
+	int nPlayers;
 	bool bWaveFinished;
 
 	float fSecondsUntilNextComet;
 	float fLightingLoopTime;
 
 	std::shared_ptr<EventHandler> pEventHandler;
+
+	static void LoadResources();
+	static void UnloadResources();
 
 	void Render() override;
 	void Update(float deltatime) override;

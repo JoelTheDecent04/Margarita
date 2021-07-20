@@ -38,10 +38,10 @@ Player::Player(float fX, float fY)
 
 bool Player::Update(float deltatime)
 {
-	if (fHealth == 0.0f)
+	if (fHealth <= 0.0f)
 	{
-		Game::sgSpaceGame->bGameRunning = false;
-		return true; //So the player object is not deleted immediately
+		Destroy();
+		return false;
 	}
 
 	if (GetKeyState(keyMoveRight1) || GetKeyState(keyMoveRight2))
@@ -147,4 +147,9 @@ void Player::Load(nlohmann::json& j)
 	fMaxMovementSpeed = j["max_movement_speed"].get<float>();
 	fHealthRegeneration = j["health_regeneration"].get<float>();
 	fMaxHealthRegeneration = j["max_health_regeneration"].get<float>();
+}
+
+void Player::Destroy()
+{
+	Game::sgSpaceGame->nPlayers--;
 }

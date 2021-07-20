@@ -23,6 +23,7 @@ public:
 	bool Update(float deltatime) override;
 	nlohmann::json Save() override;
 	void Load(nlohmann::json& f) override;
+	void Destroy() override;
 };
 
 extern int keyJump1, keyJump2, keyMoveLeft1, keyMoveLeft2, keyMoveRight1, keyMoveRight2, keyMoveDown1, keyMoveDown2;

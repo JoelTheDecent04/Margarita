@@ -30,8 +30,6 @@ float fBackgroundPosition = 0.0f;
 Texture* tCharacterTexture, * tOrbTexture, * tBackground, * tLaserTexture, * tLaserBeamTexture, * tEnemyTexture, * tBombTexture, * tCrabTexture;
 Texture* tForegroundTexture, * tCometTexture, * tNoTexture, * tBombAnimationTexture, * tEnergyPowerupTexture, * tRegenerationPowerupTexture;
 
-Texture* tLight;
-
 int keyOpenShop1 = SDL_SCANCODE_E;
 int keyOpenShop2 = 0;
 int keyChangeWeapon1[9] = { SDL_SCANCODE_1, SDL_SCANCODE_2, SDL_SCANCODE_3, SDL_SCANCODE_4, SDL_SCANCODE_5, 
@@ -50,8 +48,39 @@ int nCurrentVersion = 16;
 SpaceGame::SpaceGame() 
 	: pEventHandler(std::make_shared<EventHandler>())
 {
-	bGameRunning = true;
+	plPlayer = std::make_shared<Player>(384.0f, 380.f);
+	
+	nPlayers = 0;
 
+	vEntities.push_back(plPlayer);
+	nPlayers++;
+
+	vItems.push_back(std::make_shared<LaserWeapon>(LaserWeapon::Normal));
+	vItems.push_back(std::make_shared<OrbWeapon>());
+
+	nCurrentItem = 0;
+
+	fNextEnemySpawn = 0.0;
+
+	fDifficulty = 80.0f;
+	nWave = 0;
+	fSecondsUntilNextWave = 0.0f;
+	nEnemies = 0;
+
+	fSecondsUntilNextComet = 40 + randomf() * 40;
+	NextWave();
+
+	//LoadFromFile(); //Load save game if it exists
+
+	//Game::sgSpaceGame = this;
+};
+
+SpaceGame::~SpaceGame()
+{
+	
+}
+void SpaceGame::LoadResources()
+{
 	tCharacterTexture = new Texture("player.png", 186, 116, 83, 58);
 	tOrbTexture = new Texture("orb.png", 2497, 2497, 32, 32);
 	tBackground = new Texture("background.png", 8192, 1152, 5120, 720);
@@ -66,53 +95,6 @@ SpaceGame::SpaceGame()
 	tBombAnimationTexture = new Texture("bomb_animation.png", 1280, 720, 100.0f, 100.0f);
 	tEnergyPowerupTexture = new Texture("energy_powerup.png", 2600, 2600, 32.0f, 32.0f);
 	tRegenerationPowerupTexture = new Texture("regen_powerup.png", 2415, 2415, 32.0f, 32.0f);
-	tLight = new Texture("inverted_light.png", 512, 512, 384, 384);
-	tLight->light = true;
-
-
-	plPlayer = std::make_shared<Player>(384.0f, 380.f);
-	vEntities.push_back(plPlayer);
-	//vEntities.push_back(std::make_shared<Light>(plPlayer));
-
-
-	vItems.push_back(std::make_shared<LaserWeapon>(LaserWeapon::Normal));
-	vItems.push_back(std::make_shared<OrbWeapon>());
-
-	nCurrentItem = 0;
-
-	fNextEnemySpawn = 0.0;
-
-	fDifficulty = 80.0f;
-	nWave = 0;
-	fSecondsUntilNextWave = 0.0f;
-	nEnemies = 0;
-	fSecondsUntilNextComet = 40 + randomf() * 40;
-	NextWave();
-
-	//LoadFromFile(); //Load save game if it exists
-
-	//Game::sgSpaceGame = this;
-};
-
-SpaceGame::~SpaceGame()
-{
-	delete tCharacterTexture;
-	delete tOrbTexture;
-	delete tBackground;
-	delete tLaserTexture;
-	delete tLaserBeamTexture;
-	delete tEnemyTexture;
-	delete tBombTexture;
-	delete tCrabTexture;
-	delete tForegroundTexture;
-	delete tCometTexture;
-	delete tNoTexture;
-	delete tBombAnimationTexture;
-	delete tEnergyPowerupTexture;
-	delete tRegenerationPowerupTexture;
-	delete tLight;
-
-	Game::sgSpaceGame = nullptr;
 }
 void SpaceGame::Render()
 {
@@ -189,6 +171,23 @@ void SpaceGame::Render()
 	Graphics::WriteText(txtBuf, nScreenWidth / 2 - textsize.width / 2, nScreenHeight - 2 - textsize.height, Graphics::pFont24);
 
 }
+void SpaceGame::UnloadResources()
+{
+	SAFE_DELETE(tCharacterTexture);
+	SAFE_DELETE(tOrbTexture);
+	SAFE_DELETE(tBackground);
+	SAFE_DELETE(tLaserTexture);
+	SAFE_DELETE(tLaserBeamTexture);
+	SAFE_DELETE(tEnemyTexture);
+	SAFE_DELETE(tBombTexture);
+	SAFE_DELETE(tCrabTexture);
+	SAFE_DELETE(tForegroundTexture);
+	SAFE_DELETE(tCometTexture);
+	SAFE_DELETE(tNoTexture);
+	SAFE_DELETE(tBombAnimationTexture);
+	SAFE_DELETE(tEnergyPowerupTexture);
+	SAFE_DELETE(tRegenerationPowerupTexture);
+}
 void SpaceGame::Update(float deltatime)
 {
 	fPhysicsUpdatesPerSeconds = 1.0 / deltatime;
@@ -202,9 +201,9 @@ void SpaceGame::Update(float deltatime)
 			vEntities.erase(vEntities.begin() + i);
 			i--;
 		}
-		if (!bGameRunning) //Game could end after any entity update
+		if (nPlayers == 0) //Game has ended
 		{
-			int ret = remove("savegame.txt");
+			remove("save.json");
 			LoadLevel(std::make_shared<DeathScreen>());
 			return;
 		}
@@ -294,11 +293,8 @@ void SpaceGame::KeyDown(int key)
 	if (key == SDL_SCANCODE_H)
 		bShowHitboxes = !bShowHitboxes;
 	if (key == keyNextWave1 || key == keyNextWave2)
-		if (bWaveFinished) NextWave();
-	if (key == SDL_SCANCODE_O)
-		Save();
-	if (key == SDL_SCANCODE_L)
-		LoadFromFile();
+		if (bWaveFinished)
+			NextWave();
 	for (int i = 0; i < 9; i++)
 	{
 		if (key == keyChangeWeapon1[i] || key == keyChangeWeapon2[i])
@@ -320,33 +316,30 @@ void SpaceGame::KeyDown(int key)
 
 void SpaceGame::Save()
 {
-	if (bGameRunning)
+	nlohmann::json j = 
 	{
-		nlohmann::json j = 
-		{
-			{"version", nCurrentVersion},
-			{"difficulty", fDifficulty},
-			{"wave", nWave},
-			{"seconds_until_next_wave", fSecondsUntilNextWave},
-			{"enemies", nEnemies}
-		};
+		{"version", nCurrentVersion},
+		{"difficulty", fDifficulty},
+		{"wave", nWave},
+		{"seconds_until_next_wave", fSecondsUntilNextWave},
+		{"enemies", nEnemies}
+	};
 
-		nlohmann::json entities;
-		for (auto& entity : vEntities)
-			entities.push_back(entity->Save());
+	nlohmann::json entities;
+	for (auto& entity : vEntities)
+		entities.push_back(entity->Save());
 
-		nlohmann::json items;
-		for (auto& item : vItems)
-			items.push_back(item->Save());
+	nlohmann::json items;
+	for (auto& item : vItems)
+		items.push_back(item->Save());
 
-		j["entities"] = entities;
-		j["items"] = items;
+	j["entities"] = entities;
+	j["items"] = items;
 
-		std::fstream json_file;
-		json_file.open("save.json", std::fstream::out);
-		json_file << j;
-		json_file.close();
-	}
+	std::fstream json_file;
+	json_file.open("save.json", std::fstream::out);
+	json_file << j;
+	json_file.close();
 }
 
 void SpaceGame::LoadFromFile()
@@ -367,10 +360,12 @@ void SpaceGame::LoadFromFile()
 	fSecondsUntilNextWave = j["seconds_until_next_wave"].get<float>();
 	nEnemies = j["enemies"].get<int>();
 
+	nPlayers = 0;
 	vEntities.clear();
 
 	nlohmann::json entities = j["entities"];
 
+	bool bLoadedPlayer = false;
 	for (auto& entity : entities)
 	{
 		Entity::Type type = entity["type"].get<Entity::Type>();
@@ -385,7 +380,12 @@ void SpaceGame::LoadFromFile()
 			auto e = std::make_shared<Player>(0.0f, 0.0f);
 			e->Load(entity);
 			vEntities.push_back(e);
-			plPlayer = e;
+			nPlayers++;
+			if (bLoadedPlayer == false)
+			{
+				plPlayer = e;
+				bLoadedPlayer = true;
+			}
 			break;
 		}
 		case Entity::Type::Bomb:

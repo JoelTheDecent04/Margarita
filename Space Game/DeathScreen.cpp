@@ -49,7 +49,11 @@ void DeathScreen::LeftClick()
 DeathScreen::DeathScreen()
 {
 	nButtonHover = -1;
-	vButtons.push_back(Button(500, 200, 780, 300, [](void*) { LoadLevel(std::make_shared<SpaceGame>()); }, "New Game"));
+	vButtons.push_back(Button(500, 200, 780, 300, [](void*) { 
+		auto pSpaceGame = std::make_shared<SpaceGame>();
+		sgSpaceGame = pSpaceGame;
+		LoadLevel(pSpaceGame);
+	}, "New Game"));
 	vButtons.push_back(Button(500, 320, 780, 420, [](void*) { Quit(); }, "Quit"));
 }
 

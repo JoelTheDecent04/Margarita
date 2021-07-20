@@ -37,6 +37,7 @@ namespace Game {
 
 	void GameMain()
 	{
+		SpaceGame::LoadResources();
 		LoadLevel(std::make_shared<TitleScreen>());
 
 		uint64_t nPerformanceFrequency = SDL_GetPerformanceFrequency();
@@ -46,8 +47,8 @@ namespace Game {
 
 		while (1)
 		{
-			if (DoEvents() == false) 
-				Quit();
+			if (DoEvents() == false)
+				break;
 
 			uint64_t nCurrentTime = SDL_GetPerformanceCounter();
 			float dDeltaTime = (nCurrentTime - nStartTime) * dSecondsPerCount;
@@ -64,6 +65,9 @@ namespace Game {
 			lCurrentLevel->Render();
 			Graphics::EndDraw();
 		}
+
+		SpaceGame::UnloadResources();
+		Quit();
 	}
 
 	void LoadLevel(const std::shared_ptr<Level>& lNewLevel)
