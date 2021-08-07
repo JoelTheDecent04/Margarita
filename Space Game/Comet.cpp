@@ -3,7 +3,7 @@
 #include "Utilities.h"
 
 Comet::Comet()
-	: animation(tCometTexture, 42, 60, &nFrame)
+	: animation(TextureID::Comet, 42, 60, &nFrame)
 {
 	nFrame = 0;
 	fX = fBackgroundPosition + randomf() * 2560;
@@ -14,7 +14,7 @@ Comet::Comet()
 
 void Comet::Draw()
 {
-	tCometTexture->Draw(nFrame, fX, fY);
+	textures[TextureID::Comet]->Draw(nFrame, fX, fY);
 }
 
 bool Comet::Update(float deltatime)

@@ -24,7 +24,7 @@ void RegenerationPowerup::Update(float deltatime)
 
 RegenerationPowerupItem::RegenerationPowerupItem()
 {
-	tTexture = tRegenerationPowerupTexture;
+	nTexture = TextureID::RegenerationPowerup;
 	nCount = 1;
 	nType = Type::RegenerationPowerup;
 	strName = "Regeneration Powerup";

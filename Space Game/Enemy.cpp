@@ -4,7 +4,7 @@
 #include "Utilities.h"
 
 Enemy::Enemy(float fX, float fY)
-	: Entity(tEnemyTexture, fX, fY)
+	: Entity(TextureID::Enemy, fX, fY)
 {
 	fHealth = 100.0f;
 	fMaxHealth = 100.0f;

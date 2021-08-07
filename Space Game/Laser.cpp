@@ -5,7 +5,7 @@
 #define PI 3.1415926f
 
 LaserBeam::LaserBeam(LaserWeapon* weapon, float fX, float fY, float fSpeedX, float fSpeedY)
-	: Entity(tLaserBeamTexture, fX, fY)
+	: Entity(TextureID::Laserbeam, fX, fY)
 {
 	bAffectedByGravity = false;
 	this->fSpeedX = fSpeedX;
@@ -42,7 +42,7 @@ bool LaserBeam::Collide(Entity* entity)
 
 void LaserBeam::Draw()
 {
-	tTexture->Draw(nFrame, (fX - fBackgroundPosition - (tTexture->fTextureDrawnWidth / 2)), fY - tTexture->fTextureDrawnHeight / 2, false, fAngle);
+	textures[nTexture]->Draw(nFrame, (fX - fBackgroundPosition - (textures[nTexture]->fTextureDrawnWidth / 2)), fY - textures[nTexture]->fTextureDrawnHeight / 2, false, fAngle);
 }
 
 nlohmann::json LaserBeam::Save()
@@ -122,7 +122,7 @@ bool LaserBeam::Update(float deltatime)
 
 LaserWeapon::LaserWeapon(LaserLevel nLaserLevel)
 {
-	tTexture = tLaserTexture;
+	nTexture = TextureID::Laser;
 	this->nLaserLevel = nLaserLevel;
 	nCount = nLaserLevel;
 	nType = Type::Laser;

@@ -45,16 +45,23 @@ public:
 	void Update(float deltatime) override;
 	void LeftClick() override;
 	void KeyDown(int key) override;
-	void Save();
-	void LoadFromFile();
 	void NextWave();
 	SpaceGame();
 	~SpaceGame();
 };
 
 extern float fBackgroundPosition;
-extern Texture* tCharacterTexture, * tOrbTexture, * tBackground, * tLaserTexture, * tLaserBeamTexture, * tEnemyTexture, * tBombTexture, * tCrabTexture;
-extern Texture* tCometTexture, * tNoTexture, * tBombAnimationTexture, *tEnergyPowerupTexture, * tRegenerationPowerupTexture, * tLight;
+
+extern Texture* textures[];
+namespace TextureID
+{
+	enum TextureID
+	{
+		Character, Orb, Background, Laser, Laserbeam, Enemy, Bomb, Crab, Comet, None, BombAnimation, EnergyPowerup, RegenerationPowerup, Light, Foreground
+	};
+};
+//extern Texture* tCharacterTexture, * tOrbTexture, * tBackground, * tLaserTexture, * tLaserBeamTexture, * tEnemyTexture, * tBombTexture, * tCrabTexture;
+//extern Texture* tCometTexture, * tNoTexture, * tBombAnimationTexture, *tEnergyPowerupTexture, * tRegenerationPowerupTexture, * tLight;
 
 static const float fPlayerAcceleration = 3000.0f;
 static const float fPlayerDecceleration = 1500.0f;

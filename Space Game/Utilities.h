@@ -1,6 +1,4 @@
 #pragma once
-#include <SDL.h>
-
 struct Rect
 {
 	int left, top, right, bottom;
@@ -12,7 +10,7 @@ float random_off_screen();
 void GetRelativeMousePos(int* x, int* y);
 void DebugOut(const char* fmt, ...);
 bool PointInRect(Rect& rect, int x, int y);
-bool GetKeyState(int key);
+bool KeyState(int key);
 
 #define ErrorAndQuit(n, ...) { SDL_Log(n, ##__VA_ARGS__); SDL_Quit(); }
 

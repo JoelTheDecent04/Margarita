@@ -10,7 +10,7 @@ class BombAnimation : public BackgroundObject
 	int nFrame;
 	Animation animation;
 public:
-	Texture* tTexture;
+	int nTexture;
 	BombAnimation(Bomb* bomb);
 	void Draw() override;
 	bool Update(float deltatime) override;

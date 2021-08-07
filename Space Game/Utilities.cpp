@@ -48,7 +48,7 @@ void DebugOut(const char* fmt, ...) {
 	OutputDebugString(s);*/
 }
 
-bool GetKeyState(int key)
+bool KeyState(int key)
 {
 	return (/*key < pKeyStatesLength&&*/ Game::pKeyStates[key]);
 }

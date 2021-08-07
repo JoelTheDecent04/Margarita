@@ -23,7 +23,7 @@ void EnergyPowerup::Update(float deltatime)
 
 EnergyPowerupItem::EnergyPowerupItem()
 {
-	tTexture = tEnergyPowerupTexture;
+	nTexture = TextureID::EnergyPowerup;
 	nCount = 1;
 	nType = Type::EnergyPowerup;
 	strName = "Energy Powerup";

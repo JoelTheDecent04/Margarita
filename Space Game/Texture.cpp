@@ -15,6 +15,7 @@ Texture::Texture(const char* filename)
 	std::string str = std::string("resources/") + filename;
 	pTexture = nullptr;
 	pTexture = IMG_LoadTexture(Graphics::pRenderer, str.c_str());
+	const char* error = SDL_GetError();
 	if (pTexture == nullptr)
 	{
 		SDL_Log("Couldn't open texture \"%s\" Error: %s", str.c_str(), SDL_GetError());

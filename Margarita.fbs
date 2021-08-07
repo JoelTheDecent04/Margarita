@@ -1,0 +1,31 @@
+table Player {
+	id:short;
+	fx:float;
+	fy:float;
+	texture:short;
+	frame:short;
+	health:float;
+	energy:float;
+}
+
+table Entity {
+	fx:float;
+	fy:float;
+	texture:short;
+	frame:short;
+}
+
+table ServerPacket {
+	time_left:float;
+	wave_number:short;
+	players:[Player];
+	entities:[Entity];
+}
+
+table ClientPacket {
+	fired:bool;
+	fx:float;
+	fy:float;
+	max_health:float;
+	max_energy:float;
+}

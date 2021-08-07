@@ -46,6 +46,9 @@
     <Filter Include="Source Files\Space\Entities\Player\Powerups">
       <UniqueIdentifier>{92362d99-2852-42d6-9b0f-84904d0aee3e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\SpaceOnline">
+      <UniqueIdentifier>{7d876c1c-22db-4b4f-954d-b4c86c83af73}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -137,6 +140,12 @@
     </ClCompile>
     <ClCompile Include="EventHandler.cpp">
       <Filter>Source Files\Space</Filter>
+    </ClCompile>
+    <ClCompile Include="SpaceOnline.cpp">
+      <Filter>Source Files\SpaceOnline</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityOnline.cpp">
+      <Filter>Source Files\SpaceOnline</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -235,6 +244,12 @@
     </ClInclude>
     <ClInclude Include="Colours.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SpaceOnline.h">
+      <Filter>Source Files\SpaceOnline</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityOnline.h">
+      <Filter>Source Files\SpaceOnline</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

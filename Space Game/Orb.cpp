@@ -3,7 +3,7 @@
 #include "Player.h"
 
 Orb::Orb(float fX, float fY, float fSpeedX, float fSpeedY)
-	: Entity(tOrbTexture, fX, fY)
+	: Entity(TextureID::Orb, fX, fY)
 {
 	this->fSpeedX = fSpeedX;
 	this->fSpeedY = fSpeedY;
@@ -35,7 +35,7 @@ bool Orb::Collide(Entity* entity)
 OrbWeapon::OrbWeapon()
 {
 	nCount = -1;
-	tTexture = tOrbTexture;
+	nTexture = TextureID::Orb;
 	nType = Type::Orb;
 	strName = "Orb";
 }

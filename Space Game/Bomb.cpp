@@ -4,7 +4,7 @@
 #include "BombAnimation.h"
 
 Bomb::Bomb(float fX, float fY, float fSpeedX, float fSpeedY, int nLevel)
-	: Entity(tBombTexture, fX, fY)
+	: Entity(TextureID::Bomb, fX, fY)
 {
 	this->fSpeedX = fSpeedX;
 	this->fSpeedY = fSpeedY;
@@ -67,7 +67,7 @@ BombWeapon::BombWeapon(int nLevel)
 {
 	this->nLevel = nLevel;
 	nCount = nLevel;
-	tTexture = tBombTexture;
+	nTexture = TextureID::Bomb;
 	nType = Type::Bomb;
 	strName = "Bomb";
 }

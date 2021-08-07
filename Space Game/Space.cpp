@@ -27,8 +27,9 @@
 using namespace Game;
 
 float fBackgroundPosition = 0.0f;
-Texture* tCharacterTexture, * tOrbTexture, * tBackground, * tLaserTexture, * tLaserBeamTexture, * tEnemyTexture, * tBombTexture, * tCrabTexture;
-Texture* tForegroundTexture, * tCometTexture, * tNoTexture, * tBombAnimationTexture, * tEnergyPowerupTexture, * tRegenerationPowerupTexture;
+Texture* textures[15];
+//Texture* tCharacterTexture, * tOrbTexture, * tBackground, * tLaserTexture, * tLaserBeamTexture, * tEnemyTexture, * tBombTexture, * tCrabTexture;
+//Texture* tForegroundTexture, * tCometTexture, * tNoTexture, * tBombAnimationTexture, * tEnergyPowerupTexture, * tRegenerationPowerupTexture;
 
 int keyOpenShop1 = SDL_SCANCODE_E;
 int keyOpenShop2 = 0;
@@ -81,20 +82,20 @@ SpaceGame::~SpaceGame()
 }
 void SpaceGame::LoadResources()
 {
-	tCharacterTexture = new Texture("player.png", 186, 116, 83, 58);
-	tOrbTexture = new Texture("orb.png", 2497, 2497, 32, 32);
-	tBackground = new Texture("background.png", 8192, 1152, 5120, 720);
-	tLaserTexture = new Texture("Laser.png", 32, 32, 32.0f, 32.0f);
-	tLaserBeamTexture = new Texture("LaserBeam.png", 2569, 765, 32, 10);
-	tEnemyTexture = new Texture("enemy.png", 77, 110, 38, 55);
-	tCrabTexture = new Texture("crab.png", 700, 350, 96, 48);
-	tBombTexture = new Texture("bomb.png", 2218, 2223, 32.0f, 32.0f);
-	tForegroundTexture = new Texture("foreground.png", 8192, 204, 5120, 127.33f);
-	tCometTexture = new Texture("comet.png", 640, 360, 100, 50);
-	tNoTexture = new Texture("notexture.png");
-	tBombAnimationTexture = new Texture("bomb_animation.png", 1280, 720, 100.0f, 100.0f);
-	tEnergyPowerupTexture = new Texture("energy_powerup.png", 2600, 2600, 32.0f, 32.0f);
-	tRegenerationPowerupTexture = new Texture("regen_powerup.png", 2415, 2415, 32.0f, 32.0f);
+	textures[TextureID::Character] =		new Texture("player.png", 186, 116, 83, 58);
+	textures[TextureID::Orb] =				new Texture("orb.png", 2497, 2497, 32, 32);
+	textures[TextureID::Background] =		new Texture("background.png", 8192, 1152, 5120, 720);
+	textures[TextureID::Laser] =			new Texture("Laser.png", 32, 32, 32.0f, 32.0f);
+	textures[TextureID::Laserbeam] =		new Texture("LaserBeam.png", 2569, 765, 32, 10);
+	textures[TextureID::Enemy] =			new Texture("enemy.png", 77, 110, 38, 55);
+	textures[TextureID::Crab] =				new Texture("crab.png", 700, 350, 96, 48);
+	textures[TextureID::Bomb] =				new Texture("bomb.png", 2218, 2223, 32.0f, 32.0f);
+	textures[TextureID::Comet] =			new Texture("comet.png", 640, 360, 100, 50);
+	textures[TextureID::None] =				new Texture("notexture.png", 32, 32, 32, 32);
+	textures[TextureID::BombAnimation] =	new Texture("bomb_animation.png", 1280, 720, 100.0f, 100.0f);
+	textures[TextureID::EnergyPowerup] =	new Texture("energy_powerup.png", 2600, 2600, 32.0f, 32.0f);
+	textures[TextureID::RegenerationPowerup] = new Texture("regen_powerup.png", 2415, 2415, 32.0f, 32.0f);
+	textures[TextureID::Foreground] =		new Texture("foreground.png", 8192, 204, 5120, 127.33f);
 }
 void SpaceGame::Render()
 {
@@ -104,7 +105,7 @@ void SpaceGame::Render()
 	if (plPlayer->fX > 5120 - (1280 / 2))
 		fBackgroundPosition = 5120 - 1280;
 
-	tBackground->DrawPanorama(fBackgroundPosition);
+	textures[TextureID::Background]->DrawPanorama(fBackgroundPosition);
 
 	//Graphics::iLightingDeviceContext->BeginDraw();
 
@@ -113,7 +114,7 @@ void SpaceGame::Render()
 	for (auto& entity : vEntities)
 		entity->Draw();
 
-	tForegroundTexture->Draw(0, -fBackgroundPosition - 65.0f, 475.0f);
+	textures[TextureID::Foreground]->Draw(0, -fBackgroundPosition - 65.0f, 475.0f);
 	
 	Graphics::DrawLighting();
 
@@ -140,7 +141,7 @@ void SpaceGame::Render()
 	int nItem = 0;
 	for (auto& item : vItems)
 	{
-		item->tTexture->Draw(0, 4 + nItem * 32, nScreenHeight - 4 - 32, true);
+		textures[item->nTexture]->Draw(0, 4 + nItem * 32, nScreenHeight - 4 - 32, true);
 		Graphics::DrawRectangle(4 + nItem * 32, nScreenHeight - 4 - 32, 32, 32, nItem == nCurrentItem ? clrWhite : clrDarkGrey);
 		if (item->nCount > 1)
 		{
@@ -173,20 +174,7 @@ void SpaceGame::Render()
 }
 void SpaceGame::UnloadResources()
 {
-	SAFE_DELETE(tCharacterTexture);
-	SAFE_DELETE(tOrbTexture);
-	SAFE_DELETE(tBackground);
-	SAFE_DELETE(tLaserTexture);
-	SAFE_DELETE(tLaserBeamTexture);
-	SAFE_DELETE(tEnemyTexture);
-	SAFE_DELETE(tBombTexture);
-	SAFE_DELETE(tCrabTexture);
-	SAFE_DELETE(tForegroundTexture);
-	SAFE_DELETE(tCometTexture);
-	SAFE_DELETE(tNoTexture);
-	SAFE_DELETE(tBombAnimationTexture);
-	SAFE_DELETE(tEnergyPowerupTexture);
-	SAFE_DELETE(tRegenerationPowerupTexture);
+
 }
 void SpaceGame::Update(float deltatime)
 {
@@ -314,177 +302,7 @@ void SpaceGame::KeyDown(int key)
 	}*/
 }
 
-void SpaceGame::Save()
-{
-	nlohmann::json j = 
-	{
-		{"version", nCurrentVersion},
-		{"difficulty", fDifficulty},
-		{"wave", nWave},
-		{"seconds_until_next_wave", fSecondsUntilNextWave},
-		{"enemies", nEnemies}
-	};
 
-	nlohmann::json entities;
-	for (auto& entity : vEntities)
-		entities.push_back(entity->Save());
-
-	nlohmann::json items;
-	for (auto& item : vItems)
-		items.push_back(item->Save());
-
-	j["entities"] = entities;
-	j["items"] = items;
-
-	std::fstream json_file;
-	json_file.open("save.json", std::fstream::out);
-	json_file << j;
-	json_file.close();
-}
-
-void SpaceGame::LoadFromFile()
-{
-	std::fstream f;
-	f.open("save.json", std::fstream::in);
-
-	if (f.good() == false) return;
-
-	nlohmann::json j;
-	f >> j;
-
-	if (j["version"].get<int>() != nCurrentVersion)
-		SDL_Log("Warn: Save version does not match current version\n");
-
-	fDifficulty = j["difficulty"].get<float>(); //TODO macro
-	nWave = j["wave"].get<int>();
-	fSecondsUntilNextWave = j["seconds_until_next_wave"].get<float>();
-	nEnemies = j["enemies"].get<int>();
-
-	nPlayers = 0;
-	vEntities.clear();
-
-	nlohmann::json entities = j["entities"];
-
-	bool bLoadedPlayer = false;
-	for (auto& entity : entities)
-	{
-		Entity::Type type = entity["type"].get<Entity::Type>();
-
-		switch (type)
-		{
-		case Entity::Type::None:
-			abort();
-			break;
-		case Entity::Type::Player:
-		{
-			auto e = std::make_shared<Player>(0.0f, 0.0f);
-			e->Load(entity);
-			vEntities.push_back(e);
-			nPlayers++;
-			if (bLoadedPlayer == false)
-			{
-				plPlayer = e;
-				bLoadedPlayer = true;
-			}
-			break;
-		}
-		case Entity::Type::Bomb:
-		{
-			auto e = std::make_shared<Bomb>(0.0f, 0.0f, 0.0f, 0.0f, 0);
-			e->Load(entity);
-			vEntities.push_back(e);
-			break;
-		}
-		case Entity::Type::Crab:
-		{
-			auto e = std::make_shared<Crab>(0.0f);
-			e->Load(entity);
-			vEntities.push_back(e);
-			break;
-		}
-		case Entity::Type::Enemy:
-		{
-			auto e = std::make_shared<Enemy>(0.0f, 0.0f);
-			e->Load(entity);
-			vEntities.push_back(e);
-			break;
-		}
-		case Entity::Type::Laser:
-		{
-			auto e = std::make_shared<LaserBeam>(nullptr, 0.0f, 0.0f, 0.0f, 0.0f);
-			e->Load(entity);
-			vEntities.push_back(e);
-			break;
-		}
-		case Entity::Type::Orb:
-		{
-			auto e = std::make_shared<Orb>(0.0f, 0.0f, 0.0f, 0.0f);
-			e->Load(entity);
-			vEntities.push_back(e);
-			break;
-		}
-
-		default:
-			abort();
-		}
-	}
-	
-	vItems.clear();
-	nlohmann::json items = j["items"];
-
-
-	for (auto& item : items)
-	{
-		Item::Type type = item["type"].get<Item::Type>();
-
-		switch (type)
-		{
-		case Item::Type::None:
-			abort();
-			break;
-		case Item::Type::Bomb:
-		{
-			auto i = std::make_shared<BombWeapon>(0);
-			i->Load(item);
-			vItems.push_back(i);
-			break;
-		}
-		case Item::Type::Laser:
-		{
-			auto i = std::make_shared<LaserWeapon>(LaserWeapon::LaserLevel::Normal);
-			i->Load(item);
-			vItems.push_back(i);
-			break;
-		}
-		case Item::Type::Orb:
-		{
-			auto i = std::make_shared<OrbWeapon>();
-			i->Load(item);
-			vItems.push_back(i);
-			break;
-		}
-		case Item::Type::EnergyPowerup:
-		{
-			auto i = std::make_shared<EnergyPowerupItem>();
-			i->Load(item);
-			vItems.push_back(i);
-			break;
-		}
-		case Item::Type::RegenerationPowerup:
-		{
-			auto i = std::make_shared<RegenerationPowerupItem>();
-			i->Load(item);
-			vItems.push_back(i);
-			break;
-		}
-
-		default:
-			abort();
-		}
-	}
-
-	f.close();
-}
 
 void SpaceGame::NextWave()
 {

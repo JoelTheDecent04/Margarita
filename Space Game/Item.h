@@ -9,8 +9,8 @@ public:
 	enum class Type { None, Bomb, Laser, Orb, EnergyPowerup, RegenerationPowerup };
 	Type nType;
 	int nCount;
-	Texture* tTexture;
 	const char* strName;
+	int nTexture;
 	virtual void Use(float fX, float fY, float fAngle) = 0;
 	Item();
 	virtual nlohmann::json Save();

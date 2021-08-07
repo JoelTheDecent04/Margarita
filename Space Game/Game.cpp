@@ -91,8 +91,6 @@ namespace Game {
 	}
 	void Quit()
 	{
-		if (Game::sgSpaceGame)
-			Game::sgSpaceGame->Save();
 		exit(EXIT_SUCCESS);
 	}
 }

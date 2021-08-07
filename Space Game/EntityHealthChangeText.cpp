@@ -1,5 +1,6 @@
 #include "EntityHealthChangeText.h"
 #include "Colours.h"
+#include "Space.h"
 #include <stdio.h>
 
 EntityHealthChangeText::EntityHealthChangeText(Entity* entity, int nChange)
@@ -14,7 +15,7 @@ EntityHealthChangeText::EntityHealthChangeText(Entity* entity, int nChange)
 	fOpacity = 1.0f;
 	fOpacityChangePerSecond = -4.0f;
 	fX = entity->fX - (textsize.width / 2);
-	fY = entity->fY - (entity->tTexture->fTextureDrawnHeight / 2) - 4 - 12;
+	fY = entity->fY - (textures[entity->nTexture]->fTextureDrawnHeight / 2) - 4 - 12;
 	fSpeedX = 0.0f;
 	fSpeedY = -100.0f;
 	ppFont = &Graphics::pFont14Relative;

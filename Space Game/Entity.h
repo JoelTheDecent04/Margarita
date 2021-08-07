@@ -14,7 +14,7 @@ public:
 		None, Player, Bomb, Crab, Enemy, Laser, Orb, Light
 	};
 
-	Texture* tTexture;
+	int nTexture;
 	int nFrame;
 	float fX, fY;
 	float fSpeedX, fSpeedY;
@@ -28,7 +28,7 @@ public:
 
 	Type nType;
 
-	Entity(Texture* tTexture, float fX, float fY);
+	Entity(int nTexture, float fX, float fY);
 	virtual bool Update(float deltatime);
 	virtual void ChangeHealth(float fChange, Entity* e);
 	virtual bool Collide(Entity* entity) { return true; };

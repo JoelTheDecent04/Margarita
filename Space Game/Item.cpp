@@ -3,8 +3,7 @@
 Item::Item()
 { 
 	nCount = 0; 
-	tTexture = nullptr; 
-	nType = Type::None; 
+	nType = Type::None;
 	strName = "Unknown";
 }
 nlohmann::json Item::Save()

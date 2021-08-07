@@ -7,9 +7,9 @@
 
 const char* astrEntityName[8] = { "None", "Player", "Bomb", "Crab", "Alien", "Laser", "Orb", "Light" };
 
-Entity::Entity(Texture* tTexture, float fX, float fY)
+Entity::Entity(int nTexture, float fX, float fY)
 {
-	this->tTexture = tTexture;
+	this->nTexture = nTexture;
 	this->fX = fX;
 	this->fY = fY;
 	nFrame = 0;
@@ -19,8 +19,8 @@ Entity::Entity(Texture* tTexture, float fX, float fY)
 	bAffectedByGravity = true;
 	fHealth = -1.0f;
 	fMaxHealth = 100.0f;
-	fHeight = tTexture->fTextureDrawnHeight;
-	fWidth = tTexture->fTextureDrawnWidth;
+	fHeight = textures[nTexture]->fTextureDrawnHeight;
+	fWidth = textures[nTexture]->fTextureDrawnWidth;
 	bCanCollide = true;
 	bCanCollideWithPlayer = false;
 
@@ -30,7 +30,7 @@ void Entity::Draw()
 {
 	if (bShowHitboxes)
 		Graphics::FillRectangle(fScaleH * (fX - fWidth / 2 - fBackgroundPosition), fScaleV * (fY - fHeight / 2), fScaleH * fWidth, fScaleV * fHeight, clrWhite, 0.5f);
-	tTexture->Draw(nFrame, (fX - fBackgroundPosition - (tTexture->fTextureDrawnWidth / 2)), fY - tTexture->fTextureDrawnHeight / 2);
+	textures[nTexture]->Draw(nFrame, (fX - fBackgroundPosition - (textures[nTexture]->fTextureDrawnWidth / 2)), fY - textures[nTexture]->fTextureDrawnHeight / 2);
 }
 
 bool Entity::Update(float deltatime)

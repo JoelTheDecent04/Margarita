@@ -15,7 +15,7 @@ int keyMoveDown1 = SDL_SCANCODE_S;
 int keyMoveDown2 = 0;
 
 Player::Player(float fX, float fY)
-	: Entity(tCharacterTexture, fX, fY)
+	: Entity(TextureID::Character, fX, fY)
 {
 	fHealth = 200.0f;
 	fMaxHealth = 200.0f;
@@ -44,21 +44,21 @@ bool Player::Update(float deltatime)
 		return false;
 	}
 
-	if (GetKeyState(keyMoveRight1) || GetKeyState(keyMoveRight2))
+	if (KeyState(keyMoveRight1) || KeyState(keyMoveRight2))
 	{
 		fSpeedX += fPlayerAcceleration * deltatime;
 		if (fSpeedX > fMovementSpeed)
 			fSpeedX = fMovementSpeed;
 	}
-	if (GetKeyState(keyMoveLeft1) || GetKeyState(keyMoveLeft2))
+	if (KeyState(keyMoveLeft1) || KeyState(keyMoveLeft2))
 	{
 		fSpeedX -= fPlayerAcceleration * deltatime;
 		if (fSpeedX < -fMovementSpeed)
 			fSpeedX = -fMovementSpeed;
 	}
-	if (GetKeyState(keyMoveDown1) || GetKeyState(keyMoveDown2))
+	if (KeyState(keyMoveDown1) || KeyState(keyMoveDown2))
 		fSpeedY += fPlayerMoveDownSpeed * deltatime;
-	if (GetKeyState(keyJump1) || GetKeyState(keyJump2))
+	if (KeyState(keyJump1) || KeyState(keyJump2))
 	{
 		fSpeedY = -180.0f;
 		bOnGround = false;

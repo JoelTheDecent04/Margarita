@@ -3,6 +3,7 @@
 #include "Space.h"
 #include "Utilities.h"
 #include "Colours.h"
+#include "SpaceOnline.h"
 
 static Texture* tButtons;
 static Texture* tTitlescreenBackground;
@@ -21,13 +22,12 @@ TitleScreen::TitleScreen()
 		{
 			auto pSpaceGame = std::make_shared<SpaceGame>();
 			sgSpaceGame = pSpaceGame;
-			pSpaceGame->LoadFromFile();
 			LoadLevel(pSpaceGame);
 			
 		}
 	}, "Play"));
 	vButtons.push_back(Button(500, 500, 780, 625, [](void*) { Quit(); }, "Quit"));
-	vButtons.push_back(Button(500, 350, 780, 475, [](void*) {  }, "Info"));
+	vButtons.push_back(Button(500, 350, 780, 475, [](void*) { LoadLevel(std::make_shared<SpaceOnline>("localhost")); }, "Info"));
 
 	tTitlescreenBackground = new Texture("titlescreen_background.png", 3022, 1700, 1280.0f, 720.0f);
 }

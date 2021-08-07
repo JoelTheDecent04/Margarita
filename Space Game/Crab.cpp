@@ -3,8 +3,8 @@
 #include "Player.h"
 
 Crab::Crab(float fX)
-	: Entity(tCrabTexture, fX, 594 - (48 / 2)),
-	animation(tCharacterTexture, 14, 60.0f, &nFrame)
+	: Entity(TextureID::Crab, fX, 594 - (48 / 2)),
+	animation(TextureID::Character, 14, 60.0f, &nFrame) //TODO wtf?
 {
 	fHealth = 200.0f;
 	fMaxHealth = 200.0f;
@@ -28,8 +28,6 @@ Crab::Crab(float fX)
 }
 bool Crab::Update(float deltatime)
 {
-
-
 	if (abs(Game::sgSpaceGame->plPlayer->fX - fX) > 80.0f)
 		fSpeedX = Game::sgSpaceGame->plPlayer->fX > fX ? 100.0f + Game::sgSpaceGame->fDifficulty / 60.0f : -100.0f - Game::sgSpaceGame->fDifficulty / 60.0f;
 	else

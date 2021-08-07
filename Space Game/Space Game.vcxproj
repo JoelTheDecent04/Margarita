@@ -72,22 +72,22 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2_image-2.0.5\include;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2_ttf-2.0.15\include;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\Space Game\flatbuffers\include;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\Space Game\enet;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2_image-2.0.5\include;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2_ttf-2.0.15\include;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2_image-2.0.5\lib\x86;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2_ttf-2.0.15\lib\x86;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2-2.0.14\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2_image-2.0.5\include;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2_ttf-2.0.15\include;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\Space Game\flatbuffers\include;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\Space Game\enet;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2_image-2.0.5\include;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2_ttf-2.0.15\include;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2_image-2.0.5\lib\x86;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2_ttf-2.0.15\lib\x86;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2-2.0.14\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2_image-2.0.5\include;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2_ttf-2.0.15\include;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\Space Game\flatbuffers\include;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\Space Game\enet;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2_image-2.0.5\include;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2_ttf-2.0.15\include;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2_image-2.0.5\lib\x86;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2_ttf-2.0.15\lib\x86;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2-2.0.14\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2_image-2.0.5\include;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2_ttf-2.0.15\include;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\Space Game\flatbuffers\include;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\Space Game\enet;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2_image-2.0.5\include;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2_ttf-2.0.15\include;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2_image-2.0.5\lib\x86;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2_ttf-2.0.15\lib\x86;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2-2.0.14\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -97,11 +97,12 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_Image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_Image.lib;enet.lib;ws2_32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -113,13 +114,14 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_Image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_Image.lib;enet.lib;ws2_32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -129,11 +131,12 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_Image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_Image.lib;enet.lib;ws2_32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -145,13 +148,14 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_Image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_Image.lib;enet.lib;ws2_32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -165,6 +169,7 @@
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnergyPowerup.cpp" />
     <ClCompile Include="EntityHealthChangeText.cpp" />
+    <ClCompile Include="EntityOnline.cpp" />
     <ClCompile Include="EventHandler.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Graphics.cpp" />
@@ -181,6 +186,7 @@
     <ClCompile Include="RegenerationPowerup.cpp" />
     <ClCompile Include="Shop.cpp" />
     <ClCompile Include="Space.cpp" />
+    <ClCompile Include="SpaceOnline.cpp" />
     <ClCompile Include="TextObject.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TitleScreen.cpp" />
@@ -199,6 +205,7 @@
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnergyPowerup.h" />
     <ClInclude Include="EntityHealthChangeText.h" />
+    <ClInclude Include="EntityOnline.h" />
     <ClInclude Include="EventHandler.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Graphics.h" />
@@ -214,6 +221,7 @@
     <ClInclude Include="RegenerationPowerup.h" />
     <ClInclude Include="Shop.h" />
     <ClInclude Include="Space.h" />
+    <ClInclude Include="SpaceOnline.h" />
     <ClInclude Include="TextObject.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TitleScreen.h" />

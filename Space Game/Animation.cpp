@@ -1,8 +1,8 @@
 #include "Animation.h"
 
-Animation::Animation(Texture* tTexture, int nNumFrames, float fFrameRate, int* pnFrame)
+Animation::Animation(int nTexture, int nNumFrames, float fFrameRate, int* pnFrame)
 {
-	this->tTexture = tTexture;
+	this->nTexture = nTexture;
 	this->nNumFrames = nNumFrames;
 	this->pnFrame = pnFrame;
 	this->fFrameRate = fFrameRate;
