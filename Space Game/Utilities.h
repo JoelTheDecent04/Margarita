@@ -2,6 +2,15 @@
 struct Rect
 {
 	int left, top, right, bottom;
+
+	Rect() = default;
+	Rect(int left, int top, int right, int bottom)
+	{
+		this->left = left;
+		this->top = top;
+		this->right = right;
+		this->bottom = bottom;
+	}
 };
 
 float distance(float ax, float ay, float bx, float by);

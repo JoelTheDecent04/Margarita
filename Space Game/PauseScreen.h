@@ -7,8 +7,9 @@ class PauseScreen : public Level
 {
 public:
 	std::shared_ptr<Level> lPrevLevel;
-	std::vector<Button> vButtons;
-	int nButtonHover;
+	//std::vector<Button> vButtons;
+	
+	WidgetGroup gui;
 
 	PauseScreen();
 	void Render() override;

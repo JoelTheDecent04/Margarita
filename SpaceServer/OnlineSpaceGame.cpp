@@ -24,19 +24,28 @@ OnlineSpaceGame::OnlineSpaceGame()
 
 bool OnlineSpaceGame::Update(float deltatime)
 {
+	if (nPlayers == 0)
+		return false;
+	//std::cout << "Delta time: " << deltatime << "\n";
+
 	//Entity updates
-	for (auto entity = vEntities.begin(); entity != vEntities.end(); entity++) 
+	for (auto entity = vEntities.begin(); entity != vEntities.end(); ) 
 	{
 		bool entity_exists = (*entity)->Update(deltatime);
 		if (entity_exists == false)
-		{
-			vEntities.erase(entity);
-		}
-		if (nPlayers == 0)
-		{
-			//Game has ended
-			//return false;
-		}
+			entity = vEntities.erase(entity);
+		else
+			entity++; //To prevent deleting current iterator
+	}
+
+	//Player updates
+	for (auto player = vPlayers.begin(); player != vPlayers.end(); )
+	{
+		bool player_exists = (*player)->Update(deltatime);
+		if (player_exists == false)
+			player = vPlayers.erase(player);
+		else
+			player++; //To prevent deleting current iterator
 	}
 
 	//Enemy spawns
@@ -54,7 +63,7 @@ bool OnlineSpaceGame::Update(float deltatime)
 		}
 		else
 		{
-			auto crab = std::make_shared<Crab>(randomf() * 5120);
+			auto crab = std::make_shared<Crab>(randomf() > 0.5f ? -100.0f : 5120.0f + 100.0f);
 			if (crab->bLegalPosition)
 			{
 				vEntities.push_back(crab);
@@ -65,12 +74,28 @@ bool OnlineSpaceGame::Update(float deltatime)
 	}
 
 	//Wave
-	fSecondsUntilNextWave -= deltatime;
-	if (fSecondsUntilNextWave < 0.0f)
+	if (!bWaveFinished)
 	{
-		fSecondsUntilNextWave = 0.0f;
-		if (fSecondsUntilNextWave < 0.0f && nEnemies == 0)
-			bWaveFinished = true;
+		fSecondsUntilNextWave -= deltatime;
+		if (fSecondsUntilNextWave <= 0.0f)
+		{
+			fSecondsUntilNextWave = 0.0f;
+			if (nEnemies == 0)
+			{
+				bWaveFinished = true;
+				std::cout << "Wave " << nWave << " finished\n";
+			}
+		}
+	}
+	else
+	{
+		int nReadyPlayers = 0;
+		for (auto& player : vPlayers)
+			if (player->alive && player->ready)
+				nReadyPlayers++;
+
+		if ((float)nReadyPlayers / nPlayers > 0.5f)
+			NextWave();
 	}
 	
 	return true;

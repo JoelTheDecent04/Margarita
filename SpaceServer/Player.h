@@ -25,8 +25,10 @@ public:
 
 	bool bOnGround;
 	int id;
+	bool alive;
+	bool ready;
 
-	std::vector<std::shared_ptr<Item>> vItems;
+	//std::vector<std::shared_ptr<Item>> vItems;
 
 	Player(float fX, float fY, const std::string& str);
 	bool Update(float deltatime) override;

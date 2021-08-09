@@ -1,29 +1,37 @@
-table Player {
+table NetPlayer {
 	id:short;
 	fx:float;
 	fy:float;
-	texture:short;
-	frame:short;
+	texture:byte;
+	frame:byte;
 	health:float;
 	energy:float;
+	alive:bool;
+	ready:bool;
 }
 
-table Entity {
+table NetEntity {
 	fx:float;
 	fy:float;
-	texture:short;
-	frame:short;
+	texture:byte;
+	rotation:float;
+	frame:byte;
 }
 
 table ServerPacket {
 	time_left:float;
 	wave_number:short;
-	players:[Player];
-	entities:[Entity];
+	wave_finished:bool;
+	players:[NetPlayer];
+	entities:[NetEntity];
 }
 
 table ClientPacket {
-	fired:bool;
+	weapon_fired:byte;
+	weapon_fired_angle:float;
+	weapon_fired_intensity:byte;
+	using_powerup:bool;
+	ready:bool;
 	fx:float;
 	fy:float;
 	max_health:float;

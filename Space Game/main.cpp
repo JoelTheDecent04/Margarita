@@ -56,11 +56,10 @@ bool DoEvents()
 				LeftClick();
 			break;
 		case SDL_KEYDOWN:
-			if (event.key.keysym.scancode == SDL_SCANCODE_F11)
-			{
-			}
-			else
 				KeyDown(event.key.keysym.scancode);
+				break;
+		case SDL_TEXTINPUT:
+				KeyPress(event.text.text);
 			break;
 		case SDL_WINDOWEVENT:
 			if (event.window.event == SDL_WINDOWEVENT_RESIZED)

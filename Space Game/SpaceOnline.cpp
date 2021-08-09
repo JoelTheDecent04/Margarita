@@ -3,6 +3,11 @@
 #undef max
 
 #include <algorithm>
+#include "Player.h"
+#include "Utilities.h"
+#include "ControlsScreen.h"
+#include "TitleScreen.h"
+#include "JoinServerScreen.h"
 
 std::string ip_representation(uint32_t ip)
 {
@@ -30,11 +35,34 @@ void SpaceOnline::Render()
 		{
 			textures[entity->texture()]->Draw(
 				entity->frame(),
-				entity->fx(),
-				entity->fy()
+				entity->fx() - fBackgroundPosition,
+				entity->fy(),
+				false, //bRealCoordinates = false
+				entity->rotation()
 			);
 		}
+
+		auto* player_vector = last_packet->players();
+
+		for (const auto& player : *player_vector)
+		{
+			if (player->id() != nPlayerID && player->alive() == true)
+				textures[player->texture()]->Draw(
+					player->frame(),
+					player->fx() - fBackgroundPosition,
+					player->fy()
+				);
+		}
 	}
+
+	//Render local player
+	if (player.alive)
+		textures[TextureID::Character]->Draw(
+			0, 
+			player.fX - (textures[TextureID::Character]->fTextureDrawnWidth / 2.0f) - fBackgroundPosition, 
+			player.fY - textures[TextureID::Character]->fTextureDrawnHeight / 2.0f
+			);
+
 	/*for (auto& entity : vEntities)
 		entity.Draw();*/
 
@@ -78,48 +106,178 @@ void SpaceOnline::Render()
 	Graphics::TextMetrics(txtBuf, Graphics::pFont16, textsize);
 	Graphics::FillRectangle(nScreenWidth - 5 - textsize.width - 5, nScreenHeight - textsize.height, 5 + textsize.width + 3, textsize.height, clrBlack);
 	Graphics::WriteText(txtBuf, nScreenWidth - 5 - textsize.width, nScreenHeight - textsize.height, Graphics::pFont16);
+
+	if (!bGameStarted)
+	{
+		const char* status_text = bDidConnect ? "Waiting for Game to Start" : "Failed to Connect :(";
+		Graphics::TextMetrics(status_text, Graphics::pFont24, textsize);
+		Graphics::WriteText(status_text, nScreenWidth / 2 - textsize.width / 2, 10, Graphics::pFont24);
+	}
+
+	if (last_packet && last_packet->wave_finished())
+	{
+		snprintf(txtBuf, 64, "Wave Completed. Press '%s' To Continue.", ControlsScreen::KeyText(keyNextWave1));
+		Graphics::TextMetrics(txtBuf, Graphics::pFont24, textsize);
+		Graphics::WriteText(txtBuf, nScreenWidth / 2 - textsize.width / 2, 8, Graphics::pFont24);
+	}
+
+	/*if (server_peer)
+	{
+		snprintf(txtBuf, 64, "Ping - %dms (%.1f%% packet loss)", server_peer->lastRoundTripTime, (float)(server_peer->packetLoss / ENET_PEER_PACKET_LOSS_SCALE));
+		Graphics::TextMetrics(txtBuf, Graphics::pFont12, textsize);
+		Graphics::WriteText(txtBuf, nScreenWidth / 2 - textsize.width / 2, nScreenHeight - 4 - textsize.height, Graphics::pFont12);
+	}*/
 }
 void SpaceOnline::Update(float deltatime)
 {
 	ENetEvent event;
-	int event_status = enet_host_service(client, &event, 0);
-	{
-		if (event_status > 0)
+	while (enet_host_service(client, &event, 0) > 0)
+	{		
+		switch (event.type)
 		{
-			switch (event.type)
-			{
-			case ENET_EVENT_TYPE_CONNECT:
-				SDL_Log("New connection from %s:%d\n", ip_representation(event.peer->address.host).c_str(), event.peer->address.port);
-				break;
-			case ENET_EVENT_TYPE_RECEIVE:
-			{
-				SDL_Log("Message from %s:%d\n", ip_representation(event.peer->address.host).c_str(), event.peer->address.port);
-				/*for (int i = 0; i < event.packet->dataLength; i++)
-					SDL_Log("%c", event.packet->data[i]);
-				SDL_Log("\n");*/
+		case ENET_EVENT_TYPE_CONNECT:
+			SDL_Log("New connection from %s:%d\n", ip_representation(event.peer->address.host).c_str(), event.peer->address.port);
+			break;
+		case ENET_EVENT_TYPE_RECEIVE:
+		{
+			bGameStarted = true;
+			//SDL_Log("Message from %s:%d\n", ip_representation(event.peer->address.host).c_str(), event.peer->address.port);
 
+			switch (event.channelID)
+			{
+			case 0: //Regular data update
+			{
+				if (last_enet_packet)
+					enet_packet_destroy(last_enet_packet);
+				last_enet_packet = event.packet;
 				last_packet = flatbuffers::GetRoot<ServerPacket>((char*)event.packet->data);
+				if (nWave != last_packet->wave_number())
+				{ //New wave has started
+					player.ready = false; //Reset 'ready' status
+				}
 				nWave = last_packet->wave_number();
 				fSecondsUntilNextWave = last_packet->time_left();
 
+				const auto& player_data = last_packet->players()->Get(nPlayerID);
+				player.fEnergy = player_data->energy();
+				player.fHealth = player_data->health();
+				break;
+			}
 
+			case 1: //Player ID assignment
+				nPlayerID = *(uint32_t*)event.packet->data;
 				break;
 			}
-			case ENET_EVENT_TYPE_DISCONNECT:
-				SDL_Log("Disconnected from %s:%d\n", ip_representation(event.peer->address.host).c_str(), event.peer->address.port);
-				event.peer->data = nullptr;
-				break;
-			}
+
+			//SDL_Log("Messaged received (%f seconds left)\n", fSecondsUntilNextWave);
+			break;
+		}
+		case ENET_EVENT_TYPE_DISCONNECT:
+			SDL_Log("Disconnected from %s:%d\n", ip_representation(event.peer->address.host).c_str(), event.peer->address.port);
+			event.peer->data = nullptr;
+			Game::LoadLevel(std::make_shared<JoinServerScreen>());
+			break;
 		}
 	}
+
+	//Local player movements
+	if (KeyState(keyMoveRight1) || KeyState(keyMoveRight2))
+	{
+		player.fSpeedX += fPlayerAcceleration * deltatime;
+		if (player.fSpeedX > player.fMovementSpeed)
+			player.fSpeedX = player.fMovementSpeed;
+	}
+	if (KeyState(keyMoveLeft1) || KeyState(keyMoveLeft2))
+	{
+		player.fSpeedX -= fPlayerAcceleration * deltatime;
+		if (player.fSpeedX < -player.fMovementSpeed)
+			player.fSpeedX = -player.fMovementSpeed;
+	}
+	if (KeyState(keyMoveDown1) || KeyState(keyMoveDown2))
+		player.fSpeedY += fPlayerMoveDownSpeed * deltatime;
+
+	if (KeyState(keyJump1) || KeyState(keyJump2))
+	{
+		player.fSpeedY = -180.0f;
+		player.bOnGround = false;
+	}
+
+	if (player.fSpeedX > 0)
+	{
+		player.fSpeedX -= fPlayerDecceleration * deltatime;
+		if (player.fSpeedX < 0)
+			player.fSpeedX = 0;
+	}
+	if (player.fSpeedX < 0)
+	{
+		player.fSpeedX += fPlayerDecceleration * deltatime;
+		if (player.fSpeedX > 0)
+			player.fSpeedX = 0;
+	}
+	if (!player.bOnGround)
+		player.fSpeedY += fGravity * deltatime;
+
+	player.fX += player.fSpeedX * deltatime;
+	player.fY += player.fSpeedY * deltatime;
+
+	if (player.fX < 0)
+		player.fX = 0;
+	if (player.fX > 5120)
+		player.fX = 5120;
+	if (player.fY <= 0.0f)
+	{
+		player.fY = 0.0f;
+		player.fSpeedY = 0.0f;
+	}
+	if (player.fY >= 594.0f - 58 / 2) //58 = player height
+	{
+		player.fY = 594.0f - 58 / 2;
+		player.fSpeedY = 0.0f;
+		player.bOnGround = true;
+	}
+
+	//SDL_Log("Client Y position: %f\n", player.fY);
+
+	//Send player data to server
+	flatbuffers::FlatBufferBuilder builder(1024);
+	auto client_packet = CreateClientPacket(builder, bFiredWeapon ? weapon_fire.weapon : -1, weapon_fire.angle, weapon_fire.intensity, false, 
+											player.ready, player.fX, player.fY, player.fMaxHealth, player.fMaxEnergy);
+	builder.Finish(client_packet);
+
+	uint8_t* client_packet_buffer = builder.GetBufferPointer();
+	size_t client_packet_size = builder.GetSize();
+
+	ENetPacket* packet = enet_packet_create(client_packet_buffer, client_packet_size, bFiredWeapon ? ENET_PACKET_FLAG_RELIABLE : 0 /*| ENET_PACKET_FLAG_NO_ALLOCATE*/);
+	enet_peer_send(server_peer, 0, packet);
+	enet_host_flush(client);
+
+	bFiredWeapon = false;
 }
 void SpaceOnline::LeftClick()
 {
+	int nCursorX, nCursorY;
+	GetRelativeMousePos(&nCursorX, &nCursorY);
 
+	nCursorX += fBackgroundPosition;
+
+	float fPlayerCentreX = player.fX; //+textures[TextureID::Character]->fTextureDrawnWidth / 2.0f;
+	float fPlayerCentreY = player.fY; //+textures[TextureID::Character]->fTextureDrawnHeight / 2.0f;
+
+	float fGradient = (nCursorY - fPlayerCentreY) / (nCursorX - fPlayerCentreX);
+	float fAngle = atan(fGradient);
+	if (nCursorX < fPlayerCentreX) fAngle += 3.1415926f;
+
+	weapon_fire.angle = fAngle;
+	weapon_fire.weapon = player.vItems[nCurrentItem].ID;
+	weapon_fire.intensity = player.vItems[nCurrentItem].nCount;
+	bFiredWeapon = true;
 }
 void SpaceOnline::KeyDown(int key)
 {
-
+	if ((key == keyNextWave1 || key == keyNextWave2) && last_packet && last_packet->wave_finished())
+		player.ready = true;
+	if (key == SDL_SCANCODE_ESCAPE)
+		Game::LoadLevel(std::make_shared<TitleScreen>());
 }
 SpaceOnline::SpaceOnline(const std::string& ip)
 {
@@ -141,9 +299,15 @@ SpaceOnline::SpaceOnline(const std::string& ip)
 	SDL_Log("Waiting up to 5 seconds for connection\n");
 	event_status = enet_host_service(client, &event, 5000);
 	if (event_status != ENET_EVENT_TYPE_CONNECT)
+	{
 		SDL_Log("Failed to connect\n");
+		bDidConnect = false;
+	}
 	else
+	{
 		SDL_Log("Connected to %s:%u\n", ip_representation(event.peer->address.host).c_str(), event.peer->address.port);
+		bDidConnect = true;
+	}
 	
 	nPlayerID = -1;
 	player.fX = 100;
@@ -151,18 +315,26 @@ SpaceOnline::SpaceOnline(const std::string& ip)
 	player.fSpeedX = 0;
 	player.fSpeedY = 0;
 	player.fHealth = -1;
-	player.fMaxHealth = -1;
+	player.fMaxHealth = 200;
 	player.fEnergy = -1;
-	player.fMaxEnergy = -1;
+	player.fMaxEnergy = 150;
 	player.fMoney = 0;
+	player.bOnGround = false;
+	player.fMovementSpeed = 150.0f;
+	player.alive = true;
+	player.ready = false;
 
 	nCurrentItem = 0;
-	player.vItems.push_back({ TextureID::None, -1, "None" });
+	player.vItems.push_back({ 1, TextureID::Laser, 1, "Laser" }); //1 = laser
 
 	fSecondsUntilNextWave = -1.0f;
 	nWave = -1;
 
+	bFiredWeapon = false;
+
 	last_packet = nullptr;
+	last_enet_packet = nullptr;
+	bGameStarted = false;
 }
 SpaceOnline::~SpaceOnline()
 {

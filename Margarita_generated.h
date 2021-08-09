@@ -27,7 +27,9 @@ struct NetPlayer FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
     VT_TEXTURE = 10,
     VT_FRAME = 12,
     VT_HEALTH = 14,
-    VT_ENERGY = 16
+    VT_ENERGY = 16,
+    VT_ALIVE = 18,
+    VT_READY = 20
   };
   int16_t id() const {
     return GetField<int16_t>(VT_ID, 0);
@@ -38,11 +40,11 @@ struct NetPlayer FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   float fy() const {
     return GetField<float>(VT_FY, 0.0f);
   }
-  int16_t texture() const {
-    return GetField<int16_t>(VT_TEXTURE, 0);
+  int8_t texture() const {
+    return GetField<int8_t>(VT_TEXTURE, 0);
   }
-  int16_t frame() const {
-    return GetField<int16_t>(VT_FRAME, 0);
+  int8_t frame() const {
+    return GetField<int8_t>(VT_FRAME, 0);
   }
   float health() const {
     return GetField<float>(VT_HEALTH, 0.0f);
@@ -50,15 +52,23 @@ struct NetPlayer FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   float energy() const {
     return GetField<float>(VT_ENERGY, 0.0f);
   }
+  bool alive() const {
+    return GetField<uint8_t>(VT_ALIVE, 0) != 0;
+  }
+  bool ready() const {
+    return GetField<uint8_t>(VT_READY, 0) != 0;
+  }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<int16_t>(verifier, VT_ID) &&
            VerifyField<float>(verifier, VT_FX) &&
            VerifyField<float>(verifier, VT_FY) &&
-           VerifyField<int16_t>(verifier, VT_TEXTURE) &&
-           VerifyField<int16_t>(verifier, VT_FRAME) &&
+           VerifyField<int8_t>(verifier, VT_TEXTURE) &&
+           VerifyField<int8_t>(verifier, VT_FRAME) &&
            VerifyField<float>(verifier, VT_HEALTH) &&
            VerifyField<float>(verifier, VT_ENERGY) &&
+           VerifyField<uint8_t>(verifier, VT_ALIVE) &&
+           VerifyField<uint8_t>(verifier, VT_READY) &&
            verifier.EndTable();
   }
 };
@@ -76,17 +86,23 @@ struct NetPlayerBuilder {
   void add_fy(float fy) {
     fbb_.AddElement<float>(NetPlayer::VT_FY, fy, 0.0f);
   }
-  void add_texture(int16_t texture) {
-    fbb_.AddElement<int16_t>(NetPlayer::VT_TEXTURE, texture, 0);
+  void add_texture(int8_t texture) {
+    fbb_.AddElement<int8_t>(NetPlayer::VT_TEXTURE, texture, 0);
   }
-  void add_frame(int16_t frame) {
-    fbb_.AddElement<int16_t>(NetPlayer::VT_FRAME, frame, 0);
+  void add_frame(int8_t frame) {
+    fbb_.AddElement<int8_t>(NetPlayer::VT_FRAME, frame, 0);
   }
   void add_health(float health) {
     fbb_.AddElement<float>(NetPlayer::VT_HEALTH, health, 0.0f);
   }
   void add_energy(float energy) {
     fbb_.AddElement<float>(NetPlayer::VT_ENERGY, energy, 0.0f);
+  }
+  void add_alive(bool alive) {
+    fbb_.AddElement<uint8_t>(NetPlayer::VT_ALIVE, static_cast<uint8_t>(alive), 0);
+  }
+  void add_ready(bool ready) {
+    fbb_.AddElement<uint8_t>(NetPlayer::VT_READY, static_cast<uint8_t>(ready), 0);
   }
   explicit NetPlayerBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -104,18 +120,22 @@ inline flatbuffers::Offset<NetPlayer> CreateNetPlayer(
     int16_t id = 0,
     float fx = 0.0f,
     float fy = 0.0f,
-    int16_t texture = 0,
-    int16_t frame = 0,
+    int8_t texture = 0,
+    int8_t frame = 0,
     float health = 0.0f,
-    float energy = 0.0f) {
+    float energy = 0.0f,
+    bool alive = false,
+    bool ready = false) {
   NetPlayerBuilder builder_(_fbb);
   builder_.add_energy(energy);
   builder_.add_health(health);
   builder_.add_fy(fy);
   builder_.add_fx(fx);
+  builder_.add_id(id);
+  builder_.add_ready(ready);
+  builder_.add_alive(alive);
   builder_.add_frame(frame);
   builder_.add_texture(texture);
-  builder_.add_id(id);
   return builder_.Finish();
 }
 
@@ -125,7 +145,8 @@ struct NetEntity FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
     VT_FX = 4,
     VT_FY = 6,
     VT_TEXTURE = 8,
-    VT_FRAME = 10
+    VT_ROTATION = 10,
+    VT_FRAME = 12
   };
   float fx() const {
     return GetField<float>(VT_FX, 0.0f);
@@ -133,18 +154,22 @@ struct NetEntity FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   float fy() const {
     return GetField<float>(VT_FY, 0.0f);
   }
-  int16_t texture() const {
-    return GetField<int16_t>(VT_TEXTURE, 0);
+  int8_t texture() const {
+    return GetField<int8_t>(VT_TEXTURE, 0);
   }
-  int16_t frame() const {
-    return GetField<int16_t>(VT_FRAME, 0);
+  float rotation() const {
+    return GetField<float>(VT_ROTATION, 0.0f);
+  }
+  int8_t frame() const {
+    return GetField<int8_t>(VT_FRAME, 0);
   }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<float>(verifier, VT_FX) &&
            VerifyField<float>(verifier, VT_FY) &&
-           VerifyField<int16_t>(verifier, VT_TEXTURE) &&
-           VerifyField<int16_t>(verifier, VT_FRAME) &&
+           VerifyField<int8_t>(verifier, VT_TEXTURE) &&
+           VerifyField<float>(verifier, VT_ROTATION) &&
+           VerifyField<int8_t>(verifier, VT_FRAME) &&
            verifier.EndTable();
   }
 };
@@ -159,11 +184,14 @@ struct NetEntityBuilder {
   void add_fy(float fy) {
     fbb_.AddElement<float>(NetEntity::VT_FY, fy, 0.0f);
   }
-  void add_texture(int16_t texture) {
-    fbb_.AddElement<int16_t>(NetEntity::VT_TEXTURE, texture, 0);
+  void add_texture(int8_t texture) {
+    fbb_.AddElement<int8_t>(NetEntity::VT_TEXTURE, texture, 0);
   }
-  void add_frame(int16_t frame) {
-    fbb_.AddElement<int16_t>(NetEntity::VT_FRAME, frame, 0);
+  void add_rotation(float rotation) {
+    fbb_.AddElement<float>(NetEntity::VT_ROTATION, rotation, 0.0f);
+  }
+  void add_frame(int8_t frame) {
+    fbb_.AddElement<int8_t>(NetEntity::VT_FRAME, frame, 0);
   }
   explicit NetEntityBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -180,9 +208,11 @@ inline flatbuffers::Offset<NetEntity> CreateNetEntity(
     flatbuffers::FlatBufferBuilder &_fbb,
     float fx = 0.0f,
     float fy = 0.0f,
-    int16_t texture = 0,
-    int16_t frame = 0) {
+    int8_t texture = 0,
+    float rotation = 0.0f,
+    int8_t frame = 0) {
   NetEntityBuilder builder_(_fbb);
+  builder_.add_rotation(rotation);
   builder_.add_fy(fy);
   builder_.add_fx(fx);
   builder_.add_frame(frame);
@@ -195,8 +225,9 @@ struct ServerPacket FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_TIME_LEFT = 4,
     VT_WAVE_NUMBER = 6,
-    VT_NetPlayerS = 8,
-    VT_ENTITIES = 10
+    VT_WAVE_FINISHED = 8,
+    VT_PLAYERS = 10,
+    VT_ENTITIES = 12
   };
   float time_left() const {
     return GetField<float>(VT_TIME_LEFT, 0.0f);
@@ -204,8 +235,11 @@ struct ServerPacket FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   int16_t wave_number() const {
     return GetField<int16_t>(VT_WAVE_NUMBER, 0);
   }
-  const flatbuffers::Vector<flatbuffers::Offset<NetPlayer>> *NetPlayers() const {
-    return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<NetPlayer>> *>(VT_NetPlayerS);
+  bool wave_finished() const {
+    return GetField<uint8_t>(VT_WAVE_FINISHED, 0) != 0;
+  }
+  const flatbuffers::Vector<flatbuffers::Offset<NetPlayer>> *players() const {
+    return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<NetPlayer>> *>(VT_PLAYERS);
   }
   const flatbuffers::Vector<flatbuffers::Offset<NetEntity>> *entities() const {
     return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<NetEntity>> *>(VT_ENTITIES);
@@ -214,9 +248,10 @@ struct ServerPacket FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
     return VerifyTableStart(verifier) &&
            VerifyField<float>(verifier, VT_TIME_LEFT) &&
            VerifyField<int16_t>(verifier, VT_WAVE_NUMBER) &&
-           VerifyOffset(verifier, VT_NetPlayerS) &&
-           verifier.VerifyVector(NetPlayers()) &&
-           verifier.VerifyVectorOfTables(NetPlayers()) &&
+           VerifyField<uint8_t>(verifier, VT_WAVE_FINISHED) &&
+           VerifyOffset(verifier, VT_PLAYERS) &&
+           verifier.VerifyVector(players()) &&
+           verifier.VerifyVectorOfTables(players()) &&
            VerifyOffset(verifier, VT_ENTITIES) &&
            verifier.VerifyVector(entities()) &&
            verifier.VerifyVectorOfTables(entities()) &&
@@ -234,8 +269,11 @@ struct ServerPacketBuilder {
   void add_wave_number(int16_t wave_number) {
     fbb_.AddElement<int16_t>(ServerPacket::VT_WAVE_NUMBER, wave_number, 0);
   }
-  void add_NetPlayers(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<NetPlayer>>> NetPlayers) {
-    fbb_.AddOffset(ServerPacket::VT_NetPlayerS, NetPlayers);
+  void add_wave_finished(bool wave_finished) {
+    fbb_.AddElement<uint8_t>(ServerPacket::VT_WAVE_FINISHED, static_cast<uint8_t>(wave_finished), 0);
+  }
+  void add_players(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<NetPlayer>>> players) {
+    fbb_.AddOffset(ServerPacket::VT_PLAYERS, players);
   }
   void add_entities(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<NetEntity>>> entities) {
     fbb_.AddOffset(ServerPacket::VT_ENTITIES, entities);
@@ -255,13 +293,15 @@ inline flatbuffers::Offset<ServerPacket> CreateServerPacket(
     flatbuffers::FlatBufferBuilder &_fbb,
     float time_left = 0.0f,
     int16_t wave_number = 0,
-    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<NetPlayer>>> NetPlayers = 0,
+    bool wave_finished = false,
+    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<NetPlayer>>> players = 0,
     flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<NetEntity>>> entities = 0) {
   ServerPacketBuilder builder_(_fbb);
   builder_.add_entities(entities);
-  builder_.add_NetPlayers(NetPlayers);
+  builder_.add_players(players);
   builder_.add_time_left(time_left);
   builder_.add_wave_number(wave_number);
+  builder_.add_wave_finished(wave_finished);
   return builder_.Finish();
 }
 
@@ -269,29 +309,47 @@ inline flatbuffers::Offset<ServerPacket> CreateServerPacketDirect(
     flatbuffers::FlatBufferBuilder &_fbb,
     float time_left = 0.0f,
     int16_t wave_number = 0,
-    const std::vector<flatbuffers::Offset<NetPlayer>> *NetPlayers = nullptr,
+    bool wave_finished = false,
+    const std::vector<flatbuffers::Offset<NetPlayer>> *players = nullptr,
     const std::vector<flatbuffers::Offset<NetEntity>> *entities = nullptr) {
-  auto NetPlayers__ = NetPlayers ? _fbb.CreateVector<flatbuffers::Offset<NetPlayer>>(*NetPlayers) : 0;
+  auto players__ = players ? _fbb.CreateVector<flatbuffers::Offset<NetPlayer>>(*players) : 0;
   auto entities__ = entities ? _fbb.CreateVector<flatbuffers::Offset<NetEntity>>(*entities) : 0;
   return CreateServerPacket(
       _fbb,
       time_left,
       wave_number,
-      NetPlayers__,
+      wave_finished,
+      players__,
       entities__);
 }
 
 struct ClientPacket FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   typedef ClientPacketBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_FIRED = 4,
-    VT_FX = 6,
-    VT_FY = 8,
-    VT_MAX_HEALTH = 10,
-    VT_MAX_ENERGY = 12
+    VT_WEAPON_FIRED = 4,
+    VT_WEAPON_FIRED_ANGLE = 6,
+    VT_WEAPON_FIRED_INTENSITY = 8,
+    VT_USING_POWERUP = 10,
+    VT_READY = 12,
+    VT_FX = 14,
+    VT_FY = 16,
+    VT_MAX_HEALTH = 18,
+    VT_MAX_ENERGY = 20
   };
-  bool fired() const {
-    return GetField<uint8_t>(VT_FIRED, 0) != 0;
+  int8_t weapon_fired() const {
+    return GetField<int8_t>(VT_WEAPON_FIRED, 0);
+  }
+  float weapon_fired_angle() const {
+    return GetField<float>(VT_WEAPON_FIRED_ANGLE, 0.0f);
+  }
+  int8_t weapon_fired_intensity() const {
+    return GetField<int8_t>(VT_WEAPON_FIRED_INTENSITY, 0);
+  }
+  bool using_powerup() const {
+    return GetField<uint8_t>(VT_USING_POWERUP, 0) != 0;
+  }
+  bool ready() const {
+    return GetField<uint8_t>(VT_READY, 0) != 0;
   }
   float fx() const {
     return GetField<float>(VT_FX, 0.0f);
@@ -307,7 +365,11 @@ struct ClientPacket FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
-           VerifyField<uint8_t>(verifier, VT_FIRED) &&
+           VerifyField<int8_t>(verifier, VT_WEAPON_FIRED) &&
+           VerifyField<float>(verifier, VT_WEAPON_FIRED_ANGLE) &&
+           VerifyField<int8_t>(verifier, VT_WEAPON_FIRED_INTENSITY) &&
+           VerifyField<uint8_t>(verifier, VT_USING_POWERUP) &&
+           VerifyField<uint8_t>(verifier, VT_READY) &&
            VerifyField<float>(verifier, VT_FX) &&
            VerifyField<float>(verifier, VT_FY) &&
            VerifyField<float>(verifier, VT_MAX_HEALTH) &&
@@ -320,8 +382,20 @@ struct ClientPacketBuilder {
   typedef ClientPacket Table;
   flatbuffers::FlatBufferBuilder &fbb_;
   flatbuffers::uoffset_t start_;
-  void add_fired(bool fired) {
-    fbb_.AddElement<uint8_t>(ClientPacket::VT_FIRED, static_cast<uint8_t>(fired), 0);
+  void add_weapon_fired(int8_t weapon_fired) {
+    fbb_.AddElement<int8_t>(ClientPacket::VT_WEAPON_FIRED, weapon_fired, 0);
+  }
+  void add_weapon_fired_angle(float weapon_fired_angle) {
+    fbb_.AddElement<float>(ClientPacket::VT_WEAPON_FIRED_ANGLE, weapon_fired_angle, 0.0f);
+  }
+  void add_weapon_fired_intensity(int8_t weapon_fired_intensity) {
+    fbb_.AddElement<int8_t>(ClientPacket::VT_WEAPON_FIRED_INTENSITY, weapon_fired_intensity, 0);
+  }
+  void add_using_powerup(bool using_powerup) {
+    fbb_.AddElement<uint8_t>(ClientPacket::VT_USING_POWERUP, static_cast<uint8_t>(using_powerup), 0);
+  }
+  void add_ready(bool ready) {
+    fbb_.AddElement<uint8_t>(ClientPacket::VT_READY, static_cast<uint8_t>(ready), 0);
   }
   void add_fx(float fx) {
     fbb_.AddElement<float>(ClientPacket::VT_FX, fx, 0.0f);
@@ -348,7 +422,11 @@ struct ClientPacketBuilder {
 
 inline flatbuffers::Offset<ClientPacket> CreateClientPacket(
     flatbuffers::FlatBufferBuilder &_fbb,
-    bool fired = false,
+    int8_t weapon_fired = 0,
+    float weapon_fired_angle = 0.0f,
+    int8_t weapon_fired_intensity = 0,
+    bool using_powerup = false,
+    bool ready = false,
     float fx = 0.0f,
     float fy = 0.0f,
     float max_health = 0.0f,
@@ -358,7 +436,11 @@ inline flatbuffers::Offset<ClientPacket> CreateClientPacket(
   builder_.add_max_health(max_health);
   builder_.add_fy(fy);
   builder_.add_fx(fx);
-  builder_.add_fired(fired);
+  builder_.add_weapon_fired_angle(weapon_fired_angle);
+  builder_.add_ready(ready);
+  builder_.add_using_powerup(using_powerup);
+  builder_.add_weapon_fired_intensity(weapon_fired_intensity);
+  builder_.add_weapon_fired(weapon_fired);
   return builder_.Finish();
 }
 

@@ -116,6 +116,11 @@ bool LaserBeam::Update(float deltatime)
 			bFireSecond = false;
 		}
 	}
+
+	if (fX < 0.0f || fX > 5120.0f || fY < -250.0f)
+	{
+		return false;
+	}
 	
 	return true;
 }

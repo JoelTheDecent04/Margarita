@@ -85,6 +85,7 @@ void Texture::DrawDifferentSize(int index, float x, float y, float width, float 
 }
 void Texture::Draw(int index, float x, float y, bool bRealCoordinates, float fAngle)
 {
+
 	if (pTexture == nullptr) return;
 
 	SDL_Rect rSrc;

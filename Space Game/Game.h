@@ -9,6 +9,7 @@ public:
 	virtual void Update(float deltatime) = 0;
 	virtual void LeftClick() {};
 	virtual void KeyDown(int key) {};
+	virtual void KeyPress(const char* keys) {};
 };
 
 class SpaceGame;
@@ -18,6 +19,7 @@ namespace Game {
 	void LoadLevel(const std::shared_ptr<Level>& lNewLevel);
 	void LeftClick();
 	void KeyDown(int key);
+	void KeyPress(const char* keys);
 	void Resize();
 	void Quit();
 

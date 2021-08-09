@@ -8,6 +8,7 @@
 
 struct OnlineItem
 {
+	int ID;
 	int nTexture;
 	int nCount;
 	std::string name;
@@ -19,7 +20,18 @@ struct OnlinePlayer
 	float fHealth, fMaxHealth;
 	float fEnergy, fMaxEnergy;
 	float fMoney;
+	float fMovementSpeed;
+	bool bOnGround;
+	bool alive;
+	bool ready;
 	std::vector<OnlineItem> vItems;
+};
+
+struct WeaponFire
+{
+	short weapon;
+	float angle;
+	short intensity;
 };
 
 class SpaceOnline : public Level
@@ -28,6 +40,9 @@ class SpaceOnline : public Level
 	OnlinePlayer player;
 	int nCurrentItem;
 
+	WeaponFire weapon_fire;
+	bool bFiredWeapon;
+
 	float fSecondsUntilNextWave;
 	int nWave;
 
@@ -35,6 +50,10 @@ class SpaceOnline : public Level
 	ENetPeer* server_peer;
 
 	const ServerPacket* last_packet;
+	ENetPacket* last_enet_packet;
+
+	bool bDidConnect;
+	bool bGameStarted;
 
 	std::vector<OnlineEntity> vEntities;
 

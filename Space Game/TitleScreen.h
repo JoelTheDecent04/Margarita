@@ -5,8 +5,9 @@
 
 class TitleScreen : public Level
 {
-	std::vector<Button> vButtons;
-	int nButtonHover;
+	//std::vector<Button> vButtons;
+	WidgetGroup gui;
+	
 public:
 	TitleScreen();
 	~TitleScreen();

@@ -39,7 +39,7 @@ public:
 	float Distance(Entity* entity);
 	virtual void Destroy(Entity*) {};
 
-	flatbuffers::Offset<NetEntity> Serialise(flatbuffers::FlatBufferBuilder& packet);
+	virtual flatbuffers::Offset<NetEntity> Serialise(flatbuffers::FlatBufferBuilder& packet);
 
 	std::shared_ptr<Player> NearestPlayer(float* nearest_dist);
 };

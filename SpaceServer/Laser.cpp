@@ -3,9 +3,11 @@
 #include "Player.h"
 #include "ServerUtilities.h"
 
+#include <iostream>
+
 #define PI 3.1415926f
 
-LaserWeapon::LaserWeapon(int nLaserLevel)
+/*LaserWeapon::LaserWeapon(int nLaserLevel)
 {
 	this->nLaserLevel = nLaserLevel;
 	nCount = nLaserLevel;
@@ -18,7 +20,7 @@ void LaserWeapon::Use(Player* player, float fX, float fY, float fAngle)
 	case Normal:
 		if (player->fEnergy >= 4)
 		{
-			sgSpaceGame->vEntities.push_back(std::make_shared<LaserBeam>(this, fX, fY, 1000.0f * cos(fAngle), 1000.0f * sin(fAngle)));
+			sgSpaceGame->vEntities.push_back(std::make_shared<LaserBeam>(fX, fY, fAngle));
 
 			player->fEnergy -= 4;
 		}
@@ -26,28 +28,27 @@ void LaserWeapon::Use(Player* player, float fX, float fY, float fAngle)
 	case DoubleShot:
 		if (player->fEnergy >= 6)
 		{
-			sgSpaceGame->vEntities.push_back(std::make_shared<LaserBeam>(this, fX, fY, 1000.0f * cos(fAngle), 1000.0f * sin(fAngle)));
+			sgSpaceGame->vEntities.push_back(std::make_shared<LaserBeam>(this, fX, fY, fAngle));
 			player->fEnergy -= 6;
 		}
 		break;
 	}
-}
+}*/
 
-LaserBeam::LaserBeam(LaserWeapon* weapon, float fX, float fY, float fSpeedX, float fSpeedY)
+LaserBeam::LaserBeam(float fX, float fY, float fAngle)
 	: Entity(fX, fY, 0.0f, 0.0f)
 {
+	//std::cout << "Creating laser at " << fX << '\n';
+
 	bAffectedByGravity = false;
-	this->fSpeedX = fSpeedX;
-	this->fSpeedY = fSpeedY;
+	this->fSpeedX = 1000.0f * cos(fAngle);
+	this->fSpeedY = 1000.0f * sin(fAngle);
 	bCanCollideWithPlayer = false;
 	bCanCollide = false;
 	
 	//TODO copy logic from double shot
 
-	float fGradient = fSpeedY / fSpeedX;
-	fAngle = (float)atan(fGradient) * 180.0f / PI;
-	if (fSpeedX < 0.0f)
-		fAngle += 180.0f;
+	this->fAngle = fAngle * 180.0f / PI;
 
 	nType = Type::Laser;
 	nTexture = TextureID::Laserbeam;
@@ -119,4 +120,9 @@ bool LaserBeam::Update(float deltatime)
 
 	return true;
 
+}
+
+flatbuffers::Offset<NetEntity> LaserBeam::Serialise(flatbuffers::FlatBufferBuilder& packet)
+{
+	return CreateNetEntity(packet, fX - 32 / 2.0f, fY - 10 / 2.0f, nTexture, fAngle, nFrame); //32, 10 are texture width and height. Laserbeam manages its on collisions
 }

@@ -4,6 +4,7 @@
 #include "Utilities.h"
 #include "Colours.h"
 #include "SpaceOnline.h"
+#include "JoinServerScreen.h"
 
 static Texture* tButtons;
 static Texture* tTitlescreenBackground;
@@ -11,11 +12,11 @@ static Texture* tTitlescreenBackground;
 using namespace Game;
 
 TitleScreen::TitleScreen()
+	: gui(Rect(0, 0, 1280, 720))
 {
-	nButtonHover = -1;
 	tButtons = new Texture("buttons.png", 764, 343, 280, 125);
 
-	vButtons.push_back(Button(500, 200, 780, 325, [](void*) {
+	auto play_button_function = [](void*) {
 		if (sgSpaceGame.get())
 			LoadLevel(sgSpaceGame);
 		else
@@ -23,11 +24,12 @@ TitleScreen::TitleScreen()
 			auto pSpaceGame = std::make_shared<SpaceGame>();
 			sgSpaceGame = pSpaceGame;
 			LoadLevel(pSpaceGame);
-			
 		}
-	}, "Play"));
-	vButtons.push_back(Button(500, 500, 780, 625, [](void*) { Quit(); }, "Quit"));
-	vButtons.push_back(Button(500, 350, 780, 475, [](void*) { LoadLevel(std::make_shared<SpaceOnline>("localhost")); }, "Info"));
+	};
+
+	gui.children.push_back(std::make_shared<WidgetBitmapButton>(Rect(500, 200, 780, 325), play_button_function, tButtons, 0));
+	gui.children.push_back(std::make_shared<WidgetBitmapButton>(Rect(500, 500, 780, 625), [](void*) {Quit(); }, tButtons, 1));
+	gui.children.push_back(std::make_shared<WidgetBitmapButton>(Rect(500, 350, 780, 475), [](void*) { LoadLevel(std::make_shared<JoinServerScreen>()); /*std::make_shared<SpaceOnline>("localhost")*/ }, tButtons, 2));
 
 	tTitlescreenBackground = new Texture("titlescreen_background.png", 3022, 1700, 1280.0f, 720.0f);
 }
@@ -44,40 +46,17 @@ void TitleScreen::Render()
 	Graphics::TextMetrics("Margarita", Graphics::pFont125Relative, textsize); //TODO change font to chiller
 	Graphics::WriteText("Margarita", fScaleH * 640 - textsize.width / 2, fScaleV * 15, Graphics::pFont125Relative, clrRed, 1.0f);
 
-	int nIndex = 0;
-	for (Button& button : vButtons)
-	{
-		tButtons->Draw(nIndex, button.rect.left, button.rect.top);
-		if (nButtonHover == nIndex)
-		{
-			Graphics::FillRectangle(fScaleH * button.rect.left, fScaleV * button.rect.top, fScaleH * (button.rect.right - button.rect.left), fScaleV * (button.rect.bottom - button.rect.top), clrBlack, 0.35f);
-		}
-		nIndex++;
-	}
+	gui.Draw(0, 0);
 }
 
 void TitleScreen::Update(float deltatime)
 {
-	int nCursorX, nCursorY;
-	GetRelativeMousePos(&nCursorX, &nCursorY);
-
-	bool bMouseOverButton = false;
-	int i = 0;
-	for (Button& button : vButtons)
-	{
-		if (PointInRect(button.rect, nCursorX, nCursorY))
-		{
-			nButtonHover = i;
-			bMouseOverButton = true;
-			break;
-		}
-		i++;
-	}
-	if (!bMouseOverButton) nButtonHover = -1;
+	gui.Update(deltatime);
 }
 
 void TitleScreen::LeftClick()
 {
-	if (nButtonHover != -1)
-		vButtons[nButtonHover].function(this);
+	int nCursorX, nCursorY;
+	GetRelativeMousePos(&nCursorX, &nCursorY);
+	gui.ClickOn(nCursorX, nCursorY, this);
 }

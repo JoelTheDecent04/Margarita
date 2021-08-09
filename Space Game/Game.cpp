@@ -85,6 +85,11 @@ namespace Game {
 		lCurrentLevel->KeyDown(key);
 	}
 
+	void KeyPress(const char* keys)
+	{
+		lCurrentLevel->KeyPress(keys);
+	}
+
 	void Resize()
 	{
 		

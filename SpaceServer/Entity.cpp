@@ -136,7 +136,7 @@ bool Entity::Update(float deltatime)
 		fSpeedY = -fSpeedY;
 	}
 
-	if (fX < 0.0f || fX > 5120.0f || fY < -250.0f)
+	if (fX < -200.0f || fX > 5320.0f || fY < -250.0f)
 	{
 		return false;
 	}
@@ -179,12 +179,12 @@ void Entity::ChangeHealth(float fChange, Entity* e)
 std::shared_ptr<Player> Entity::NearestPlayer(float* nearest_dist)
 {
 	std::shared_ptr<Player> nearest_player;
-	float distance = 0.0f;
+	float distance = 10000.0f; //Large number
 
 	for (auto& player : sgSpaceGame->vPlayers)
 	{
 		float dist;
-		if ((dist = Distance( (Entity*)(player.get()) )) > distance)
+		if ((dist = Distance( (Entity*)(player.get()) )) < distance)
 		{
 			nearest_player = player;
 			distance = dist;
@@ -198,6 +198,6 @@ std::shared_ptr<Player> Entity::NearestPlayer(float* nearest_dist)
 
 flatbuffers::Offset<NetEntity> Entity::Serialise(flatbuffers::FlatBufferBuilder& packet)
 {
-	return CreateNetEntity(packet, fX - fWidth / 2.0f, fY - fHeight / 2.0f, nTexture, nFrame); //Client draws from top left corner
+	return CreateNetEntity(packet, fX - fWidth / 2.0f, fY - fHeight / 2.0f, nTexture, 0.0f, nFrame); //Client draws from top left corner
 }
 
