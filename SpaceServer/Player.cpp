@@ -5,6 +5,8 @@
 #include "Orb.h"
 #include "ServerUtilities.h"
 
+#include <iostream>
+
 Player::Player(float fX, float fY, const std::string& str)
 	: Entity(fX, fY, 83, 58)
 {
@@ -37,8 +39,12 @@ Player::Player(float fX, float fY, const std::string& str)
 }
 bool Player::Update(float deltatime) 
 {
+	//std::cout << "Player " << id << " health " << fHealth << "\n";
 	if (fHealth <= 0.0f)
 	{
+		if (!alive)
+			abort();
+		//std::cout << "Player " << id << " died with " << fHealth << " health\n";
 		Destroy(nullptr);
 		return true; //Players stay loaded even after dying
 	}

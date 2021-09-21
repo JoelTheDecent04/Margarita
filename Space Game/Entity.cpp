@@ -194,28 +194,3 @@ float Entity::Distance(Entity* entity)
 {
 	return distance(fX, fY, entity->fX, entity->fY);
 }
-
-nlohmann::json Entity::Save()
-{
-	nlohmann::json j =
-	{
-		{"type", nType},
-		{"x", fX},
-		{"y", fY},
-		{"speed_x", fSpeedX},
-		{"speed_y", fSpeedY},
-		{"health", fHealth},
-		{"max_health", fMaxHealth}
-	};
-	return j;
-}
-
-void Entity::Load(nlohmann::json& j)
-{
-	fX = j["x"].get<float>();
-	fY = j["y"].get<float>();
-	fSpeedX = j["speed_x"].get<float>();
-	fSpeedY = j["speed_y"].get<float>();
-	fHealth = j["health"].get<float>();
-	fMaxHealth = j["max_health"].get<float>();
-}

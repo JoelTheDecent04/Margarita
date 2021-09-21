@@ -57,6 +57,9 @@
     <ClCompile Include="Orb.cpp">
       <Filter>Source Files\Space Game\Entities\Player\Items</Filter>
     </ClCompile>
+    <ClCompile Include="BackgroundObject.cpp">
+      <Filter>Source Files\Space Game\Entities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ServerUtilities.h">
@@ -91,6 +94,9 @@
     </ClInclude>
     <ClInclude Include="Orb.h">
       <Filter>Source Files\Space Game\Entities\Player\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="BackgroundObject.h">
+      <Filter>Source Files\Space Game\Entities</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,5 +1,7 @@
 #pragma once
 #include "Game.h"
+
+#ifdef SUPPORT_MULTIPLAYER
 #include "Space.h"
 #include "EntityOnline.h"
 #include <enet/enet.h>
@@ -65,3 +67,5 @@ public:
 	SpaceOnline(const std::string& ip);
 	~SpaceOnline();
 };
+
+#endif

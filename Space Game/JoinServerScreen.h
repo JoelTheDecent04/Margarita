@@ -1,11 +1,13 @@
 #pragma once
 #include "Game.h"
+
+#ifdef SUPPORT_MULTIPLAYER
 #include "GUI.h"
 
 class JoinServerScreen : public Level
 {
 	WidgetGroup gui;
-	std::shared_ptr<WidgetTextbox> ip_input_textbox;
+	static std::shared_ptr<WidgetTextbox> ip_input_textbox;
 public:
 	JoinServerScreen();
 	~JoinServerScreen();
@@ -18,3 +20,4 @@ public:
 	void Connect();
 };
 
+#endif

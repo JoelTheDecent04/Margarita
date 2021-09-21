@@ -45,18 +45,7 @@ void LaserBeam::Draw()
 	textures[nTexture]->Draw(nFrame, (fX - fBackgroundPosition - (textures[nTexture]->fTextureDrawnWidth / 2)), fY - textures[nTexture]->fTextureDrawnHeight / 2, false, fAngle);
 }
 
-nlohmann::json LaserBeam::Save()
-{
-	nlohmann::json j = Entity::Save();
-	j["angle"] = fAngle;
-	return j;
-}
 
-void LaserBeam::Load(nlohmann::json& j)
-{
-	Entity::Load(j);
-	fAngle = j["angle"].get<float>();
-}
 
 bool LaserBeam::Update(float deltatime)
 {
@@ -156,16 +145,3 @@ void LaserWeapon::Use(float fX, float fY, float fAngle)
 	}
 }
 
-nlohmann::json LaserWeapon::Save()
-{
-	nlohmann::json j = Item::Save();
-	j["laser_level"] = nLaserLevel;
-	return j;
-}
-
-void LaserWeapon::Load(nlohmann::json& j)
-{
-	Item::Load(j);
-	nLaserLevel = j["laser_level"].get<LaserLevel>();
-	nCount = nLaserLevel;
-}

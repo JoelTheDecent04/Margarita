@@ -1,5 +1,6 @@
 #pragma once
 
+#ifdef SUPPORT_MULTIPLAYER
 class OnlineEntity
 {
 public:
@@ -8,3 +9,4 @@ public:
 	int nFrame;
 	void Draw();
 };
+#endif

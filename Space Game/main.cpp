@@ -26,7 +26,7 @@ extern "C" int main(int argc, char** argv)
 
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "best");
 
-	SDL_Window* pWindow = SDL_CreateWindow("Margarita 0.1.7", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, nScreenWidth, nScreenHeight, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+	SDL_Window* pWindow = SDL_CreateWindow("Margarita (Beta)", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, nScreenWidth, nScreenHeight, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 	if (pWindow == nullptr)
 		ErrorAndQuit("Couldn't create window: %s", SDL_GetError());
 

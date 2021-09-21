@@ -17,7 +17,6 @@
 #include "Graphics.h"
 #include "Light.h"
 #include "Colours.h"
-#include "nlohmann/json.hpp"
 #include <math.h>
 #include <random>
 #include <time.h>

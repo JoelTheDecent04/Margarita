@@ -55,7 +55,7 @@ void WidgetGroup::ClickOn(int x, int y, void* arg)
 	for (int i = 0; i < children.size(); i++)
 	{
 		auto& child = children[i];
-		if (i == nCurrentHover)
+		if (PointInRect(child->region, x, y))
 			child->ClickOn(x - child->region.left, y - child->region.top, arg);
 		else
 			child->ClickOff(x - child->region.left, y - child->region.top, arg);
@@ -267,3 +267,15 @@ void WidgetTextbox::Draw(int x, int y)
 	}
 }
 
+WidgetBitmap::WidgetBitmap(const Rect& r, Texture* tTexture, int nFrame)
+{
+	region = r;
+	this->tTexture = tTexture;
+	this->nFrame = nFrame;
+}
+void WidgetBitmap::Draw(int x, int y)
+{
+	tTexture->DrawDifferentSize(
+		nFrame, region.left, region.top,
+		region.right - region.left, region.bottom - region.top);
+}

@@ -8,6 +8,7 @@ table NetPlayer {
 	energy:float;
 	alive:bool;
 	ready:bool;
+	money_gained:int;
 }
 
 table NetEntity {
@@ -24,6 +25,21 @@ table ServerPacket {
 	wave_finished:bool;
 	players:[NetPlayer];
 	entities:[NetEntity];
+}
+
+table ServerObject {
+	type:byte;
+	data:short;
+	fx:float;
+	fy:float;
+}
+
+table ServerObjectPacket {
+	objects:[ServerObject];
+}
+
+table ServerNamePacket {
+	names:[string];
 }
 
 table ClientPacket {

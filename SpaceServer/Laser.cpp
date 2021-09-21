@@ -2,6 +2,7 @@
 #include "OnlineSpaceGame.h"
 #include "Player.h"
 #include "ServerUtilities.h"
+#include "BackgroundObject.h"
 
 #include <iostream>
 
@@ -35,8 +36,8 @@ void LaserWeapon::Use(Player* player, float fX, float fY, float fAngle)
 	}
 }*/
 
-LaserBeam::LaserBeam(float fX, float fY, float fAngle)
-	: Entity(fX, fY, 0.0f, 0.0f)
+LaserBeam::LaserBeam(float fX, float fY, float fAngle, const std::shared_ptr<Entity>& parent)
+	: Entity(fX, fY, 0.0f, 0.0f, parent)
 {
 	//std::cout << "Creating laser at " << fX << '\n';
 
@@ -70,15 +71,22 @@ bool LaserBeam::Update(float deltatime)
 	bool bCollided = false;
 	for (auto& entity : sgSpaceGame->vEntities) //Check for collisions
 	{
-		if (!entity) continue;
 		if (entity.get() == this || !entity->bCanCollide) continue;
-		if (entity->nType == Type::Player && !bCanCollideWithPlayer) continue;
 		if (entity->WillOverlap(this, fBulletX, fBulletY))
 		{
 			bCollided = true;
 			return Collide(entity.get());
 		}
 	}
+	for (auto& player : sgSpaceGame->vPlayers) //Check for collisions
+	{
+		if (player.second->alive && player.second != parent && player.second->WillOverlap(this, fBulletX, fBulletY))
+		{
+			bCollided = true;
+			return Collide(player.second.get());
+		}
+	}
+
 	if (!bCollided)
 	{
 		fX = fNewX;

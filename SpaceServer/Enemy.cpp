@@ -18,8 +18,17 @@ Enemy::Enemy(float fX, float fY)
 	{
 		if (Overlapping(entity.get()))
 		{
-			bLegalPosition = true;
-			break;
+			bLegalPosition = false;
+			return;
+		}
+	}
+
+	for (auto& player : sgSpaceGame->vPlayers)
+	{
+		if (player.second->alive && Overlapping(player.second.get()))
+		{
+			bLegalPosition = false;
+			return;
 		}
 	}
 

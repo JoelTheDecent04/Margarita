@@ -72,8 +72,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\Space Game\flatbuffers\include;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\Space Game\enet;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2_image-2.0.5\include;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2_ttf-2.0.15\include;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2_image-2.0.5\lib\x86;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2_ttf-2.0.15\lib\x86;C:\Users\Joel Kruger\source\repos\JoelTheDecent04\MargaritaSDL\SDL2-2.0.14\lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)\Space Game\flatbuffers\include;$(SolutionDir)\Space Game\enet;$(SolutionDir)\SDL2_image-2.0.5\include;$(SolutionDir)\SDL2_ttf-2.0.15\include;$(SolutionDir)\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\SDL2_image-2.0.5\lib\x86;$(SolutionDir)\SDL2_ttf-2.0.15\lib\x86;$(SolutionDir)\SDL2-2.0.14\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -164,6 +164,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="BackgroundObjectOnline.cpp" />
     <ClCompile Include="Bomb.cpp" />
     <ClCompile Include="BombAnimation.cpp" />
     <ClCompile Include="Comet.cpp" />
@@ -200,6 +201,7 @@
   <ItemGroup>
     <ClInclude Include="Animation.h" />
     <ClInclude Include="BackgroundObject.h" />
+    <ClInclude Include="BackgroundObjectOnline.h" />
     <ClInclude Include="Bomb.h" />
     <ClInclude Include="BombAnimation.h" />
     <ClInclude Include="Colours.h" />

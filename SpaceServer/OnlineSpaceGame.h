@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <memory>
+#include <unordered_map>
 #include "Entity.h"
 
 class OnlineSpaceGame
@@ -18,7 +19,9 @@ public:
 	//std::unique_ptr<EventHandler> pEventHandler;
 
 	std::vector<std::shared_ptr<Entity>> vEntities;
-	std::vector<std::shared_ptr<Player>> vPlayers; //Unordered map maybe
+	std::unordered_map<int, std::shared_ptr<Player>> vPlayers;
+	
+	//std::vector<std::shared_ptr<Player>> vPlayers; //Unordered map maybe
 
 	OnlineSpaceGame();
 	bool Update(float deltatime);

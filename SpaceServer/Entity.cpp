@@ -1,8 +1,10 @@
 #include "Entity.h"
 #include "OnlineSpaceGame.h"
 #include "ServerUtilities.h"
+#include "Player.h"
+#include "BackgroundObject.h"
 
-Entity::Entity(float fX, float fY, float fWidth, float fHeight)
+Entity::Entity(float fX, float fY, float fWidth, float fHeight, const std::shared_ptr<Entity>& parent)
 {
 	this->fX = fX;
 	this->fY = fY;
@@ -19,6 +21,8 @@ Entity::Entity(float fX, float fY, float fWidth, float fHeight)
 
 	nFrame = 0;
 	nTexture = TextureID::None;
+
+	this->parent = parent;
 }
 
 bool Entity::Update(float deltatime)
@@ -37,10 +41,9 @@ bool Entity::Update(float deltatime)
 	if (bCanCollide) //If this entity can collide
 	{
 		bool bCollided = false;
-		for (auto entity : sgSpaceGame->vEntities) //Check for collisions
+		for (auto& entity : sgSpaceGame->vEntities) //Check for collisions
 		{
 			if (entity.get() == this || !entity->bCanCollide) continue;
-			if (entity->nType == Type::Player && !bCanCollideWithPlayer) continue;
 			if (entity->WillOverlap(this, fNewX, fNewY))
 			{
 				bCollided = true;
@@ -49,6 +52,22 @@ bool Entity::Update(float deltatime)
 					return false;
 				}
 				break;
+			}
+		}
+
+		if (bCanCollideWithPlayer)
+		{
+			for (auto& player : sgSpaceGame->vPlayers)
+			{
+				if (player.second != parent && player.second->WillOverlap(this, fNewX, fNewY))
+				{
+					bCollided = true;
+					if (Collide(player.second.get()) == false)
+					{
+						return false;
+					}
+					break; 
+				}
 			}
 		}
 
@@ -165,6 +184,9 @@ float Entity::Distance(Entity* entity)
 }
 void Entity::ChangeHealth(float fChange, Entity* e)
 {
+	BackgroundObject entity_health_change_text = { BackgroundObject::EntityHealthChange, (int)fChange, fX, (int)(fY - fHeight / 2 - 16) };
+	BackgroundObject::vObjects.push_back(entity_health_change_text);
+
 	fHealth += fChange;
 	if (fHealth <= 0.0f)
 	{
@@ -184,9 +206,9 @@ std::shared_ptr<Player> Entity::NearestPlayer(float* nearest_dist)
 	for (auto& player : sgSpaceGame->vPlayers)
 	{
 		float dist;
-		if ((dist = Distance( (Entity*)(player.get()) )) < distance)
+		if (player.second->alive && (dist = Distance( (Entity*)(player.second.get()) )) < distance)
 		{
-			nearest_player = player;
+			nearest_player = player.second;
 			distance = dist;
 		}
 	}

@@ -39,13 +39,10 @@ bool OnlineSpaceGame::Update(float deltatime)
 	}
 
 	//Player updates
-	for (auto player = vPlayers.begin(); player != vPlayers.end(); )
+	for (auto player = vPlayers.begin(); player != vPlayers.end(); player++)
 	{
-		bool player_exists = (*player)->Update(deltatime);
-		if (player_exists == false)
-			player = vPlayers.erase(player);
-		else
-			player++; //To prevent deleting current iterator
+		if (player->second->alive)
+			player->second->Update(deltatime);
 	}
 
 	//Enemy spawns
@@ -91,7 +88,7 @@ bool OnlineSpaceGame::Update(float deltatime)
 	{
 		int nReadyPlayers = 0;
 		for (auto& player : vPlayers)
-			if (player->alive && player->ready)
+			if (player.second->alive && player.second->ready)
 				nReadyPlayers++;
 
 		if ((float)nReadyPlayers / nPlayers > 0.5f)
@@ -124,7 +121,7 @@ void OnlineSpaceGame::NextWave()
 int OnlineSpaceGame::AddPlayer()
 {
 	auto new_player = std::make_shared<Player>(100.0f, 100.0f, "Player");
-	vPlayers.push_back(new_player);
+	vPlayers[new_player->id] = new_player;
 
 	return new_player->id;
 }

@@ -1,4 +1,6 @@
 #include "SpaceOnline.h"
+
+#ifdef SUPPORT_MULTIPLAYER
 #include <sstream>
 #undef max
 
@@ -90,7 +92,7 @@ void SpaceOnline::Render()
 	{
 		textures[item.nTexture]->Draw(0, 4 + nItem * 32, nScreenHeight - 4 - 32, true);
 		Graphics::DrawRectangle(4 + nItem * 32, nScreenHeight - 4 - 32, 32, 32, nItem == nCurrentItem ? clrWhite : clrDarkGrey);
-		if (item.nCount > 1)
+		if (item.nCount >= 1)
 		{
 			snprintf(txtBuf, sizeof(txtBuf), "%d", item.nCount);
 			Graphics::WriteText(txtBuf, 6 + nItem * 32, nScreenHeight - 4 - 16, Graphics::pFont14);
@@ -116,17 +118,33 @@ void SpaceOnline::Render()
 
 	if (last_packet && last_packet->wave_finished())
 	{
-		snprintf(txtBuf, 64, "Wave Completed. Press '%s' To Continue.", ControlsScreen::KeyText(keyNextWave1));
+		if (!player.ready)
+			snprintf(txtBuf, 64, "Wave Completed. Press '%s' To Continue.", ControlsScreen::KeyText(keyNextWave1));
+		else
+		{
+			int nTotalPlayers = 0;
+			int nReadyPlayers = 0;
+			for (int i = 0; i < last_packet->players()->size(); i++)
+			{
+				const auto& player = last_packet->players()->Get(i);
+				if (player->alive()) nTotalPlayers++;
+				if (player->alive() && player->ready()) nReadyPlayers++;
+			}
+			
+			int nNeededPlayers = (int)ceil(nTotalPlayers / 2.0f);
+
+			snprintf(txtBuf, 64, "Wave Completed. Waiting For %d More Players", nNeededPlayers - nReadyPlayers);
+		}
 		Graphics::TextMetrics(txtBuf, Graphics::pFont24, textsize);
 		Graphics::WriteText(txtBuf, nScreenWidth / 2 - textsize.width / 2, 8, Graphics::pFont24);
 	}
 
-	/*if (server_peer)
+	if (server_peer)
 	{
 		snprintf(txtBuf, 64, "Ping - %dms (%.1f%% packet loss)", server_peer->lastRoundTripTime, (float)(server_peer->packetLoss / ENET_PEER_PACKET_LOSS_SCALE));
 		Graphics::TextMetrics(txtBuf, Graphics::pFont12, textsize);
 		Graphics::WriteText(txtBuf, nScreenWidth / 2 - textsize.width / 2, nScreenHeight - 4 - textsize.height, Graphics::pFont12);
-	}*/
+	}
 }
 void SpaceOnline::Update(float deltatime)
 {
@@ -167,6 +185,14 @@ void SpaceOnline::Update(float deltatime)
 			case 1: //Player ID assignment
 				nPlayerID = *(uint32_t*)event.packet->data;
 				break;
+
+			case 2: //Background Object
+
+				SDL_Log("Background object\n");
+				break;
+
+			default:
+				abort();
 			}
 
 			//SDL_Log("Messaged received (%f seconds left)\n", fSecondsUntilNextWave);
@@ -176,7 +202,7 @@ void SpaceOnline::Update(float deltatime)
 			SDL_Log("Disconnected from %s:%d\n", ip_representation(event.peer->address.host).c_str(), event.peer->address.port);
 			event.peer->data = nullptr;
 			Game::LoadLevel(std::make_shared<JoinServerScreen>());
-			break;
+			return;
 		}
 	}
 
@@ -278,19 +304,26 @@ void SpaceOnline::KeyDown(int key)
 		player.ready = true;
 	if (key == SDL_SCANCODE_ESCAPE)
 		Game::LoadLevel(std::make_shared<TitleScreen>());
+
+	for (int i = 0; i < 9; i++)
+	{
+		if (key == keyChangeWeapon1[i] || key == keyChangeWeapon2[i])
+			if (player.vItems.size() >= i + 1)
+				nCurrentItem = i;
+	}
 }
 SpaceOnline::SpaceOnline(const std::string& ip)
 {
 	int ret = enet_initialize();
 	assert(ret == 0);
 
-	client = enet_host_create(nullptr, 1, 2, 0, 0);
+	client = enet_host_create(nullptr, 1, 4, 0, 0);
 	
 	ENetAddress address;
 	enet_address_set_host(&address, ip.c_str());
 	address.port = 5123;
 
-	server_peer = enet_host_connect(client, &address, 2, 0);
+	server_peer = enet_host_connect(client, &address, 4, 0);
 	assert(server_peer);
 
 	int event_status = 1;
@@ -326,6 +359,7 @@ SpaceOnline::SpaceOnline(const std::string& ip)
 
 	nCurrentItem = 0;
 	player.vItems.push_back({ 1, TextureID::Laser, 1, "Laser" }); //1 = laser
+	player.vItems.push_back({ 2, TextureID::Orb, 0, "Orb" }); //2 = Orb
 
 	fSecondsUntilNextWave = -1.0f;
 	nWave = -1;
@@ -338,5 +372,9 @@ SpaceOnline::SpaceOnline(const std::string& ip)
 }
 SpaceOnline::~SpaceOnline()
 {
+	if (client)
+		enet_host_destroy(client);
 	enet_deinitialize();
 }
+
+#endif

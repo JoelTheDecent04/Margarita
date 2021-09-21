@@ -18,7 +18,7 @@ class LaserBeam : public Entity
 	std::shared_ptr<LaserBeam> lbNextShot;
 	float fAngle;
 public:
-	LaserBeam(float fX, float fY, float fAngle);
+	LaserBeam(float fX, float fY, float fAngle, const std::shared_ptr<Entity>& parent);
 	bool Collide(Entity* entity) override;
 	bool Update(float deltatime);
 	flatbuffers::Offset<NetEntity> Serialise(flatbuffers::FlatBufferBuilder& packet) override;

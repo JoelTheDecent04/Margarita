@@ -124,3 +124,12 @@ public:
 	void Draw(int x, int y) override;
 	std::string& Text() { return text; }
 };
+
+class WidgetBitmap : public Widget
+{
+	Texture* tTexture;
+	int nFrame;
+public:
+	WidgetBitmap(const Rect& r, Texture* tTexture, int nFrame);
+	void Draw(int x, int y) override;
+};

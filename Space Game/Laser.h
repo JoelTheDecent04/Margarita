@@ -13,8 +13,7 @@ public:
 	LaserLevel nLaserLevel;
 	LaserWeapon(LaserLevel nLaserLevel);
 	void Use(float fX, float fY, float fAngle) override;
-	nlohmann::json Save() override;
-	void Load(nlohmann::json& j) override;
+
 };
 
 class LaserBeam : public Entity
@@ -28,6 +27,4 @@ public:
 	bool Collide(Entity* entity) override;
 	bool Update(float deltatime) override;
 	void Draw() override;
-	nlohmann::json Save() override;
-	void Load(nlohmann::json& j) override;
 };

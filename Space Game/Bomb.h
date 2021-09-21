@@ -11,8 +11,7 @@ public:
 	bool Collide(Entity* entity) override;
 	void Explode();
 	bool Update(float deltatime) override;
-	nlohmann::json Save() override;
-	void Load(nlohmann::json& f) override;
+
 };
 
 class BombWeapon : public Weapon
@@ -21,6 +20,4 @@ public:
 	int nLevel;
 	BombWeapon(int nLevel);
 	void Use(float fX, float fY, float fAngle) override;
-	void Load(nlohmann::json& f) override;
-	nlohmann::json Save() override;
 };

@@ -22,6 +22,16 @@ Crab::Crab(float fX)
 			break;
 		}
 	}
+
+	for (auto& player : sgSpaceGame->vPlayers)
+	{
+		if (player.second->alive && Overlapping(player.second.get()))
+		{
+			bLegalPosition = false;
+			break;
+		}
+	}
+
 	nTexture = TextureID::Crab;
 }
 bool Crab::Update(float deltatime)

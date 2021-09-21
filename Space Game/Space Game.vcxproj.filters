@@ -150,6 +150,9 @@
     <ClCompile Include="SpaceOnline.cpp">
       <Filter>Source Files\SpaceOnline</Filter>
     </ClCompile>
+    <ClCompile Include="BackgroundObjectOnline.cpp">
+      <Filter>Source Files\SpaceOnline</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -255,6 +258,9 @@
       <Filter>Source Files\SpaceOnline</Filter>
     </ClInclude>
     <ClInclude Include="JoinServerScreen.h">
+      <Filter>Source Files\SpaceOnline</Filter>
+    </ClInclude>
+    <ClInclude Include="BackgroundObjectOnline.h">
       <Filter>Source Files\SpaceOnline</Filter>
     </ClInclude>
   </ItemGroup>

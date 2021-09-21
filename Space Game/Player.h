@@ -21,8 +21,6 @@ public:
 	float fMaxHealthRegeneration;
 	Player(float fX, float fY);
 	bool Update(float deltatime) override;
-	nlohmann::json Save() override;
-	void Load(nlohmann::json& f) override;
 	void Destroy() override;
 };
 

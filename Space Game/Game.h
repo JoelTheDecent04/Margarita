@@ -1,4 +1,8 @@
 #pragma once
+#ifndef __EMSCRIPTEN__
+#define SUPPORT_MULTIPLAYER
+#endif
+
 #include <stdint.h>
 #include <memory>
 

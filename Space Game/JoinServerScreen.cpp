@@ -1,6 +1,10 @@
 #include "JoinServerScreen.h"
+
+#ifdef SUPPORT_MULTIPLAYER
 #include "Graphics.h"
 #include "SpaceOnline.h"
+
+std::shared_ptr<WidgetTextbox> JoinServerScreen::ip_input_textbox = std::make_shared<WidgetTextbox>(Rect(450, 125, 600, 175), TextAlign::Left, WidgetTextbox::StartActive);
 
 JoinServerScreen::JoinServerScreen()
 	: gui (Rect(0, 0, 1280, 720))
@@ -10,7 +14,7 @@ JoinServerScreen::JoinServerScreen()
 	gui.children.push_back(std::make_shared<WidgetButton>(Rect(590, 200, 690, 250), [](void* p) { ((JoinServerScreen*)p)->Connect(); }, "Connect"));
 
 	//Input textbox
-	ip_input_textbox = std::make_shared<WidgetTextbox>(Rect(450, 125, 600, 175), TextAlign::Left, WidgetTextbox::StartActive);
+	//ip_input_textbox = std::make_shared<WidgetTextbox>(Rect(450, 125, 600, 175), TextAlign::Left, WidgetTextbox::StartActive);
 	gui.children.push_back(ip_input_textbox);
 }
 
@@ -39,7 +43,10 @@ void JoinServerScreen::LeftClick()
 
 void JoinServerScreen::KeyDown(int key)
 {
-	gui.KeyDown(key);
+	if (key == SDL_SCANCODE_RETURN || key == SDL_SCANCODE_RETURN2)
+		Connect();
+	else
+		gui.KeyDown(key);
 }
 
 void JoinServerScreen::KeyPress(const char* keys)
@@ -51,3 +58,5 @@ void JoinServerScreen::Connect()
 {
 	Game::LoadLevel(std::make_shared<SpaceOnline>(ip_input_textbox->Text()));
 }
+
+#endif

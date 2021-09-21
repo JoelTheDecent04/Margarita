@@ -155,6 +155,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BackgroundObject.cpp" />
     <ClCompile Include="Bomb.cpp" />
     <ClCompile Include="Crab.cpp" />
     <ClCompile Include="Entity.cpp" />
@@ -167,6 +168,7 @@
     <ClCompile Include="SpaceServer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BackgroundObject.h" />
     <ClInclude Include="Bomb.h" />
     <ClInclude Include="Crab.h" />
     <ClInclude Include="Enemy.h" />

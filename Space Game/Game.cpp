@@ -10,6 +10,10 @@
 #include <thread>
 #include <memory>
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 int32_t nScreenWidth = 1280;
 int32_t nScreenHeight = 720;
 
@@ -45,6 +49,16 @@ namespace Game {
 
 		uint64_t nStartTime = SDL_GetPerformanceCounter();
 
+#ifdef __EMSCRIPTEN__
+		auto callback_func = [](void*) {
+			lCurrentLevel->Update((float)1 / 60);
+			Graphics::BeginDraw();
+			lCurrentLevel->Render();
+			Graphics::EndDraw();
+
+			emscripten_set_main_loop(callback_func, 0, 60);
+	};
+#else
 		while (1)
 		{
 			if (DoEvents() == false)
@@ -65,6 +79,7 @@ namespace Game {
 			lCurrentLevel->Render();
 			Graphics::EndDraw();
 		}
+#endif
 
 		SpaceGame::UnloadResources();
 		Quit();

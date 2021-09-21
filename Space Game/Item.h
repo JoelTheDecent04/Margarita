@@ -13,6 +13,4 @@ public:
 	int nTexture;
 	virtual void Use(float fX, float fY, float fAngle) = 0;
 	Item();
-	virtual nlohmann::json Save();
-	virtual void Load(nlohmann::json& f);
 };

@@ -29,8 +29,9 @@ public:
 	int nFrame;
 
 	Type nType;
+	std::shared_ptr<Entity> parent;
 
-	Entity(float fX, float fY, float fHeight, float fWidth);
+	Entity(float fX, float fY, float fHeight, float fWidth, const std::shared_ptr<Entity>& parent = nullptr);
 	virtual bool Update(float deltatime);
 	virtual void ChangeHealth(float fChange, Entity* e);
 	virtual bool Collide(Entity* entity) { return true; };

@@ -49,20 +49,6 @@ bool Bomb::Update(float deltatime)
 	return true;
 }
 
-nlohmann::json Bomb::Save()
-{
-	nlohmann::json j = Entity::Save();
-	j["age"] = fAge;
-	j["level"] = nLevel;
-	return j;
-}
-
-void Bomb::Load(nlohmann::json& j)
-{
-	fAge = j["age"].get<float>();
-	nLevel = j["level"].get<int>();
-}
-
 BombWeapon::BombWeapon(int nLevel)
 {
 	this->nLevel = nLevel;
@@ -79,18 +65,4 @@ void BombWeapon::Use(float fX, float fY, float fAngle)
 		Game::sgSpaceGame->vEntities.push_back(std::make_shared<Bomb>(fX, fY, 300.0f * cos(fAngle), 300.0f * sin(fAngle), nLevel));
 		Game::sgSpaceGame->plPlayer->nEnergy -= 8.0f + 3.0f * nLevel;
 	}
-}
-
-void BombWeapon::Load(nlohmann::json& j)
-{
-	Item::Load(j);
-	nLevel = j["level"].get<int>();
-	nCount = nLevel;
-}
-
-nlohmann::json BombWeapon::Save()
-{
-	nlohmann::json j = Item::Save();
-	j["level"] = nLevel;
-	return j;
 }

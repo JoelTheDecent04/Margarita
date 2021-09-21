@@ -15,6 +15,15 @@ struct NetEntityBuilder;
 struct ServerPacket;
 struct ServerPacketBuilder;
 
+struct ServerObject;
+struct ServerObjectBuilder;
+
+struct ServerObjectPacket;
+struct ServerObjectPacketBuilder;
+
+struct ServerNamePacket;
+struct ServerNamePacketBuilder;
+
 struct ClientPacket;
 struct ClientPacketBuilder;
 
@@ -29,7 +38,8 @@ struct NetPlayer FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
     VT_HEALTH = 14,
     VT_ENERGY = 16,
     VT_ALIVE = 18,
-    VT_READY = 20
+    VT_READY = 20,
+    VT_MONEY_GAINED = 22
   };
   int16_t id() const {
     return GetField<int16_t>(VT_ID, 0);
@@ -58,6 +68,9 @@ struct NetPlayer FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   bool ready() const {
     return GetField<uint8_t>(VT_READY, 0) != 0;
   }
+  int32_t money_gained() const {
+    return GetField<int32_t>(VT_MONEY_GAINED, 0);
+  }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<int16_t>(verifier, VT_ID) &&
@@ -69,6 +82,7 @@ struct NetPlayer FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
            VerifyField<float>(verifier, VT_ENERGY) &&
            VerifyField<uint8_t>(verifier, VT_ALIVE) &&
            VerifyField<uint8_t>(verifier, VT_READY) &&
+           VerifyField<int32_t>(verifier, VT_MONEY_GAINED) &&
            verifier.EndTable();
   }
 };
@@ -104,6 +118,9 @@ struct NetPlayerBuilder {
   void add_ready(bool ready) {
     fbb_.AddElement<uint8_t>(NetPlayer::VT_READY, static_cast<uint8_t>(ready), 0);
   }
+  void add_money_gained(int32_t money_gained) {
+    fbb_.AddElement<int32_t>(NetPlayer::VT_MONEY_GAINED, money_gained, 0);
+  }
   explicit NetPlayerBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
@@ -125,8 +142,10 @@ inline flatbuffers::Offset<NetPlayer> CreateNetPlayer(
     float health = 0.0f,
     float energy = 0.0f,
     bool alive = false,
-    bool ready = false) {
+    bool ready = false,
+    int32_t money_gained = 0) {
   NetPlayerBuilder builder_(_fbb);
+  builder_.add_money_gained(money_gained);
   builder_.add_energy(energy);
   builder_.add_health(health);
   builder_.add_fy(fy);
@@ -321,6 +340,181 @@ inline flatbuffers::Offset<ServerPacket> CreateServerPacketDirect(
       wave_finished,
       players__,
       entities__);
+}
+
+struct ServerObject FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef ServerObjectBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_TYPE = 4,
+    VT_DATA = 6,
+    VT_FX = 8,
+    VT_FY = 10
+  };
+  int8_t type() const {
+    return GetField<int8_t>(VT_TYPE, 0);
+  }
+  int16_t data() const {
+    return GetField<int16_t>(VT_DATA, 0);
+  }
+  float fx() const {
+    return GetField<float>(VT_FX, 0.0f);
+  }
+  float fy() const {
+    return GetField<float>(VT_FY, 0.0f);
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<int8_t>(verifier, VT_TYPE) &&
+           VerifyField<int16_t>(verifier, VT_DATA) &&
+           VerifyField<float>(verifier, VT_FX) &&
+           VerifyField<float>(verifier, VT_FY) &&
+           verifier.EndTable();
+  }
+};
+
+struct ServerObjectBuilder {
+  typedef ServerObject Table;
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_type(int8_t type) {
+    fbb_.AddElement<int8_t>(ServerObject::VT_TYPE, type, 0);
+  }
+  void add_data(int16_t data) {
+    fbb_.AddElement<int16_t>(ServerObject::VT_DATA, data, 0);
+  }
+  void add_fx(float fx) {
+    fbb_.AddElement<float>(ServerObject::VT_FX, fx, 0.0f);
+  }
+  void add_fy(float fy) {
+    fbb_.AddElement<float>(ServerObject::VT_FY, fy, 0.0f);
+  }
+  explicit ServerObjectBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  flatbuffers::Offset<ServerObject> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<ServerObject>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<ServerObject> CreateServerObject(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    int8_t type = 0,
+    int16_t data = 0,
+    float fx = 0.0f,
+    float fy = 0.0f) {
+  ServerObjectBuilder builder_(_fbb);
+  builder_.add_fy(fy);
+  builder_.add_fx(fx);
+  builder_.add_data(data);
+  builder_.add_type(type);
+  return builder_.Finish();
+}
+
+struct ServerObjectPacket FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef ServerObjectPacketBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_OBJECTS = 4
+  };
+  const flatbuffers::Vector<flatbuffers::Offset<ServerObject>> *objects() const {
+    return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<ServerObject>> *>(VT_OBJECTS);
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyOffset(verifier, VT_OBJECTS) &&
+           verifier.VerifyVector(objects()) &&
+           verifier.VerifyVectorOfTables(objects()) &&
+           verifier.EndTable();
+  }
+};
+
+struct ServerObjectPacketBuilder {
+  typedef ServerObjectPacket Table;
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_objects(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<ServerObject>>> objects) {
+    fbb_.AddOffset(ServerObjectPacket::VT_OBJECTS, objects);
+  }
+  explicit ServerObjectPacketBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  flatbuffers::Offset<ServerObjectPacket> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<ServerObjectPacket>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<ServerObjectPacket> CreateServerObjectPacket(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<ServerObject>>> objects = 0) {
+  ServerObjectPacketBuilder builder_(_fbb);
+  builder_.add_objects(objects);
+  return builder_.Finish();
+}
+
+inline flatbuffers::Offset<ServerObjectPacket> CreateServerObjectPacketDirect(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    const std::vector<flatbuffers::Offset<ServerObject>> *objects = nullptr) {
+  auto objects__ = objects ? _fbb.CreateVector<flatbuffers::Offset<ServerObject>>(*objects) : 0;
+  return CreateServerObjectPacket(
+      _fbb,
+      objects__);
+}
+
+struct ServerNamePacket FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef ServerNamePacketBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_NAMES = 4
+  };
+  const flatbuffers::Vector<flatbuffers::Offset<flatbuffers::String>> *names() const {
+    return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<flatbuffers::String>> *>(VT_NAMES);
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyOffset(verifier, VT_NAMES) &&
+           verifier.VerifyVector(names()) &&
+           verifier.VerifyVectorOfStrings(names()) &&
+           verifier.EndTable();
+  }
+};
+
+struct ServerNamePacketBuilder {
+  typedef ServerNamePacket Table;
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_names(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<flatbuffers::String>>> names) {
+    fbb_.AddOffset(ServerNamePacket::VT_NAMES, names);
+  }
+  explicit ServerNamePacketBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  flatbuffers::Offset<ServerNamePacket> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<ServerNamePacket>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<ServerNamePacket> CreateServerNamePacket(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<flatbuffers::String>>> names = 0) {
+  ServerNamePacketBuilder builder_(_fbb);
+  builder_.add_names(names);
+  return builder_.Finish();
+}
+
+inline flatbuffers::Offset<ServerNamePacket> CreateServerNamePacketDirect(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    const std::vector<flatbuffers::Offset<flatbuffers::String>> *names = nullptr) {
+  auto names__ = names ? _fbb.CreateVector<flatbuffers::Offset<flatbuffers::String>>(*names) : 0;
+  return CreateServerNamePacket(
+      _fbb,
+      names__);
 }
 
 struct ClientPacket FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {

@@ -116,39 +116,6 @@ bool Player::Update(float deltatime)
 	return true;
 }
 
-nlohmann::json Player::Save()
-{
-	nlohmann::json j = Entity::Save();
-
-	j["money"] = fMoney;
-	j["energy"] = nEnergy;
-	j["max_energy"] = nMaxEnergy;
-	j["energy_recharge_speed"] = fEnergyRechargeSpeed;
-	j["max_energy_recharge_speed"] = fMaxEnergyRechargeSpeed;
-	j["max_health_upgrade"] = fMaxHealthUpgrade;
-	j["movement_speed"] = fMovementSpeed;
-	j["max_movement_speed"] = fMaxMovementSpeed;
-	j["health_regeneration"] = fHealthRegeneration;
-	j["max_health_regeneration"] = fMaxHealthRegeneration;
-
-	return j;
-}
-
-void Player::Load(nlohmann::json& j)
-{
-	Entity::Load(j);
-	fMoney = j["money"].get<float>();
-	nEnergy = j["energy"].get<float>();
-	nMaxEnergy = j["max_energy"].get<float>();
-	fEnergyRechargeSpeed = j["energy_recharge_speed"].get<float>();
-	fMaxEnergyRechargeSpeed = j["max_energy_recharge_speed"].get<float>();
-	fMaxHealthUpgrade = j["max_health_upgrade"].get<float>();
-	fMovementSpeed = j["movement_speed"].get<float>();
-	fMaxMovementSpeed = j["max_movement_speed"].get<float>();
-	fHealthRegeneration = j["health_regeneration"].get<float>();
-	fMaxHealthRegeneration = j["max_health_regeneration"].get<float>();
-}
-
 void Player::Destroy()
 {
 	Game::sgSpaceGame->nPlayers--;

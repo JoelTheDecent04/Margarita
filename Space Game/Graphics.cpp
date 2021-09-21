@@ -30,24 +30,8 @@ namespace Graphics {
 	TTF_Font* pFont44Relative;
 	TTF_Font* pFont125Relative;
 	
-#define _LOCAL_FONT
-
-#ifndef _LOCAL_FONT
-#ifdef _WIN32 
-#define __FONT_FOUND__
-	static const char* strFontFile = "C:\\Windows\\Fonts\\bahnschrift.ttf";
-#endif
-#ifdef __gnu_linux__
-#define __FONT_FOUND__
-	static const char* strFontFile = "/usr/share/fonts/truetype/FreeSans.ttf";
-#endif
-#ifndef __FONT_FOUND__
-		static const char* strFontFile = "resources/Satella.ttf";
-#endif
-#else
+	//static const char* strFontFile = "resources/Margarita-Regular.ttf";
 	static const char* strFontFile = "resources/TitilliumWeb-Regular.ttf";
-#endif
-
 
 	bool Initialise(SDL_Window* w)
 	{

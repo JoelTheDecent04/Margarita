@@ -13,6 +13,8 @@
 #include "../Margarita_generated.h"
 
 #include "Laser.h"
+#include "Orb.h"
+#include "BackgroundObject.h"
 
 static ENetHost* server;
 
@@ -41,30 +43,37 @@ void HandleEvent(const ENetEvent& event)
         client_player->fMaxHealth = client_packet->max_health();
         client_player->ready = client_packet->ready();
 
-        if (client_packet->weapon_fired() >= 0)
+        if (client_player->alive && client_packet->weapon_fired() >= 0)
         {
+            
             switch (client_packet->weapon_fired())
             {
             case 1: //Laser
             {
-                sgSpaceGame->vEntities.push_back(std::make_shared<LaserBeam>(client_player->fX, client_player->fY, client_packet->weapon_fired_angle()));
+                sgSpaceGame->vEntities.push_back(std::make_shared<LaserBeam>(client_player->fX, client_player->fY, client_packet->weapon_fired_angle(), client_player));
+                break;
+            }
+            case 2: //Orb
+            {
+                sgSpaceGame->vEntities.push_back(std::make_shared<Orb>(client_player->fX, client_player->fY,
+                    cos(client_packet->weapon_fired_angle()) * 300.0f, sin(client_packet->weapon_fired_angle()) * 300.0f, client_player));
+                break;
+            case 3: //Bomb
+            {
+                break;
+            }
             }
             }
         }
 
-       // std::cout << "Y position: " << client_player->fY << '\n';
-
         enet_packet_destroy(event.packet);
-
-        //std::cout << "Message from " << ip_representation(event.peer->address.host) << ':' << event.peer->address.port << ":\n";
-        /*std::cout.write((const char*)event.packet->data, event.packet->dataLength);
-        std::cout << '\n';*/
-
-        //enet_host_broadcast(server, 0, event.packet);
         break;
     }
     case ENET_EVENT_TYPE_DISCONNECT:
         std::cout << ip_representation(event.peer->address.host) << ':' << event.peer->address.port << " disconnected\n";
+        if (sgSpaceGame->vPlayers[(int)event.peer->data]->alive)
+            sgSpaceGame->vPlayers[(int)event.peer->data]->Destroy(nullptr); //Nothing killed the player
+        sgSpaceGame->vPlayers.erase((int)(event.peer->data));
         event.peer->data = nullptr;
         break;
     }
@@ -80,7 +89,7 @@ int main(int argc, char** argv)
     address.host = ENET_HOST_ANY;
     address.port = 5123;
 
-    server = enet_host_create(&address, 32, 2, 0, 0);
+    server = enet_host_create(&address, 32, 4, 0, 0);
     assert(server);
 
     std::cout << "Server open on " << ip_representation(server->address.host) << ':' << server->address.port << '\n';
@@ -92,13 +101,10 @@ int main(int argc, char** argv)
     int event_status;
     ENetEvent event = { };
 
-    while (true) //Wait for players to connect
-    {
-        std::cout << "Waiting up to 60 seconds for first player to connect\n";
-        event_status = enet_host_service(server, &event, 20000);
-        if (event.type != ENET_EVENT_TYPE_NONE)
-            HandleEvent(event);
-    }
+    std::cout << "Waiting up to 60 seconds for first player to connect\n";
+    event_status = enet_host_service(server, &event, 20000);
+    if (event.type != ENET_EVENT_TYPE_NONE)
+        HandleEvent(event);
 
     std::cout << "Game starting...\n";
 
@@ -123,7 +129,7 @@ int main(int argc, char** argv)
         {
             flatbuffers::FlatBufferBuilder builder(2048);
                                   
-            //Entity data
+            //Entity and player data
             std::vector<flatbuffers::Offset<NetEntity>> entity_data_vector;
             std::vector<flatbuffers::Offset<NetPlayer>> player_data_vector;
 
@@ -135,13 +141,14 @@ int main(int argc, char** argv)
 
             for (auto& player : sgSpaceGame->vPlayers)
             {
-                auto player_data = player->SerialisePlayer(builder);
+                auto player_data = player.second->SerialisePlayer(builder);
                 player_data_vector.push_back(player_data);
             }
 
             auto entity_vector = builder.CreateVector(entity_data_vector);
             auto player_vector = builder.CreateVector(player_data_vector);
 
+            //Create packet
             auto server_packet = CreateServerPacket(
                 builder,
                 sgSpaceGame->fSecondsUntilNextWave,
@@ -158,6 +165,30 @@ int main(int argc, char** argv)
 
             ENetPacket* packet = enet_packet_create(server_packet_buffer, server_packet_size, 0/*ENET_PACKET_FLAG_RELIABLE *//*| ENET_PACKET_FLAG_NO_ALLOCATE*/);
             enet_host_broadcast(server, 0, packet);
+
+
+            //Background objects
+            if (BackgroundObject::vObjects.size() > 0)
+            {
+                flatbuffers::FlatBufferBuilder builder2(1024);
+                std::vector<flatbuffers::Offset<ServerObject>> background_object_data_vector;
+                for (auto& object : BackgroundObject::vObjects)
+                    background_object_data_vector.push_back(object.Serialise(builder2));
+
+                auto background_object_vector = builder2.CreateVector(background_object_data_vector);
+
+                auto server_object_packet = CreateServerObjectPacket(builder2, background_object_vector);
+                builder2.Finish(server_object_packet);
+
+                uint8_t* server_object_packet_buffer = builder2.GetBufferPointer();
+                size_t server_object_packet_size = builder2.GetSize();
+                
+                ENetPacket* object_packet = enet_packet_create(server_object_packet_buffer, server_object_packet_size, ENET_PACKET_FLAG_RELIABLE);
+                enet_host_broadcast(server, 2, object_packet); //Channel 2 - Background objects
+
+                BackgroundObject::vObjects.clear();
+            }
+
             enet_host_flush(server);
             //std::cout << "Sent message\n, time left: " << sgSpaceGame->fSecondsUntilNextWave << '\n';
             //enet_packet_destroy(packet);
@@ -167,6 +198,9 @@ int main(int argc, char** argv)
         }
         
     }
+
+    if (server)
+        enet_host_destroy(server);
 
     enet_deinitialize();
 }
